@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.XmlResourceParser;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -21,6 +22,8 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		XmlResourceParser ontology = this.getResources().getXml(R.xml.ontology);
+		//ontology.
 
 		// This is the constructor, do any initialization you require here
 		// like reading the ontology, parsing stuff and so on...
