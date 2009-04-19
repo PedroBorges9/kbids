@@ -1,0 +1,29 @@
+<Alerts>
+	<Alert title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" >
+		<GeneratedFrom>
+			<State name="CPU_Usage_Level">
+				<SymbolicValueCondition>
+					<Value name="Normal" />
+					<Value name="High" />
+				</SymbolicValueCondition>
+				<DurationCondition>
+					<Duration min="P2D" max="P8D" />
+				</DurationCondition>			
+			</State>
+		</GeneratedFrom>
+	</Alert>
+	
+	<Alert title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)" >
+		<GeneratedFrom>
+			<State name="Garbage_Collections_Level">
+				<SymbolicValueCondition>
+					<Value name="Normal" />
+					<Value name="High" />
+				</SymbolicValueCondition>
+				<DurationCondition>
+					<Duration min="P2D" max="P8D" />
+				</DurationCondition>			
+			</State>
+		</GeneratedFrom>		
+	</Alert>
+</Ontology>
