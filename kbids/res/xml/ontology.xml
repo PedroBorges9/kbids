@@ -1,0 +1,183 @@
+<Ontology name="Android">
+	<Primitives>
+		<Primitive name="CPU_Usage" minE="0" maxE="100" />		
+		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
+	</Primitives>
+	
+	<Events>
+		<Event name="Picture_Taken" />
+		<Event name="Keyboard_Opening" />
+		<Event name="Keyboard_Closing" />
+	</Events>
+
+	<Contexts>
+		<Context name="Keyboard_Open">
+			<Inductions>
+				<Induction>
+					<Event name="Keyboard_Opening" />
+
+					<!-- <Starts relativeTo="end" gap="P" /> -->
+					<Ends relativeTo="end" gap="PT2H" />
+				</Induction>
+			</Inductions>
+			
+			<Destructions>
+			</Destructions>
+		</Context>
+		
+		<Context name="High_CPU_Usage">
+			<Inductions>
+				<Induction>
+					<Primitive name="CPU_Usage" min="80" maxE="100" />
+
+					<Ends relativeTo="end" gap="PT1M" />
+				</Induction>			
+			</Inductions>
+			
+			<Destructions>
+			</Destructions>
+		</Context>
+	</Contexts>
+	
+	<States>
+		<State name="CPU_Usage_Level">
+			<AbstractedFrom>
+				<Primitive name="CPU_Usage" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<!-- <Context name="Some context..." /> -->
+			</NecessaryContexts>
+			<PersistenceFunction>
+				<Value name="Low">
+					<PersistenceTable timeUnit="minute" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+				<Value name="Normal">
+					<PersistenceTable timeUnit="day" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+				<Value name="High">
+					<PersistenceTable timeUnit="day" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+			</PersistenceFunction>
+			<MappingFunction>
+				<Value name="Low">
+					<Primitive name="CPU_Usage" minE="0" maxE="30" />
+				</Value>
+				<Value name="Normal">
+					<Primitive name="CPU_Usage" minE="31" maxE="70" />
+				</Value>
+				<Value name="High">
+					<Primitive name="CPU_Usage" minE="71" maxE="100" />
+				</Value>
+			</MappingFunction>
+		</State>
+	</States>
+	
+	<!--
+	<Gradients>
+		<Gradient name="Blood Pressure Gradient">
+			<AbstractedFrom>
+				<Primitive name="Blood Pressure"/>
+			</AbstractedFrom>
+			<SymbolicValues scale="ordinal">
+				<Value name="Increasing" />
+				<Value name="Same" />
+				<Value name="Decreasing" />
+			</SymbolicValues>
+			<NecessaryContexts>
+				<Context name="After Running"/>
+			</NecessaryContexts>
+			<PersistenceFunction>
+				<Value name="Increasing">
+					<PersistenceTable timeUnit="minute" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+				<Value name="Same">
+					<PersistenceTable timeUnit="day" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+				<Value name="Decreasing">
+					<PersistenceTable timeUnit="day" type="positive-positive">
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+						<Gaps>10 10 10 10 10 10</Gaps>
+					</PersistenceTable>
+				</Value>
+			</PersistenceFunction>
+			<GradientMappingFunction significantVariation="3" />
+		</Gradient>
+	</Gradients>
+
+	<Patterns>
+		<Pattern name="DDoS Attack" componentType="">
+			<Elements>
+				<Element name="Heart Rate-2">
+					<Primitive name="Heart Rate">
+						<SymbolicValueCondition>
+							<Value name="Normal" />
+						</SymbolicValueCondition>
+						<DurationCondition>
+							<Duration min="P2D" max="P8D" />
+						</DurationCondition>
+						<BoundpointCondition>
+							<StartPoint timeUnit="Month" min="9" max="11" />
+							<EndPoint />
+						</BoundpointCondition>
+					</Primitive>
+				</Element>
+				
+				<Element name="Drug Admin-2">
+					<Event name="Drug Admin" attributeName="Dose">						
+						<NumericValueCondition>
+							<Value minE="200" maxE="400" />
+						</NumericValueCondition>
+						<DurationCondition>
+							<Duration min="P2D" max="P8D" />
+						</DurationCondition>
+						<BoundpointCondition>
+							<StartPoint timeUnit="Month" min="9" max="11" />
+							<EndPoint />
+						</BoundpointCondition>
+					</Event>
+				</Element>
+				
+			</Elements>
+		</Pattern>
+	</Patterns>
+	-->
+</Ontology>
