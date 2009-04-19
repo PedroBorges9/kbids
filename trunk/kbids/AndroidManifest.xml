@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionCode="1" android:versionName="1.0.0" package="dt.processor.kbta">
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
+		
+		<service android:name="KBTAProcessorService">
+			<intent-filter>
+				<action android:name="dt.processor.kbta.action.PROCESSOR_SERVICE"></action>
+				<category android:name="dt.agent.category.PROCESSOR"></category>
+			</intent-filter>
+		</service>		
+		
+		<meta-data android:name="is_processor" android:value="true" />
+		<meta-data android:name="processor_info" android:resource="@xml/processor_info" />
+	</application>
+
+</manifest> 
