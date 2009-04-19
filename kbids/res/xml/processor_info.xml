@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<info>
+	<processor 
+		processorName="KBTA Processor"
+		description="A processor based on Knowledge-based Temporal Abstraction"
+		enabled="true" 
+		serviceIntentAction="dt.processor.kbta.action.PROCESSOR_SERVICE"
+		/>
+</info>
