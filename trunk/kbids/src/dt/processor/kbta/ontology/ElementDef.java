@@ -8,6 +8,16 @@ package dt.processor.kbta.ontology;
  *
  */
 public class ElementDef {
-	protected String name;
+	protected final String _name;
+	
+	public ElementDef(String name){
+		_name = name;
+	}
+	
+	public String getName() {
+		return _name;
+	}
+	
+	
 	
 }

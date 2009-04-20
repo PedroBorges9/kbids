@@ -75,7 +75,7 @@ public class AgentSim extends Activity implements ServiceConnection{
 							}
 						}else{
 							unbindService(AgentSim.this);
-							_thread.interrupt();
+							if (_thread!=null) _thread.interrupt();
 							_thread = null;
 							Toast.makeText(AgentSim.this, "Disconnected from processor", Toast.LENGTH_SHORT).show();
 						}
@@ -91,11 +91,13 @@ public class AgentSim extends Activity implements ServiceConnection{
 		}else{
 			Toast.makeText(AgentSim.this, "Connected to processor", Toast.LENGTH_SHORT).show();
 			_processor = Processor.Stub.asInterface(service);
-			
+
+			if (_thread!=null) _thread.interrupt();
 			_thread = new Thread(){
 				@Override
 				public void run(){
-					while (!isInterrupted()){
+					int loop = 0;
+					while (!isInterrupted() && loop++ < 2){
 						SystemClock.sleep(getInterval() * 1000);
 						
 						if (_processor != null){
@@ -104,6 +106,14 @@ public class AgentSim extends Activity implements ServiceConnection{
 							
 							list.add(new MonitoredData("CPU_Usage", (int)(Math.random() * 100), d));
 							list.add(new MonitoredData("Garbage_Collections", (int)(Math.random() * 300), d));
+							
+							MonitoredData md;
+							md = new MonitoredData("Keyboard_Opening", 1, d);
+							Bundle extras = new Bundle();
+							extras.putLongArray("Events", 
+									new long[]{d.getTime() - 5000, d.getTime() - 3000, d.getTime()});
+							md.setExtras(extras);
+							list.add(md);
 							try{
 								_processor.receiveMonitoredData(list);
 							}catch(RemoteException e){
