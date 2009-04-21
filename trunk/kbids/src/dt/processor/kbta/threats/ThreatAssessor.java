@@ -5,7 +5,15 @@ import java.util.*;
 import dt.processor.kbta.AllInstanceContainer;
 
 public class ThreatAssessor {
-	//TODO container of threat assessments
+	private ArrayList<ThreatAssessment> _containerAssessments;
+
+	public ThreatAssessor() {
+		_containerAssessments = new ArrayList<ThreatAssessment>();
+	}
+	
+	public void addThreatAssessment(ThreatAssessment ta){
+		_containerAssessments.add(ta);
+	}
 	
 	public Collection<ThreatAssessment> assess(AllInstanceContainer allInstances){
 		Collection<ThreatAssessment> assessments = new ArrayList<ThreatAssessment>();
