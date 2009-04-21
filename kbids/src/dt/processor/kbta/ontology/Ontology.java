@@ -2,6 +2,9 @@ package dt.processor.kbta.ontology;
 
 import java.util.HashMap;
 
+import dt.processor.kbta.ontology.defs.EventDef;
+import dt.processor.kbta.ontology.defs.PrimitiveDef;
+
 public class Ontology {
 	private HashMap<String, PrimitiveDef> _primitiveDefiners; 
 	private HashMap<String, EventDef> _eventDefiners;

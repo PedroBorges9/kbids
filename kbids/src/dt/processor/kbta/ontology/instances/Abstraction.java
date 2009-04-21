@@ -1,7 +1,9 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.instances;
+
+import dt.processor.kbta.ontology.defs.ElementDef;
 
 /**
  * @author rahamime

@@ -1,7 +1,8 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.defs;
+
 
 /**
  * @author 

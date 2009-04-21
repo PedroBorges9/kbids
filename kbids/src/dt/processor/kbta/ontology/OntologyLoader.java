@@ -13,6 +13,8 @@ import android.content.res.XmlResourceParser;
 import android.text.TextUtils;
 import android.util.Log;
 import dt.processor.kbta.R;
+import dt.processor.kbta.ontology.defs.EventDef;
+import dt.processor.kbta.ontology.defs.PrimitiveDef;
 
 import static dt.processor.kbta.KBTAProcessorService.TAG;
 
@@ -44,6 +46,7 @@ public class OntologyLoader {
 						parseEvents(xpp);
 
 					} else if (name.equalsIgnoreCase("Contexts")) {
+						// parseContext(xpp);
 
 					} else if (name.equalsIgnoreCase("States")) {
 
@@ -143,7 +146,7 @@ public class OntologyLoader {
 		int eventType;
 		String name;
 		String tag;
-		
+
 		eventType = xmlOntology.next();
 
 		while (eventType != XmlPullParser.END_TAG
@@ -163,4 +166,71 @@ public class OntologyLoader {
 			eventType = xmlOntology.next();
 		}
 	}
+
+	private void parseContext(XmlPullParser xpp) throws XmlPullParserException,
+			IOException {
+		int eventType;
+		String name;
+		String tag;
+
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !(tag = xpp.getName()).equalsIgnoreCase("Contexts")) {
+			if (eventType == XmlPullParser.START_TAG
+					&& "Context".equals(xpp.getName())) {
+				System.out.println("<Context name="
+						+ xpp.getAttributeValue(null, "name") + ">");
+
+				while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+						|| !(tag = xpp.getName()).equalsIgnoreCase("Context")) {
+					if (eventType == XmlPullParser.START_TAG
+							&& "Inductions".equals(xpp.getName())) {
+						System.out.println("Inductions");
+
+						while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+								|| !(tag = xpp.getName())
+										.equalsIgnoreCase("Inductions")) {
+
+							if (eventType == XmlPullParser.START_TAG
+									&& "Induction".equals(xpp.getName())) {
+								System.out.println("Induction");
+
+								while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+										|| !(tag = xpp.getName())
+												.equalsIgnoreCase("Induction")) {
+									if (eventType == XmlPullParser.START_TAG){
+										tag = xpp.getName();
+									}else{
+										continue;
+									}
+									if ("Primitive".equalsIgnoreCase(tag)){
+										
+									}else{
+										
+									}
+								}
+							}
+							System.out.println("Induction");
+
+							xpp.next();
+							System.out.println(xpp.getName() + " name="
+									+ xpp.getAttributeValue(null, "name"));
+							xpp.next();
+							xpp.next();
+							System.out.println(xpp.getName() + " gap="
+									+ xpp.getAttributeValue(null, "gap"));
+							xpp.next();
+							xpp.next();
+
+							;
+
+						}
+
+					} else if ("Destructions".equals(xpp.getName())) {
+
+					}
+				}
+			}
+		}
+	}
+
 }

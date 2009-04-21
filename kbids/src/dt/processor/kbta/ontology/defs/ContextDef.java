@@ -1,9 +1,10 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.defs;
 
 import java.util.List;
+
 
 /**
  * @author 

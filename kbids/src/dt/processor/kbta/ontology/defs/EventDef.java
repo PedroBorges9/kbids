@@ -1,13 +1,14 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.defs;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
 import dt.fe.MonitoredData;
+import dt.processor.kbta.ontology.instances.Event;
 
 /**
  * @author 

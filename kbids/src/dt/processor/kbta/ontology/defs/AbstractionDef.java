@@ -1,9 +1,11 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.defs;
 
 import java.util.ArrayList;
+
+import dt.processor.kbta.ontology.instances.Context;
 
 /**
  * @author 
