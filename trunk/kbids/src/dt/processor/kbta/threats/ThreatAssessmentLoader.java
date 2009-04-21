@@ -60,21 +60,23 @@ public class ThreatAssessmentLoader {
 		String type=null;
 		String nameOfType=null;
 		String description=null;
-		GeneratedFrom gf;
+		GeneratedFrom gf=null;
 		ArrayList<String> symbolicValueCondition;
 		ArrayList<Duration> durationCondition;
 		String name;
 		String tag;
+		ThreatAssessment threatAssessment;
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !(tag = xpp.getName()).equalsIgnoreCase("Assessments")) {
 			if (eventType == XmlPullParser.START_TAG
 					&& "Assessment".equalsIgnoreCase(xpp.getName())) {
+				
 				title =  xpp.getAttributeValue(null, "title");
 				description =  xpp.getAttributeValue(null, "description");
 				
 				
-				System.out.println("title=" + title + " description=" +description);
+			//	System.out.println("title=" + title + " description=" +description);
 
 				while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 						|| !(tag = xpp.getName()).equalsIgnoreCase("Assessment")) {
@@ -90,7 +92,7 @@ public class ThreatAssessmentLoader {
 								type = xpp.getName();
 								nameOfType = xpp.getAttributeValue(null, "name");
 								
-								System.out.println("type="+type+" nameOfType=" +nameOfType);
+							//	System.out.println("type="+type+" nameOfType=" +nameOfType);
 								
 
 								while ((eventType = xpp.next()) != XmlPullParser.END_TAG
@@ -103,7 +105,7 @@ public class ThreatAssessmentLoader {
 													&& "Value".equalsIgnoreCase(xpp.getName())) {
 		
 												symbolicValueCondition.add(xpp.getAttributeValue(null, "name"));
-												System.out.println("value name="+xpp.getAttributeValue(null, "name"));
+											//	System.out.println("value name="+xpp.getAttributeValue(null, "name"));
 								
 											}
 										}
@@ -117,7 +119,7 @@ public class ThreatAssessmentLoader {
 											if (eventType == XmlPullParser.START_TAG
 													&& "Duration".equalsIgnoreCase(xpp.getName())) {
 												durationCondition.add(new Duration(xpp.getAttributeValue(null, "min"),xpp.getAttributeValue(null, "max")));
-												System.out.println("min= "+xpp.getAttributeValue(null, "min")+"max= "+xpp.getAttributeValue(null, "max"));	
+										//		System.out.println("min= "+xpp.getAttributeValue(null, "min")+"max= "+xpp.getAttributeValue(null, "max"));	
 											}
 										}
 						
@@ -126,12 +128,16 @@ public class ThreatAssessmentLoader {
 								}
 							}
 							gf=new GeneratedFrom(type,nameOfType,symbolicValueCondition,durationCondition);
+							
 						}
 						
 					}
 				}
+				threatAssessment = new ThreatAssessment(title,description,100,gf);
+				_ta.addThreatAssessment(threatAssessment);
 			}
 		}
+		System.out.println(_ta);
 
 		
 	}

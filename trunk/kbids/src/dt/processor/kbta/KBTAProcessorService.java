@@ -113,7 +113,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 						// (0 - 100)%
 						for (ThreatAssessment ta : threats){
 							_twu.receiveThreatAssessment("dt.processor.kbta",
-									ta.title, ta.description, ta.certainty);
+									ta.getTitle(), ta.getDescription(), ta.getCertainty());
 						}
 					}
 				} catch (Throwable t) {

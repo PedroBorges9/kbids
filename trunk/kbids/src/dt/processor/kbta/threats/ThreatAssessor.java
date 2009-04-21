@@ -22,4 +22,17 @@ public class ThreatAssessor {
 		
 		return assessments;
 	}
+	
+	@Override
+	public String toString() {
+		String st="";
+		for(ThreatAssessment t : _containerAssessments){
+			st+=t.toString()+"\n";
+		}
+		
+		return st;
+		
+	}
+	
+	
 }
