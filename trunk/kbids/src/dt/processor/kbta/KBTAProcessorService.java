@@ -21,12 +21,12 @@ import android.os.RemoteException;
 import android.util.Log;
 import dt.fe.MonitoredData;
 import dt.processor.Processor;
-import dt.processor.kbta.ontology.Event;
-import dt.processor.kbta.ontology.EventDef;
-import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.ontology.OntologyLoader;
-import dt.processor.kbta.ontology.Primitive;
-import dt.processor.kbta.ontology.PrimitiveDef;
+import dt.processor.kbta.ontology.*;
+import dt.processor.kbta.ontology.defs.EventDef;
+import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.instances.Event;
+import dt.processor.kbta.ontology.instances.Primitive;
+import dt.processor.kbta.threats.*;
 import dt.agent.twu.TWU;
 
 public class KBTAProcessorService extends Service implements ServiceConnection {
@@ -34,23 +34,34 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 
 	private TWU _twu;
 	private Ontology _ontology;
+	private AllInstanceContainer _allInstances;
+	private ThreatAssessor _threatAssessor;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		System.out.println("creating kbta");
+		_allInstances = new AllInstanceContainer();
 
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				System.out.println("loading ");
 				OntologyLoader ontologyLoader = new OntologyLoader();
 				_ontology = ontologyLoader
 						.loadOntology(KBTAProcessorService.this);
 			}
-		}).start();
+		}, "Ontology Loader Thread").start();
 
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
+				_threatAssessor = threatAssessmentLoader
+						.loadThreatAssessments(KBTAProcessorService.this);
+			}
+		}, "Threat Assessment Loader Thread").start();
+		
 		// This is the constructor, do any initialization you require here
 		// like reading the ontology, parsing stuff and so on...
 
@@ -79,67 +90,34 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		System.out.println("bind");
 		return new Processor.Stub() {
 
 			@Override
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException {
 				try {
-					Primitive p = null;
-					for (MonitoredData m : features) {
-						// Extracting the properties of the feature
-						String name = m.getName();
-						Date start = m.getStartTime();
-						Date end = m.getEndTime();
-						Double value = valueToDouble(m);
-						if (name == null || start == null || end == null
-								|| value == null) {
-							continue;
-						}
-						
-						// Matching feature to a primitive
-						PrimitiveDef pd = _ontology.getPrimitiveDef(name);
-						if (pd != null) {
-							p = pd.definePrimitive(start, end, value);
-							System.out.println(p.toString());
-							//TODO do something with the primitive
-						}
-						
-						EventDef ed=_ontology.getEventDef(name);
-						if (ed != null) {
-							Collection<Event> events = ed.defineEvents(m);
-							if (events != null){
-								for (Event event : events){
-									//TODO do something with the events
-									System.out.println(event);
-								}
-							}
-						}
-					}
-					// This is what is called by the agent when he sends the
-					// data
-					// A MonitoredData object is a feature (name, start time,
-					// end
-					// time, value)
+					process(features);
 
-					// Here you should do your computation
-					// for (MonitoredData feature : features){
-					// System.out.println(feature);
-					// }
-					// Once the computation is finished, we send the threat
-					// assessment to the TWU
+					if (_threatAssessor == null) {
+						return;
+					}
+
+					Collection<ThreatAssessment> threats = _threatAssessor
+							.assess(_allInstances);
+
 					if (_twu != null) {
 						// Sending the processor's name, threat title, threat
 						// description
 						// and the certainty of the processor that the threat
 						// exists
 						// (0 - 100)%
-						_twu.receiveThreatAssessment("dt.processor.kbta",
-								"Threat title", "Threat description", 100);
-
+						for (ThreatAssessment ta : threats){
+							_twu.receiveThreatAssessment("dt.processor.kbta",
+									ta.title, ta.description, ta.certainty);
+						}
 					}
 				} catch (Throwable t) {
+					System.err.println("This should've been caught sooner!!!");
 					t.printStackTrace();
 				}
 			}
@@ -150,6 +128,71 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 				// do whatever you want here
 			}
 		};
+	}
+
+	void process(List<MonitoredData> features) {
+		if (_ontology == null) {
+			return;
+		}
+
+		featuresToElements(features);
+
+		boolean cont = false;
+
+		do {
+			createContexts();
+			createAbstractions();
+			// cont = whether something new happened
+		} while (cont);
+
+		createPatterns();
+	}
+
+	private void createPatterns() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void createAbstractions() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void createContexts() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void featuresToElements(List<MonitoredData> features) {
+		for (MonitoredData m : features) {
+			// Extracting the properties of the feature
+			String name = m.getName();
+			Date start = m.getStartTime();
+			Date end = m.getEndTime();
+			Double value = valueToDouble(m);
+			if (name == null || start == null || end == null || value == null) {
+				continue;
+			}
+
+			// Matching feature to a primitive
+			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
+			if (pd != null) {
+				Primitive primitive = pd.definePrimitive(start, end, value);
+				_allInstances.addPrimitive(primitive);
+				System.out.println(primitive.toString()); // TODO Remove
+			}
+
+			EventDef ed = _ontology.getEventDef(name);
+			if (ed != null) {
+				Collection<Event> events = ed.defineEvents(m);
+				if (events != null) {
+					for (Event event : events) {
+						_allInstances.addEvent(event);
+						System.out.println(event); // TODO Remove
+					}
+				}
+			}
+		}
 	}
 
 	public Double valueToDouble(MonitoredData md) {

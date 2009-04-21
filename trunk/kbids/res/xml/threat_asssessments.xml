@@ -1,5 +1,5 @@
-<Alerts>
-	<Alert title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" >
+<Assessments>
+	<Assessment title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" >
 		<GeneratedFrom>
 			<State name="CPU_Usage_Level">
 				<SymbolicValueCondition>
@@ -11,9 +11,9 @@
 				</DurationCondition>			
 			</State>
 		</GeneratedFrom>
-	</Alert>
+	</Assessment>
 	
-	<Alert title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)" >
+	<Assessment title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)" >
 		<GeneratedFrom>
 			<State name="Garbage_Collections_Level">
 				<SymbolicValueCondition>
@@ -25,5 +25,5 @@
 				</DurationCondition>			
 			</State>
 		</GeneratedFrom>		
-	</Alert>
-</Alerts>
+	</Assessment>
+</Assessments>
