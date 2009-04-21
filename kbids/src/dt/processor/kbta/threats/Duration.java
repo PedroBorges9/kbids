@@ -9,6 +9,12 @@ public class Duration {
 		_max = max;
 	}
 	
+	@Override
+	public String toString() {
+		
+		return "min="+_min+" max="+_max;
+	}
+	
 	
 	
 	

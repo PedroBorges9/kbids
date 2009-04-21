@@ -19,6 +19,25 @@ public class GeneratedFrom {
 		
 	}
 	
+	@Override
+	public String toString() {
+		String st="GeneratedFrom\n";
+		st+="<"+_type+" name="+_name+">\n";
+		
+		st+="symbolicValueCondition ";
+		for(String s : _symbolicValueCondition){
+			st+=s+" ";
+			
+		}
+		st+="\n";
+		st+="durationCondition ";
+		for(Duration d : _durationCondition){
+			st+=d.toString()+"\n";
+			
+		}
+		return st;
+	}
+	
 	
 	
 	
