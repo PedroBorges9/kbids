@@ -7,9 +7,10 @@
 					<Value name="High" />
 				</SymbolicValueCondition>
 				<DurationCondition>
-					<Duration min="P2D" max="P8D" />
+						<Duration min="P2D" max="P8D" />
 				</DurationCondition>			
 			</State>
+
 		</GeneratedFrom>
 	</Assessment>
 	

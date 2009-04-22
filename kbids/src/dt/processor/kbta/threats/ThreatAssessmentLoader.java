@@ -118,7 +118,9 @@ public class ThreatAssessmentLoader {
 												|| !(tag = xpp.getName()).equalsIgnoreCase("DurationCondition")) {
 											if (eventType == XmlPullParser.START_TAG
 													&& "Duration".equalsIgnoreCase(xpp.getName())) {
-												durationCondition.add(new Duration(xpp.getAttributeValue(null, "min"),xpp.getAttributeValue(null, "max")));
+												Duration dur = new Duration(xpp.getAttributeValue(null, "min"),
+														xpp.getAttributeValue(null, "max"));
+												durationCondition.add(dur);
 										//		System.out.println("min= "+xpp.getAttributeValue(null, "min")+"max= "+xpp.getAttributeValue(null, "max"));	
 											}
 										}

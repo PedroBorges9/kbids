@@ -21,4 +21,12 @@ public class ElementContainer <T extends Element> {
 		
 		elements.add(element);		
 	}
+	
+	public ArrayList<T> getElements(String st){
+		return _elements.get(st);
+	}
+	
+	public T getMostRecent(){
+		return null; //TODO implement
+	}
 }

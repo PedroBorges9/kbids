@@ -47,5 +47,31 @@ public class AllInstanceContainer {
 	
 	public void addTrend(Trend element){
 		_trends.addElement(element);
+	}
+
+	public ElementContainer<Primitive> getPrimitives() {
+		return _primitives;
+	}
+
+	public ElementContainer<Event> getEvents() {
+		return _events;
+	}
+
+	public ElementContainer<Context> getContexts() {
+		return _contexts;
+	}
+
+	public ElementContainer<State> getStates() {
+		return _states;
+	}
+
+	public ElementContainer<Trend> getTrends() {
+		return _trends;
+	}
+
+	public ElementContainer<Pattern> getPatterns() {
+		return _patterns;
 	}	
+	
+	
 }
