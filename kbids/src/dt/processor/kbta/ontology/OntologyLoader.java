@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package dt.processor.kbta.ontology;
 
 import java.io.IOException;
@@ -16,13 +14,13 @@ import dt.processor.kbta.R;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 
-import static dt.processor.kbta.KBTAProcessorService.TAG;
 
 /**
  * @author
  * 
  */
 public class OntologyLoader {
+	private static final String TAG = "OntologyLoader";
 	private Ontology _ontology;
 
 	public Ontology loadOntology(Context context) {
