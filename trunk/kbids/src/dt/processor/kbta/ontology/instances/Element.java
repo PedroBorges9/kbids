@@ -40,6 +40,10 @@ public class Element {
 	public long getEnd() {
 		return _end;
 	}
+	
+	public long getDuration(){
+		return _end - _start;
+	}
 
 	@Override
 	public boolean equals(Object o) {

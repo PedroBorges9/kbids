@@ -7,7 +7,7 @@
 					<Value name="High" />
 				</SymbolicValueCondition>
 				<DurationCondition>
-						<Duration min="P2D" max="P8D" />
+					<Duration min="P2D" max="P8D" />
 				</DurationCondition>			
 			</State>
 
@@ -18,7 +18,7 @@
 		<GeneratedFrom>
 			<State name="Garbage_Collections_Level">
 				<SymbolicValueCondition>
-					<Value name="Normal" />
+					<Value name="LOW" />
 					<Value name="High" />
 				</SymbolicValueCondition>
 				<DurationCondition>
