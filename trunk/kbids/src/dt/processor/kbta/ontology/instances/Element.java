@@ -27,6 +27,20 @@ public class Element {
 		return _name;
 	}
 	
+	
+	
+	public ElementDef getElementDef() {
+		return _elementDef;
+	}
+
+	public long getStart() {
+		return _start;
+	}
+
+	public long getEnd() {
+		return _end;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		// TODO compare by name and start and end

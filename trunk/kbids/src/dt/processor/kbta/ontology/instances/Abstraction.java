@@ -16,7 +16,11 @@ public class Abstraction extends Element {
 		super(elementDef, name, start, end);
 		_value = value;
 	}
-
+	
+	
+	public String getValue() {
+		return _value;
+	}
 	
 
 }

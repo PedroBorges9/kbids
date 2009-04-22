@@ -1,12 +1,24 @@
 package dt.processor.kbta.threats;
 
+import dt.processor.kbta.util.ISODuration;
+import dt.processor.kbta.util.InvalidDateException;
+
 public class Duration {
-	private final String _min;
-	private final String _max;
+	private final long _min;
+	private final long _max;
 	
-	public Duration(String min,String max){
-		_min = min;
-		_max = max;
+	public Duration(String min, String max) throws InvalidDateException{
+		_min = new ISODuration(min).toMillis();
+		_max = new ISODuration(max).toMillis();
+	}
+	
+	
+	public long getMax() {
+		return _max;
+	}
+	
+	public long getMin() {
+		return _min;
 	}
 	
 	@Override
@@ -14,6 +26,8 @@ public class Duration {
 		
 		return "min="+_min+" max="+_max;
 	}
+	
+	
 	
 	
 	
