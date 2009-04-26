@@ -33,9 +33,16 @@
 
 					<Ends relativeTo="end" gap="PT1M" />
 				</Induction>			
+				<Induction>
+					<State name="CPU_Usage_Level" value="High" />
+
+					<Ends relativeTo="end" gap="PT1M" />
+				</Induction>
 			</Inductions>
 			
 			<Destructions>
+				<Primitive name="CPU_Usage" min="20" maxE="60" />
+
 			</Destructions>
 		</Context>
 	</Contexts>
