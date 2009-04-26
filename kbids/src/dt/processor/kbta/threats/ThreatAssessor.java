@@ -20,43 +20,13 @@ public class ThreatAssessor {
 	public Collection<ThreatAssessment> assess(AllInstanceContainer allInstances) {
 		Collection<ThreatAssessment> assessments = new ArrayList<ThreatAssessment>();
 
-		// for(ThreatAssessment ca : _containerAssessments ){
-		// ArrayList<GeneratedFrom> gf=ca.getGeneratedFrom();
-		// String type=gf.getType();
-		// String name=gf.getName();
-		//			
-		// if (type.equalsIgnoreCase("State")){
-		// ElementContainer<State> states=allInstances.getStates();
-		//
-		// // ArrayList<State> stateListForName=states.getElements(name);
-		// // stateListForName.get(stateListForName.size()-1);
-		//				
-		// State state= states.getMostRecent();
-		// String stateValue=state.getValue();
-		//				
-		//				
-		// //TODO compare Duration, and need to check all States or the
-		// last;Match condition
-		// if(gf.symbolicValueConditionExist(stateValue)){
-		//					
-		//					
-		// }
-		//				
-		//	
-		// }else if (type.equalsIgnoreCase("Trend")){
-		//				
-		// }else if (type.equalsIgnoreCase("Pattern")){
-		//				
-		// }
-		//			
-		//			
-		//			
-		//			
-		// }
-		//		                                               
-		//		
+		for (ThreatAssessment ta : _containerAssessments) {
+			GeneratedFrom genratedFrom = ta.getGeneratedFrom();
 
-		// TODO go over the instances and do something...
+			if (genratedFrom.matchConditions(allInstances)) {
+				assessments.add(ta);
+			}
+		}
 
 		return assessments;
 	}

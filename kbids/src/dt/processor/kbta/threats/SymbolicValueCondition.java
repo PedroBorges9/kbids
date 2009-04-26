@@ -3,6 +3,7 @@ package dt.processor.kbta.threats;
 import java.util.ArrayList;
 
 import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.ontology.instances.State;
 
 public class SymbolicValueCondition {
 	private final ArrayList<String> _symbolicValueConditions;
@@ -12,17 +13,13 @@ public class SymbolicValueCondition {
 
 	}
 
-	public boolean checkValueCondition(Element element) {
-		// long elementValue=element.getValue;
-		// for(Duration duration : _durationConditions){
-		// if(elementDuration>=duration.getMin() &&
-		// elementDuration<=duration.getMax()){
-		// return true;
-		// }
-		// }
-		// TODO there is getValue for state,trend, primitive
+	public boolean check(String elementValue) {
+		for (String st : _symbolicValueConditions) {
+			if (st.equals(elementValue)) {
+				return true;
+			}
+		}
 		return false;
-
 	}
 
 	@Override

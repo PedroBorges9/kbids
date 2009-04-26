@@ -6,10 +6,10 @@ public class ThreatAssessment {
 	private final String _title;
 	private final String _description;
 	private final int _certainty;
-	private final ArrayList<GeneratedFrom> _generatedFrom;
+	private final GeneratedFrom _generatedFrom;
 
 	public ThreatAssessment(String title, String description, int certainty,
-			ArrayList<GeneratedFrom> generatedFrom) {
+			GeneratedFrom generatedFrom) {
 		_title = title;
 		_description = description;
 		_certainty = certainty;
@@ -28,7 +28,7 @@ public class ThreatAssessment {
 		return _certainty;
 	}
 
-	public ArrayList<GeneratedFrom> getGeneratedFrom() {
+	public GeneratedFrom getGeneratedFrom() {
 		return _generatedFrom;
 	}
 
