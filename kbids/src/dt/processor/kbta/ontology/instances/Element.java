@@ -11,13 +11,18 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  *
  */
 public class Element {
-	protected final ElementDef _elementDef;
 	protected final String _name;
 	protected final long _start;
-	protected final long _end;
+	protected long _end;
 	
-	public Element(ElementDef elementDef, String name,long start, long end){
-		  _elementDef = elementDef;
+	public static final int PRIMITIVE=0;
+	public static final int EVENT=1;
+	public static final int CONTEXT=2;
+	public static final int STATE=3;
+	public static final int TREND=4;
+	public static final int PATTERN=5;
+	
+	public Element( String name,long start, long end){
 		  _name = name;
 		  _start = start;
 		  _end = end;
@@ -29,9 +34,7 @@ public class Element {
 	
 	
 	
-	public ElementDef getElementDef() {
-		return _elementDef;
-	}
+	
 
 	public long getStart() {
 		return _start;
@@ -50,4 +53,10 @@ public class Element {
 		// TODO compare by name and start and end
 		return super.equals(o);
 	}
+
+	public void setEnd(long end){
+		this._end = _end;
+	}
+	
+	
 }

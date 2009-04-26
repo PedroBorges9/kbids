@@ -36,7 +36,7 @@ public class EventDef extends ElementDef{
 				break;
 			}
 
-			Event e= new Event(this,_name, eventTime,eventTime);
+			Event e= new Event(_name, eventTime,eventTime);
 			events.add(e);			
 		}
 		

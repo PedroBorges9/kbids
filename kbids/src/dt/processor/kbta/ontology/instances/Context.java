@@ -11,8 +11,8 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Context extends Element {
 
-	public Context(ElementDef elementDef, String name, long start, long end) {
-		super(elementDef, name, start, end);
+	public Context( String name, long start, long end) {
+		super( name, start, end);
 	}
 
 }

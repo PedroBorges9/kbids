@@ -12,11 +12,12 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import dt.processor.kbta.R;
+import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.Induction;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.threats.Duration;
+import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.util.ISODuration;
 import dt.processor.kbta.util.InvalidDateException;
 
@@ -101,7 +102,7 @@ public class OntologyLoader {
 					Log.e(TAG, "Missing name for a primitive");
 					continue;
 				}
-				NumericRange range=NumericRange.ParseRange(xmlOntology);
+				NumericRange range=NumericRange.parseRange(xmlOntology);
 				if (range!=null){
 					p = new PrimitiveDef(name, range);
 					_ontology.addPrimitiveDef(p);
@@ -158,67 +159,65 @@ public class OntologyLoader {
 	IOException{
 		int eventType;
 		String tag;
+		String contextName=null;
+		ArrayList<Induction> inductions=null;
 		System.out.println("<Context name="
 			+ xpp.getAttributeValue(null, "name") + ">");
+		contextName=xpp.getAttributeValue(null, "name");
+		if (contextName==null){
+			Log.e(TAG,"No name for context");
+			return;
+		}
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !(tag = xpp.getName()).equalsIgnoreCase("Context")) {
+			
 			if (eventType == XmlPullParser.START_TAG
 					&& "Inductions".equals(xpp.getName())) {
-
-
-
-				ArrayList<Induction> inductions= parseInductions(xpp);
-
+				
+				inductions= parseInductions(xpp,contextName);
+			
 			} else if ("Destructions".equals(xpp.getName())) {
-
+				
 			}
 		}
-	}
+		if (contextName!=null){
+		ContextDef cd=new ContextDef(contextName,inductions,null );
+		System.out.println(cd);
+		}
+		}
 
-	private ArrayList<Induction> parseInductions(XmlPullParser xpp) throws XmlPullParserException,
+	private ArrayList<Induction> parseInductions(XmlPullParser xpp, String context) throws XmlPullParserException,
 	IOException{
 		int eventType;
 		String tag;
 		System.out.println("Inductions");
-
+		ArrayList<Induction> inductions=new ArrayList<Induction>();
+		Induction i=null;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Inductions")) {
 
 			if (eventType == XmlPullParser.START_TAG
 					&& "Induction".equals(xpp.getName())) {
-
-
-				loadInduction(xpp);
+				
+				i=loadInduction(xpp,context);
+				if (i!=null) inductions.add(i);
 			}
-			System.out.println("Induction");
-
-			xpp.next();
-			System.out.println(xpp.getName() + " name="
-				+ xpp.getAttributeValue(null, "name"));
-			xpp.next();
-			xpp.next();
-			System.out.println(xpp.getName() + " gap="
-				+ xpp.getAttributeValue(null, "gap"));
-			xpp.next();
-			xpp.next();
-
-			;
-
 		}
-		return null;
+		if (inductions.isEmpty()) return null;
+		return inductions;
 	}
 
-	private Induction loadInduction(XmlPullParser xpp) throws XmlPullParserException,
+	private Induction loadInduction(XmlPullParser xpp,String context) throws XmlPullParserException,
 	IOException{
 		int eventType;
 		String tag;
 		String name=null;
-		String type=null;
+		int type=-1;
 		String value=null;
 		NumericRange range=null;
-		String Relative=null;
-		Long gap=null;
+		String relative=null;
+		long gap=-1;
 		System.out.println("Induction");
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
@@ -226,21 +225,22 @@ public class OntologyLoader {
 			if (eventType == XmlPullParser.START_TAG){
 				tag = xpp.getName();
 				if ("Primitive".equalsIgnoreCase(tag)){
-					type="Primitive";
+					type=Element.PRIMITIVE;
 					name=xpp.getAttributeValue(null, "name");
-					if (name!=null){
+					if (name==null){
 						Log.e(TAG, "missing name for primitive based induction");
 						return null;
 					}
-					range=NumericRange.ParseRange(xpp);
+					range=NumericRange.parseRange(xpp);
 					if (range==null){
 						Log.e(TAG, "invalid numeric range for " + name +" based induction");
 						return null;
 					}
 
 				}else if ("State".equalsIgnoreCase(tag)){
+					type=Element.STATE;
 					name=xpp.getAttributeValue(null, "name");
-					if (name!=null){
+					if (name==null){
 						Log.e(TAG, "missing name for state based induction");
 						return null;
 					}
@@ -252,14 +252,14 @@ public class OntologyLoader {
 
 				}
 				else if ("Trend".equalsIgnoreCase(tag)){
-
+					type=Element.TREND;
 					return null;
 				}
 				else if("Ends".equalsIgnoreCase(tag)){
-					Relative=xpp.getAttributeValue(null, "relativeTo");
-					if (!"End".equalsIgnoreCase(Relative) 
-							|| !"Start".equalsIgnoreCase(Relative)){
-						Relative=null;
+					relative=xpp.getAttributeValue(null, "relativeTo");
+					if (!"End".equalsIgnoreCase(relative) 
+							&& !"Start".equalsIgnoreCase(relative)){
+						relative=null;
 					}
 					try{
 						gap=(new ISODuration(xpp.getAttributeValue(null, "gap"))).toMillis();
@@ -270,6 +270,11 @@ public class OntologyLoader {
 
 				}
 			}
+			
+		}
+		
+		if (name!=null && relative!=null && gap!=-1 && type!=-1){
+			return new Induction(type,name,context,value,range,relative,gap);
 		}
 		return null;
 			

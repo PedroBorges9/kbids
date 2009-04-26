@@ -15,8 +15,8 @@ import android.os.Bundle;
  */
 public class Event extends Element {
 	
-	public Event(ElementDef elementDef, String name, long start, long end) {
-		 super(elementDef, name, start, end);
+	public Event(  String name, long start, long end) {
+		 super( name, start, end);
 	}
 	
 	@Override

@@ -11,9 +11,9 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Trend extends Abstraction {
 
-	public Trend(ElementDef elementDef, String name, String value, long start,
+	public Trend(  String name, String value, long start,
 			long end) {
-		super(elementDef, name, value, start, end);
+		super( name, value, start, end);
 	}
 
 }
