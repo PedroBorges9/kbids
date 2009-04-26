@@ -12,28 +12,18 @@ import dt.processor.kbta.ontology.instances.Primitive;
  * 
  */
 public class PrimitiveDef extends ElementDef {
-	private final double _min;
-	private final double _max;
-	private final boolean _isMinE;
-	private final boolean _isMaxE;
+	private NumericRange _range;
+	
 
-	public PrimitiveDef(String name, double minValue, boolean minEquals,
-			double maxValue, boolean maxEquals) {
+	public PrimitiveDef(String name, NumericRange range){
 		super(name);
-		_min = minValue;
-		_isMinE = minEquals;
-		_max = maxValue;
-		_isMaxE = maxEquals;
+		this._range = range;
 	}
 
 	public Primitive definePrimitive(Date start, Date end,
 			double value) {
 		Primitive p = null;
-
-		boolean ok = ((_isMinE) ? value >= _min : value > _min);
-		ok = ok && ((_isMaxE) ? value <= _max : value < _max);
-
-		if (ok) {
+		if (_range.inRange(value)) {
 			p = new Primitive(this,_name, value, start, end);
 		}
 		return p;
@@ -41,8 +31,7 @@ public class PrimitiveDef extends ElementDef {
 
 	@Override
 	public String toString() {
-		return "<Primitive name= " + _name + " min= " + _min + " isMinE= "
-				+ _isMinE + " max=" + _max + " isMaxE= " + _isMaxE + " />";
+		return "<Primitive name= " + _name + " "+ _range+ " />";
 	}
 
 }
