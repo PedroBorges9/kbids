@@ -58,118 +58,90 @@ public class ThreatAssessmentLoader {
 
 		System.out.println("******parseAssessments******");
 		int eventType;
-		ArrayList<String> symbolicValueCondition;
-		ArrayList<Duration> durationCondition;
-		ArrayList<GeneratedFrom> generatedFromCollection = null;
+		GeneratedFrom generatedFrom = null;
 
 		while ((eventType = xpp.next()) != END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Assessments")) {
 			if (eventType == START_TAG
 					&& "Assessment".equalsIgnoreCase(xpp.getName())) {
-
 				String title = xpp.getAttributeValue(null, "title");
 				String description = xpp.getAttributeValue(null, "description");
 
-				// System.out.println("title=" + title + " description="
-				// +description);
 				while ((eventType = xpp.next()) != END_TAG
 						|| !xpp.getName().equalsIgnoreCase("Assessment")) {
-					generatedFromCollection = parseGeneratedFrom(xpp, eventType);
-
+					generatedFrom = parseGeneratedFrom(xpp);
 				}
-				ThreatAssessment threatAssessment = new ThreatAssessment(title,
-						description, 100, generatedFromCollection);
-				_ta.addThreatAssessment(threatAssessment);
+
+				if (generatedFrom != null) {
+					ThreatAssessment threatAssessment = new ThreatAssessment(
+							title, description, /* TODO change certainty */
+							100, generatedFrom);
+					_ta.addThreatAssessment(threatAssessment);
+				}
 			}
 		}
 		System.out.println(_ta);
 	}
 
-	private ArrayList<GeneratedFrom> parseGeneratedFrom(XmlPullParser xpp,
-			int eventType) throws XmlPullParserException, IOException {
-		String type;
-		String nameOfType;
+	private GeneratedFrom parseGeneratedFrom(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
 		SymbolicValueCondition symbolicValueCondition = null;
 		DurationCondition durationCondition = null;
-		GeneratedFrom gf = null;
-		ArrayList<GeneratedFrom> generatedFromCollection = new ArrayList<GeneratedFrom>();
+		int eventType;
 
-		if (eventType == START_TAG
-				&& "GeneratedFrom".equalsIgnoreCase(xpp.getName())) {
+		for (eventType = xpp.getEventType(); eventType != START_TAG; eventType = xpp
+				.next())
+			;
 
-			while ((eventType = xpp.next()) != END_TAG
-					|| !xpp.getName().equalsIgnoreCase("GeneratedFrom")) {
-
-				if (eventType == START_TAG) {
-					type = xpp.getName();
-					nameOfType = xpp.getAttributeValue(null, "name");
-
-					// System.out.println("type="+type+" nameOfType="
-					// +nameOfType);
-
-					while ((eventType = xpp.next()) != END_TAG
-							|| !xpp.getName().equalsIgnoreCase(type)) {
-
-						if (eventType == START_TAG
-								&& "SymbolicValueCondition"
-										.equalsIgnoreCase(xpp.getName())) {
-							symbolicValueCondition = parseSymbolicValueCondition(xpp);
-							eventType = xpp.getEventType();
-							// System.out.println("CH\n"+symbolicValueCondition+"ECH\n");//?
-						}
-
-						if (eventType == START_TAG
-								&& "DurationCondition".equalsIgnoreCase(xpp
-										.getName())) {
-							durationCondition = parseDurationCondition(xpp);
-						}
-
-					}
-
-					gf = new GeneratedFrom(type, nameOfType,
-							symbolicValueCondition, durationCondition);
-
-				}
-
-				generatedFromCollection.add(gf);
-			}
-
+		String type = xpp.getName();
+		String elementName = xpp.getAttributeValue(null, "name");
+		if (TextUtils.isEmpty(type) || TextUtils.isEmpty(elementName)) {
+			Log.e(TAG, "Missing threat assessment element type/name");
+			return null;
 		}
-		// System.out.println("CH\n"+generatedFromCollection+"ECH\n");//?
-		return generatedFromCollection;
-	}
-
-	private DurationCondition parseDurationCondition(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
-		String tag;
-		int eventType = xpp.getEventType();
-		DurationCondition durationCondition = null;
-		ArrayList<Duration> durationConditionList = new ArrayList<Duration>();
 
 		while ((eventType = xpp.next()) != END_TAG
-				|| !(tag = xpp.getName()).equalsIgnoreCase("DurationCondition")) {
-			if (eventType == START_TAG
-					&& "Duration".equalsIgnoreCase(xpp.getName())) {
-				String min = null, max = null;
+				|| !xpp.getName().equalsIgnoreCase(type)) {
+			if (eventType != START_TAG) {
+				continue;
+			}
+
+			if ("SymbolicValueCondition".equalsIgnoreCase(xpp.getName())) {
+				symbolicValueCondition = parseSymbolicValueCondition(xpp);
+				eventType = xpp.getEventType();
+			}
+
+			if ("DurationCondition".equalsIgnoreCase(xpp.getName())) {
+				String min = null;
+				String max = null;
 				try {
-					Duration dur = new Duration(min = xpp.getAttributeValue(
-							null, "min"), max = xpp.getAttributeValue(null,
-							"max"));
-					durationConditionList.add(dur);
+					durationCondition = new DurationCondition(min = xpp
+							.getAttributeValue(null, "min"), max = xpp
+							.getAttributeValue(null, "max"));
 				} catch (InvalidDateException e) {
 					Log.e(TAG,
 							"Improper duration in duration condition, min = "
-									+ min + ", max = " + max);
+									+ min + ", max = " + max, e);
+					return null;
 				}
-				// System.out.println("min= "+xpp.getAttributeValue(null,
-				// "min")+"max= "+xpp.getAttributeValue(null, "max"));
 			}
 		}
-		if (!durationConditionList.isEmpty()) {
-			durationCondition = new DurationCondition(durationConditionList);
-		}
 
-		return durationCondition;
+		if (durationCondition == null) {
+			Log.e(TAG, "Missing threat assessment duration condition");
+			return null;
+		}
+		if (type.equalsIgnoreCase("State")) {
+			return new GeneratedFromState(elementName, symbolicValueCondition,
+					durationCondition);
+		} else if (type.equalsIgnoreCase("Trend")) {
+			return new GeneratedFromTrend(elementName, symbolicValueCondition,
+					durationCondition);
+		} else if (type.equalsIgnoreCase("Pattern")) {
+			return new GeneratedFromPattern(elementName,
+					symbolicValueCondition, durationCondition);
+		}
+		return null;
 
 	}
 
@@ -186,8 +158,6 @@ public class ThreatAssessmentLoader {
 
 				symbolicValueConditionList.add(xpp.getAttributeValue(null,
 						"name"));
-				// System.out.println("value
-				// name="+xpp.getAttributeValue(null, "name"));
 
 			}
 		}
@@ -195,7 +165,6 @@ public class ThreatAssessmentLoader {
 			symbolicValueCondition = new SymbolicValueCondition(
 					symbolicValueConditionList);
 		}
-		// ?? System.out.println("CHECK\n"+symbolicValueCondition);
 
 		return symbolicValueCondition;
 	}
