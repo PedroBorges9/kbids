@@ -53,40 +53,8 @@
 				<Primitive name="CPU_Usage" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<!-- <Context name="Some context..." /> -->
+				<Context name="Keyboard_Open" />
 			</NecessaryContexts>
-			<PersistenceFunction>
-				<Value name="Low">
-					<PersistenceTable timeUnit="minute" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-				<Value name="Normal">
-					<PersistenceTable timeUnit="day" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-				<Value name="High">
-					<PersistenceTable timeUnit="day" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-			</PersistenceFunction>
 			<MappingFunction>
 				<Value name="Low">
 					<Primitive name="CPU_Usage" minE="0" maxE="30" />
@@ -98,6 +66,11 @@
 					<Primitive name="CPU_Usage" minE="71" maxE="100" />
 				</Value>
 			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="10" timeUnit="minute" />
+				<Value name="Normal" maxGap="10" timeUnit="day" />
+				<Value name="High" maxGap="10" timeUnit="day" />
+			</InterpolationFunction>
 		</State>
 	</States>
 	
