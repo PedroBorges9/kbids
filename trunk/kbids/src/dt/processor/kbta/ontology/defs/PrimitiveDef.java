@@ -24,7 +24,7 @@ public class PrimitiveDef extends ElementDef {
 			double value) {
 		Primitive p = null;
 		if (_range.inRange(value)) {
-			p = new Primitive(this,_name, value, start, end);
+			p = new Primitive(_name, value, start, end);
 		}
 		return p;
 	}

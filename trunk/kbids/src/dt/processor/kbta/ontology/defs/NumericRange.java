@@ -20,7 +20,7 @@ public class NumericRange{
 		this._isMinE = isMinE;
 	}
 
-	public static NumericRange ParseRange(XmlPullParser xpp){
+	public static NumericRange parseRange(XmlPullParser xpp){
 		String minS;
 		String maxS;
 		boolean minE=true;

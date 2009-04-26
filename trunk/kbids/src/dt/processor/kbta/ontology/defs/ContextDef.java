@@ -12,11 +12,20 @@ import java.util.List;
  */
 public class ContextDef extends ElementDef {
 	
-	private List<Induction> inductions;
-	private List<Destruction> destructions;
+	private List<Induction> _inductions;
+	private List<Destruction> _destructions;
 	
-	public ContextDef(String name) {
+	public ContextDef(String name, List<Induction> inductions,
+		List<Destruction> destructions){
 		super(name);
-		// TODO Auto-generated constructor stub
+		this._inductions = inductions;
+		this._destructions = destructions;
 	}
+	
+	@Override
+	public String toString(){
+		// TODO Auto-generated method stub
+		return "contextDef "+ _name +"\n inductions: "+_inductions;
+	}
+
 }

@@ -12,19 +12,19 @@
 	</Events>
 
 	<Contexts>
-		<Context name="Keyboard_Open">
+	<!--	<Context name="Keyboard_Open">
 			<Inductions>
 				<Induction>
 					<Event name="Keyboard_Opening" />
 
-					<!-- <Starts relativeTo="end" gap="P" /> -->
-					<Ends relativeTo="end" gap="PT2H" />
+					<Starts relativeTo="end" gapPT2H" /> 
+					
 				</Induction>
 			</Inductions>
 			
 			<Destructions>
-			</Destructions>
-		</Context>
+			</Destructions> 
+		</Context> -->
 		
 		<Context name="High_CPU_Usage">
 			<Inductions>

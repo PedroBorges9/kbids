@@ -60,7 +60,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 				_threatAssessor = threatAssessmentLoader
 						.loadThreatAssessments(KBTAProcessorService.this);
 			}
-		}, "Threat Assessment Loader Thread").start();
+		}, "Threat Assessment Loader Thread");//.start();
 		
 		// This is the constructor, do any initialization you require here
 		// like reading the ontology, parsing stuff and so on...
