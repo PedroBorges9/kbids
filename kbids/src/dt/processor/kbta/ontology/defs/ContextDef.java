@@ -5,6 +5,9 @@ package dt.processor.kbta.ontology.defs;
 
 import java.util.List;
 
+import dt.processor.kbta.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Context;
+
 
 /**
  * @author 
@@ -20,6 +23,12 @@ public class ContextDef extends ElementDef {
 		super(name);
 		this._inductions = inductions;
 		this._destructions = destructions;
+	}
+	
+	public void createContext(AllInstanceContainer aic){
+		for (Induction i: _inductions){
+			i.induct(aic);
+		}
 	}
 	
 	@Override

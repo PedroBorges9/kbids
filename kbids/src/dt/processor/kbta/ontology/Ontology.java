@@ -1,8 +1,10 @@
 package dt.processor.kbta.ontology;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.StateDef;
@@ -10,16 +12,26 @@ import dt.processor.kbta.ontology.defs.StateDef;
 public class Ontology {
 	private HashMap<String, PrimitiveDef> _primitiveDefiners;
 	private HashMap<String, EventDef> _eventDefiners;
+	private ArrayList<ContextDef> _contextDefiners;
 	private HashMap<String, StateDef> _stateDefiners;
 
 	public Ontology() {
 		_primitiveDefiners = new HashMap<String, PrimitiveDef>();
 		_eventDefiners = new HashMap<String, EventDef>();
 		_stateDefiners = new HashMap<String, StateDef>();
+		_contextDefiners=new ArrayList<ContextDef>();
 	}
 
-	public void addPrimitiveDef(PrimitiveDef p) {
-		_primitiveDefiners.put(p.getName(), p);
+	public ArrayList<ContextDef> getContextDefiners(){
+		return _contextDefiners;
+	}
+
+	public void AddContextDefiners(ContextDef c){
+		_contextDefiners.add(c);
+	}
+
+	public void addPrimitiveDef(PrimitiveDef p){
+		_primitiveDefiners.put(p.getName(),p);
 	}
 
 	public void addEventDef(EventDef e) {

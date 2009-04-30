@@ -101,24 +101,24 @@ public class AgentSim extends Activity implements ServiceConnection{
 						SystemClock.sleep(getInterval() * 1000);
 						
 						if (_processor != null){
-//							List<MonitoredData> list = new ArrayList<MonitoredData>();
-//							ParcelableDate d = new ParcelableDate();
-//							
-//							list.add(new MonitoredData("CPU_Usage", (int)(Math.random() * 100), d));
-//							list.add(new MonitoredData("Garbage_Collections", (int)(Math.random() * 300), d));
-//							
-//							MonitoredData md;
-//							md = new MonitoredData("Keyboard_Opening", 1, d);
-//							Bundle extras = new Bundle();
-//							extras.putLongArray("Events", 
-//									new long[]{d.getTime() - 5000, d.getTime() - 3000, d.getTime()});
-//							md.setExtras(extras);
-//							list.add(md);
-//							try{
-//								_processor.receiveMonitoredData(list);
-//							}catch(RemoteException e){
-//								e.printStackTrace();
-//							}
+							List<MonitoredData> list = new ArrayList<MonitoredData>();
+							ParcelableDate d = new ParcelableDate();
+							
+							list.add(new MonitoredData("CPU_Usage", (int)(Math.random() * 100), d));
+							list.add(new MonitoredData("Garbage_Collections", (int)(Math.random() * 300), d));
+							
+							MonitoredData md;
+							md = new MonitoredData("Keyboard_Opening", 1, d);
+							Bundle extras = new Bundle();
+							extras.putLongArray("Events", 
+									new long[]{d.getTime() - 5000, d.getTime() - 3000, d.getTime()});
+							md.setExtras(extras);
+							list.add(md);
+							try{
+								_processor.receiveMonitoredData(list);
+							}catch(RemoteException e){
+								e.printStackTrace();
+							}
 						}
 					}
 				}

@@ -79,7 +79,11 @@ public class OntologyLoader {
 				eventType = xpp.next();
 			}
 
+			
 			return _ontology;
+			
+			
+			
 		} catch (Exception e) {
 			Log.e(TAG, "Error while loading Ontology", e);
 		}
@@ -171,8 +175,7 @@ public class OntologyLoader {
 		String tag;
 		String contextName=null;
 		ArrayList<Induction> inductions=null;
-		System.out.println("<Context name="
-			+ xpp.getAttributeValue(null, "name") + ">");
+		
 		contextName=xpp.getAttributeValue(null, "name");
 		if (contextName==null){
 			Log.e(TAG,"No name for context");
@@ -192,16 +195,15 @@ public class OntologyLoader {
 			}
 		}
 		if (contextName!=null){
-		ContextDef cd=new ContextDef(contextName,inductions,null );
-		System.out.println(cd);
+			ContextDef cd=new ContextDef(contextName,inductions,null );
+			_ontology.AddContextDefiners(cd);
 		}
-		}
+	}
 
 	private ArrayList<Induction> parseInductions(XmlPullParser xpp, String context) throws XmlPullParserException,
 	IOException{
 		int eventType;
 		String tag;
-		System.out.println("Inductions");
 		ArrayList<Induction> inductions=new ArrayList<Induction>();
 		Induction i=null;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
@@ -228,7 +230,6 @@ public class OntologyLoader {
 		NumericRange range=null;
 		String relative=null;
 		long gap=-1;
-		System.out.println("Induction");
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Induction")){
@@ -263,7 +264,24 @@ public class OntologyLoader {
 				}
 				else if ("Trend".equalsIgnoreCase(tag)){
 					type=Element.TREND;
-					return null;
+					name=xpp.getAttributeValue(null, "name");
+					if (name==null){
+						Log.e(TAG, "missing name for state based induction");
+						return null;
+					}
+					value=xpp.getAttributeValue(null, "value");
+					if (value==null){
+						Log.e(TAG, "invalid symbolic value for " + name +" based induction");
+						return null;
+					}
+				}
+				else if ("Event".equalsIgnoreCase(tag)){
+					type=Element.EVENT;
+					name=xpp.getAttributeValue(null, "name");
+					if (name==null){
+						Log.e(TAG, "missing name for event based induction");
+						return null;
+					}
 				}
 				else if("Ends".equalsIgnoreCase(tag)){
 					relative=xpp.getAttributeValue(null, "relativeTo");
@@ -277,7 +295,6 @@ public class OntologyLoader {
 						Log.e(TAG,"invalid ISO Duration in induction",e);
 						return null;
 					}
-
 				}
 			}
 			

@@ -55,8 +55,10 @@ public class Element {
 	}
 
 	public void setEnd(long end){
-		this._end = _end;
+		this._end = end;
 	}
+	
+	
 	
 	
 }
