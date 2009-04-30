@@ -3,7 +3,7 @@ package dt.processor.kbta.ontology.defs;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.util.Log;
-import static dt.processor.kbta.ontology.OntologyLoader.*;
+import static dt.processor.kbta.ontology.OntologyLoader.TAG;
 public class NumericRange{
 	private final double _minValue;
 	private final double _maxValue;
