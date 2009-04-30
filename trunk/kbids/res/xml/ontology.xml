@@ -51,6 +51,7 @@
 		<State name="CPU_Usage_Level">
 			<AbstractedFrom>
 				<Primitive name="CPU_Usage" />
+				<State name="blabla" />
 			</AbstractedFrom>
 			<NecessaryContexts>
 				<Context name="Keyboard_Open" />
@@ -58,18 +59,21 @@
 			<MappingFunction>
 				<Value name="Low">
 					<Primitive name="CPU_Usage" minE="0" maxE="30" />
+					<State name="blabla" value="Low"/>
 				</Value>
 				<Value name="Normal">
 					<Primitive name="CPU_Usage" minE="31" maxE="70" />
+					<State name="blabla" value="Low"/>
 				</Value>
 				<Value name="High">
 					<Primitive name="CPU_Usage" minE="71" maxE="100" />
+					<State name="blabla" value="High"/>
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Low" maxGap="10" timeUnit="minute" />
-				<Value name="Normal" maxGap="10" timeUnit="day" />
-				<Value name="High" maxGap="10" timeUnit="day" />
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P10D" />
+				<Value name="High" maxGap="P10D" />
 			</InterpolationFunction>
 		</State>
 	</States>

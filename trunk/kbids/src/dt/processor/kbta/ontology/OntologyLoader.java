@@ -1,8 +1,10 @@
-
 package dt.processor.kbta.ontology;
+
+import static android.text.TextUtils.isEmpty;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -12,15 +14,22 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import dt.processor.kbta.R;
+import dt.processor.kbta.ontology.defs.AbstractedFrom;
+import dt.processor.kbta.ontology.defs.ElementCondition;
 import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.Induction;
+import dt.processor.kbta.ontology.defs.InterpolationFunction;
+import dt.processor.kbta.ontology.defs.MappingFunction;
+import dt.processor.kbta.ontology.defs.MappingFunctionEntry;
 import dt.processor.kbta.ontology.defs.NumericRange;
+import dt.processor.kbta.ontology.defs.PrimitiveCondition;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.StateCondition;
+import dt.processor.kbta.ontology.defs.StateDef;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.util.ISODuration;
 import dt.processor.kbta.util.InvalidDateException;
-
 
 /**
  * @author
@@ -51,9 +60,11 @@ public class OntologyLoader {
 						parseEvents(xpp);
 
 					} else if (name.equalsIgnoreCase("Contexts")) {
-						parseContexts(xpp);
+						// parseContexts(xpp);
 
 					} else if (name.equalsIgnoreCase("States")) {
+						// System.out.println("Before parseStates");
+						parseStates(xpp);
 
 					} else if (name.equalsIgnoreCase("Trends")) {
 
@@ -77,8 +88,8 @@ public class OntologyLoader {
 	}
 
 	private void parsePrimitives(XmlPullParser xmlOntology)
-	throws XmlPullParserException, IOException {
-		System.out.println("parsing primitives");
+			throws XmlPullParserException, IOException {
+		// System.out.println("parsing primitives");
 		String name;
 		String minS;
 		String maxS;
@@ -93,7 +104,7 @@ public class OntologyLoader {
 
 		while (eventType != XmlPullParser.END_TAG
 				|| !(tag = xmlOntology.getName())
-				.equalsIgnoreCase("Primitives")) {
+						.equalsIgnoreCase("Primitives")) {
 			tag = xmlOntology.getName();
 			if (eventType == XmlPullParser.START_TAG
 					&& tag.equalsIgnoreCase("Primitive")) {
@@ -102,13 +113,13 @@ public class OntologyLoader {
 					Log.e(TAG, "Missing name for a primitive");
 					continue;
 				}
-				NumericRange range=NumericRange.parseRange(xmlOntology);
-				if (range!=null){
+				NumericRange range = NumericRange.parseRange(xmlOntology);
+				if (range != null) {
 					p = new PrimitiveDef(name, range);
 					_ontology.addPrimitiveDef(p);
-				}
-				else{
-					Log.e(TAG, "Invalid numeric range for the primitive "+name);
+				} else {
+					Log.e(TAG, "Invalid numeric range for the primitive "
+							+ name);
 				}
 			}
 			eventType = xmlOntology.next();
@@ -116,7 +127,7 @@ public class OntologyLoader {
 	}
 
 	private void parseEvents(XmlPullParser xmlOntology)
-	throws XmlPullParserException, IOException {
+			throws XmlPullParserException, IOException {
 		int eventType;
 		String name;
 		String tag;
@@ -141,10 +152,9 @@ public class OntologyLoader {
 		}
 	}
 
-	private void parseContexts(XmlPullParser xpp) throws XmlPullParserException,
-	IOException {
+	private void parseContexts(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
 		int eventType;
-
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Contexts")) {
@@ -278,5 +288,230 @@ public class OntologyLoader {
 		}
 		return null;
 			
+	}
+
+	private void parseStates(XmlPullParser xpp) throws XmlPullParserException,
+			IOException {
+		System.out.println("******parseStates******");
+		StateDef stateDef = null;
+		int eventType;
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("States")) {
+			if (eventType == XmlPullParser.START_TAG
+					&& "State".equals(xpp.getName())) {
+				stateDef = loadState(xpp);
+				if (stateDef != null) {
+					_ontology.addStateDef(stateDef);
+
+					System.out.println(_ontology.printStates());
+				}
+			}
+		}
+
+	}
+
+	private StateDef loadState(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<AbstractedFrom> abstractedFrom = null;
+		ArrayList<String> necessaryContexts = null;
+		MappingFunction mappingFunction = null;
+		InterpolationFunction interpolationFunction = null;
+		String name = null;
+
+		// System.out.println("<State name="
+		// + (name = xpp.getAttributeValue(null, "name")) + ">");
+		name = xpp.getAttributeValue(null, "name");
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("State")) {
+			if (eventType == XmlPullParser.START_TAG) {
+
+				if ("AbstractedFrom".equals(xpp.getName())) {
+					abstractedFrom = parseAbstractedFrom(xpp);
+				} else if ("NecessaryContexts".equals(xpp.getName())) {
+					necessaryContexts = parseNecessaryContexts(xpp);
+
+				} else if ("MappingFunction".equals(xpp.getName())) {
+					mappingFunction = parseMappingFunction(xpp);
+
+				} else if ("InterpolationFunction".equals(xpp.getName())) {
+					interpolationFunction = parseInterpolationFunction(xpp);
+
+				}
+			}
+		}
+
+		if (abstractedFrom == null || necessaryContexts == null
+				|| mappingFunction == null || interpolationFunction == null) {
+			return null;
+		}
+		return new StateDef(name, abstractedFrom, necessaryContexts,
+				mappingFunction, interpolationFunction);
+
+	}
+
+	private InterpolationFunction parseInterpolationFunction(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+
+		int eventType;
+
+		HashMap<String, Long> interpolationFunctionHash = new HashMap<String, Long>();
+
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("InterpolationFunction")) {
+
+			if (eventType == XmlPullParser.START_TAG
+					&& xpp.getName().equalsIgnoreCase("Value")) {
+				// System.out.println("name="
+				// + xpp.getAttributeValue(null, "name") + " maxGap="
+				// + xpp.getAttributeValue(null, "maxGap") + " timeUnit="
+				// + xpp.getAttributeValue(null, "timeUnit"));
+
+				String maxGap = xpp.getAttributeValue(null, "maxGap");
+				long maxGapLong;
+				try {
+					maxGapLong = new ISODuration(maxGap).toMillis();
+				} catch (Exception e) {
+					Log.e(TAG, "Corrupt maxgap value " + maxGap, e);
+					return null;
+				}
+
+				interpolationFunctionHash.put(xpp.getAttributeValue(null,
+						"name"), maxGapLong);
+			}
+
+		}
+		if (!interpolationFunctionHash.isEmpty()) {
+			return new InterpolationFunction(interpolationFunctionHash);
+		}
+		return null;
+	}
+
+	private ArrayList<String> parseNecessaryContexts(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<String> necessaryContexts = new ArrayList<String>();
+		// System.out.println("NecessaryContexts");
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("NecessaryContexts")) {
+			String tag = xpp.getName();
+			if (eventType == XmlPullParser.START_TAG
+					&& tag.equalsIgnoreCase("Context")) {
+				// System.out.println(xpp.getAttributeValue(null, "name"));
+				String name = xpp.getAttributeValue(null, "name");
+				if (!isEmpty(name)) {
+					necessaryContexts.add(name);
+				}
+
+			}
+		}
+		if (necessaryContexts.isEmpty()) {
+			return null;
+		}
+		return necessaryContexts;
+
+	}
+
+	private ArrayList<AbstractedFrom> parseAbstractedFrom(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<AbstractedFrom> abstractedFromList = new ArrayList<AbstractedFrom>();
+		// System.out.println("AbstractedFrom");
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("AbstractedFrom")) {
+			String tag = xpp.getName();
+			if (eventType == XmlPullParser.START_TAG) {
+				if (tag.equalsIgnoreCase("Primitive")
+						|| tag.equalsIgnoreCase("State")
+						|| tag.equalsIgnoreCase("Trend")) {
+					// System.out.println(tag + " name="
+					// + xpp.getAttributeValue(null, "name"));
+
+					String name = xpp.getAttributeValue(null, "name");
+					if (!isEmpty(name)) {
+						abstractedFromList.add(new AbstractedFrom(tag, name));
+					}
+
+				}
+
+			}
+		}
+		if (abstractedFromList.isEmpty()) {
+			return null;
+		}
+		return abstractedFromList;
+	}
+
+	private MappingFunction parseMappingFunction(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<MappingFunctionEntry> mappingFunction = new ArrayList<MappingFunctionEntry>();
+
+		// System.out.println("MappingFunction");
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("MappingFunction")) {
+			if (eventType == XmlPullParser.START_TAG
+					&& xpp.getName().equalsIgnoreCase("Value")) {
+
+				MappingFunctionEntry mappingFunctionEntry = parseValueTag(xpp);
+				if (mappingFunctionEntry == null) {
+					return null;
+				}
+				mappingFunction.add(mappingFunctionEntry);
+			}
+		}
+		if (mappingFunction.isEmpty()) {
+			return null;
+		}
+		return new MappingFunction(mappingFunction);
+
+	}
+
+	private MappingFunctionEntry parseValueTag(XmlPullParser xpp)
+			throws XmlPullParserException, IOException {
+		int eventType;
+
+		ArrayList<ElementCondition> elementConditions = new ArrayList<ElementCondition>();
+
+		String stateValue = xpp.getAttributeValue(null, "name");
+		// System.out.println();
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Value")) {
+			String tag = xpp.getName();
+			if (eventType == XmlPullParser.START_TAG) {
+				String name = xpp.getAttributeValue(null, "name");
+				if (isEmpty(name)) {
+					return null;
+				}
+				if ("Primitive".equalsIgnoreCase(tag)) {
+					NumericRange numericRange = NumericRange.parseRange(xpp);
+					// System.out.println("Primitive "
+					// + xpp.getAttributeValue(null, "name") + " "
+					// + numericRange + "\n");
+					if (numericRange == null) {
+						return null;
+					}
+					ElementCondition elementCondition = new PrimitiveCondition(name,
+							numericRange);
+					elementConditions.add(elementCondition);
+				} else if ("State".equalsIgnoreCase(tag)) {
+					// System.out.println("State "
+					// + xpp.getAttributeValue(null, "name") + " "
+					// + xpp.getAttributeValue(null, "value") + "\n");
+					String elementValue = xpp.getAttributeValue(null, "value");
+					if (isEmpty(elementValue)) {
+						return null;
+					}
+					ElementCondition elementCondition = new StateCondition(name, elementValue);
+					elementConditions.add(elementCondition);
+				} else if ("Trend".equalsIgnoreCase(tag)) {
+					// TODO implement trend entry
+				}
+			}
+		}
+		if (elementConditions.isEmpty()) {
+			return null;
+		}
+		return new MappingFunctionEntry(stateValue, elementConditions);
 	}
 }

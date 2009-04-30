@@ -56,7 +56,7 @@ public class ThreatAssessmentLoader {
 	private void parseAssessments(XmlPullParser xpp)
 			throws XmlPullParserException, IOException {
 
-		System.out.println("******parseAssessments******");
+//		System.out.println("******parseAssessments******");
 		int eventType;
 		GeneratedFrom generatedFrom = null;
 
@@ -80,7 +80,7 @@ public class ThreatAssessmentLoader {
 				}
 			}
 		}
-		System.out.println(_ta);
+	//	System.out.println(_ta);
 	}
 
 	private GeneratedFrom parseGeneratedFrom(XmlPullParser xpp)
