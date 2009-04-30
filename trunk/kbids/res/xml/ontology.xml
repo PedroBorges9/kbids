@@ -2,7 +2,6 @@
 	<Primitives>
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />		
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
-		
 	</Primitives>
 	
 	<Events>
@@ -12,38 +11,41 @@
 	</Events>
 
 	<Contexts>
-	<!--	<Context name="Keyboard_Open">
+		<Context name="Keyboard_Open">
 			<Inductions>
 				<Induction>
 					<Event name="Keyboard_Opening" />
 
-					<Starts relativeTo="end" gapPT2H" /> 
+					<Ends relativeTo="end" gap="PT2H" /> 
 					
+				</Induction>
+				<Induction>
+					<Trend name="CPU_Usage_Change" value="Rising" />
+
+					<Ends relativeTo="end" gap="PT1M" />
 				</Induction>
 			</Inductions>
 			
 			<Destructions>
 			</Destructions> 
-		</Context> -->
+		</Context> 
 		
 		<Context name="High_CPU_Usage">
 			<Inductions>
 				<Induction>
 					<Primitive name="CPU_Usage" min="80" maxE="100" />
 
-					<Ends relativeTo="end" gap="PT1M" />
+					<Ends relativeTo="end" gap="PT1H" />
 				</Induction>			
 				<Induction>
 					<State name="CPU_Usage_Level" value="High" />
-
-					<Ends relativeTo="end" gap="PT1M" />
+					<Ends relativeTo="end" gap="PT1S" />
 				</Induction>
 			</Inductions>
 			
 			<Destructions>
 				<Primitive name="CPU_Usage" min="20" maxE="60" />
-
-			</Destructions>
+				</Destructions>
 		</Context>
 	</Contexts>
 	

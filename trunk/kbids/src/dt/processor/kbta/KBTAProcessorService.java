@@ -1,6 +1,7 @@
 package dt.processor.kbta;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import android.util.Log;
 import dt.fe.MonitoredData;
 import dt.processor.Processor;
 import dt.processor.kbta.ontology.*;
+import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.instances.Event;
@@ -141,6 +143,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 
 		do {
 			createContexts();
+			System.out.println("********CONTEXTS:***********\n"+ _allInstances.getContexts());
 			createAbstractions();
 			// cont = whether something new happened
 		} while (cont);
@@ -159,7 +162,11 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 	}
 
 	private void createContexts() {
-		// TODO Auto-generated method stub
+		ArrayList<ContextDef> contextDefs=_ontology.getContextDefiners();
+		for (ContextDef cd : contextDefs){
+			cd.createContext(_allInstances);
+		}
+			
 
 	}
 

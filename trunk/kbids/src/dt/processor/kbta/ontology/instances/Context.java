@@ -14,5 +14,10 @@ public class Context extends Element {
 	public Context( String name, long start, long end) {
 		super( name, start, end);
 	}
+	
+	@Override
+	public String toString(){
+		return "Context "+_name+" starts at "+_start+" and ends at "+_end;
+	}
 
 }
