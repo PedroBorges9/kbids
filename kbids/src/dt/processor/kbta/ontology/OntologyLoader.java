@@ -60,11 +60,11 @@ public class OntologyLoader {
 						parseEvents(xpp);
 
 					} else if (name.equalsIgnoreCase("Contexts")) {
-						// parseContexts(xpp);
+						 parseContexts(xpp);
 
 					} else if (name.equalsIgnoreCase("States")) {
 						// System.out.println("Before parseStates");
-						parseStates(xpp);
+						// parseStates(xpp);
 
 					} else if (name.equalsIgnoreCase("Trends")) {
 

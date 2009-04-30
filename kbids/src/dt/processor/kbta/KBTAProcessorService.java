@@ -28,6 +28,8 @@ import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
+import dt.processor.kbta.ontology.instances.State;
+import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.threats.*;
 import dt.agent.twu.TWU;
 
@@ -144,6 +146,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 		do {
 			createContexts();
 			System.out.println("********CONTEXTS:***********\n"+ _allInstances.getContexts());
+			_allInstances.getContexts().CheckAllUsed();
 			createAbstractions();
 			// cont = whether something new happened
 		} while (cont);

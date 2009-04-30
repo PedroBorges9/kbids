@@ -43,6 +43,18 @@ public class ElementContainer <T extends Element> {
 		return _newElements.get(st);
 	}
 	
+	public void CheckAllUsed(){
+		for (Map.Entry<String, ArrayList<T>> s: _newElements.entrySet()){
+			String key=s.getKey();
+			ArrayList<T> elements=_elements.get(key);
+			if (elements==null)	elements =new ArrayList<T>();
+			elements.addAll(s.getValue());
+			_elements.put(key, elements);
+			
+		}
+		_newElements.clear();
+	}
+	
 	@Override
 	public String toString(){
 		

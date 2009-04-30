@@ -35,7 +35,7 @@
 				<Induction>
 					<Primitive name="CPU_Usage" min="80" maxE="100" />
 
-					<Ends relativeTo="end" gap="PT1H" />
+					<Ends relativeTo="end" gap="PT1M" />
 				</Induction>			
 				<Induction>
 					<State name="CPU_Usage_Level" value="High" />
