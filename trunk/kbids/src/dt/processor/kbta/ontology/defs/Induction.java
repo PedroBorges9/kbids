@@ -39,23 +39,23 @@ public class Induction {
 
 	public void induct(AllInstanceContainer container){
 		switch (_type){
-			case Element.PRIMITIVE:
-				inductFromPrimitive(container);
-				break;
-			case Element.EVENT:
-				inductFromEvent(container);
-				break;	
-			case Element.STATE:
-				inductFromState(container);
-				break;
-			case Element.TREND:
-				inductFromTrend(container);
-				break;
-			default:
-				Log.e(TAG,"ILLEGAL TYPE ( "+_type+" )TO INDUCT CONTEXT "+_name+" NOT SUPPOSED TO HAPPEN");
-				break;
+		case Element.PRIMITIVE:
+			inductFromPrimitive(container);
+			break;
+		case Element.EVENT:
+			inductFromEvent(container);
+			break;	
+		case Element.STATE:
+			inductFromState(container);
+			break;
+		case Element.TREND:
+			inductFromTrend(container);
+			break;
+		default:
+			Log.e(TAG,"ILLEGAL TYPE ( "+_type+" )TO INDUCT CONTEXT "+_name+" NOT SUPPOSED TO HAPPEN");
+		break;
 		}
-		
+
 	}
 
 	private void inductFromTrend(AllInstanceContainer container){
@@ -64,16 +64,16 @@ public class Induction {
 		boolean create=false;
 		Trend t=container.getTrends().getMostRecent(_from);
 		if (t!=null){
-		if (_symbolicValue.equalsIgnoreCase(t.getValue())){
-			create=true;
-			start=t.getStart();
-			if (_relative.equalsIgnoreCase("Start")) 
-				end=t.getStart()+_gap;
-			else end=t.getEnd()+_gap;
-		}
-		if (create){
-			createContext(container, start, end);
-		}
+			if (_symbolicValue.equalsIgnoreCase(t.getValue())){
+				create=true;
+				start=t.getStart();
+				if (_relative.equalsIgnoreCase("Start")) 
+					end=t.getStart()+_gap;
+				else end=t.getEnd()+_gap;
+			}
+			if (create){
+				createContext(container, start, end);
+			}
 		}
 	}
 
@@ -138,14 +138,13 @@ public class Induction {
 				container.addContext( new Context( _name, start, end));
 			}
 			else if(contextEnd<end){
-					context.setEnd(end);
-			
+				context.setEnd(end);
 			}
 		}
 		else container.addContext( new Context( _name, start, end));
-			
+
 	}
-	
+
 	@Override
 	public String toString(){
 		String ans="induction of "+_name+"\nfrom "+_from+" of type"+ _type+" with the value";
@@ -156,6 +155,6 @@ public class Induction {
 			ans=ans+_symbolicValue;
 		}
 		return ans+"\nthat ends at "+_gap+" miliseconds after the originator "+_relative;
-		
+
 	}
 }
