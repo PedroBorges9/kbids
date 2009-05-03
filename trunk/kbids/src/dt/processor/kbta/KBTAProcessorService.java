@@ -40,12 +40,12 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 	private Ontology _ontology;
 	private AllInstanceContainer _allInstances;
 	private ThreatAssessor _threatAssessor;
-
+	private int _iteration;
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		_allInstances = new AllInstanceContainer();
-
+		_iteration=0;
 		new Thread(new Runnable() {
 
 			@Override
@@ -138,7 +138,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 		if (_ontology == null) {
 			return;
 		}
-
+		++_iteration;
 		featuresToElements(features);
 
 		boolean cont = false;

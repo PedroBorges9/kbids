@@ -21,6 +21,7 @@ public class ElementDef {
 
 	public ElementDef(String name){
 		_name = name;
+		_lastCreated=-1;
 	}
 	
 	public String getName() {
