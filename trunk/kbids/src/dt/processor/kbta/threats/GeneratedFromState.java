@@ -1,7 +1,7 @@
 package dt.processor.kbta.threats;
 
-import dt.processor.kbta.AllInstanceContainer;
-import dt.processor.kbta.ComplexContainer;
+import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.instances.State;
 
 public class GeneratedFromState extends GeneratedFrom {

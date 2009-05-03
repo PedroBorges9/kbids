@@ -1,12 +1,13 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology.defs;
+package dt.processor.kbta.ontology.defs.context;
 
 import java.util.ArrayList;
 
 import android.util.Log;
-import dt.processor.kbta.AllInstanceContainer;
+import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Event;
@@ -68,9 +69,12 @@ public class Induction {
 			if (_symbolicValue.equalsIgnoreCase(t.getValue())){
 				create=true;
 				start=t.getTimeInterval().getStartTime();
-				if (_relative.equalsIgnoreCase("Start")) 
+				if (_relative.equalsIgnoreCase("Start")) {
 					end=t.getTimeInterval().getStartTime()+_gap;
-				else end=t.getTimeInterval().getEndTime()+_gap;
+				}
+				else{
+					end=t.getTimeInterval().getEndTime()+_gap;
+				}
 			}
 			if (create){
 				createContext(container, start, end);
@@ -87,10 +91,12 @@ public class Induction {
 			if (_symbolicValue.equalsIgnoreCase(s.getValue())){
 				create = true;
 				start = s.getTimeInterval().getStartTime();
-				if (_relative.equalsIgnoreCase("Start"))
+				if (_relative.equalsIgnoreCase("Start")){
 					end = s.getTimeInterval().getStartTime() + _gap;
-				else
+				}
+				else{
 					end = s.getTimeInterval().getEndTime() + _gap;
+				}
 			}
 			if (create){
 				createContext(container, start, end);
@@ -99,16 +105,18 @@ public class Induction {
 	}
 
 	private void inductFromEvent(AllInstanceContainer container){
-		ArrayList<Event> events=container.getEvents().getOldEvent(_from);//TODO//
+		ArrayList<Event> events=container.getEvents().getCurrentEvent(_from);//TODO//
 		if (events!=null){
 			for (Event e : events){
 				long start = -1;
 				long end = -1;
 				start = e.getTimeInterval().getStartTime();
-				if (_relative.equalsIgnoreCase("Start"))
+				if (_relative.equalsIgnoreCase("Start")){
 					end = e.getTimeInterval().getStartTime() + _gap;
-				else
+				}
+				else{
 					end = e.getTimeInterval().getEndTime() + _gap;
+				}
 				createContext(container, start, end);
 			}
 		}
@@ -132,7 +140,8 @@ public class Induction {
 	}
 
 	private void createContext(AllInstanceContainer container, long start, long end){
-		Context context=container.getContexts().getNewestElement(_from);
+		Context context=container.getContexts().getCurrentElement(_name);
+		
 		if (context!=null){
 			long contextEnd=context.getTimeInterval().getEndTime();
 			if (contextEnd<start){
@@ -142,7 +151,9 @@ public class Induction {
 				context.getTimeInterval().setEndTime(end);
 			}
 		}
-		else container.addContext( new Context( _name, new TimeInterval(start, end)));
+		else {
+			container.addContext( new Context( _name, new TimeInterval(start, end)));
+		}
 
 	}
 

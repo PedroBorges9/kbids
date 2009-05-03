@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.StateDef;
+import dt.processor.kbta.ontology.defs.context.ContextDef;
 
 public class Ontology {
 	private HashMap<String, PrimitiveDef> _primitiveDefiners;

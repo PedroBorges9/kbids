@@ -1,4 +1,4 @@
-package dt.processor.kbta;
+package dt.processor.kbta.container;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 		return _newElements.get(st);	 
 	}
 	
-	public T getCurrentElements(String st){
+	public T getCurrentElement(String st){
 		return _currentElements.get(st);
 	}
 		
@@ -75,9 +75,16 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	}
 	
 	
-	/*@Override
+	@Override
 	public String toString(){
 		
-		return "Element Container\n Contains Elements: "+_oldElements+"\nContains new Elements: "+_newElements;
-	}*/
+		return "Complex Element Container\n Contains :\n" +
+				"New Elements: \n"+_newElements+"\n" +
+				"current Elements: "+_currentElements+"\n" +
+				"old Elements:"+_oldElements;
+	}
+
+	public boolean hasNew() {
+		return !_newElements.isEmpty();
+	}
 }
