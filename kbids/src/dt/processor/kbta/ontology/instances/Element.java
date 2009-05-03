@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.util.TimeInterval;
 
 
 /**
@@ -12,8 +13,7 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Element {
 	protected final String _name;
-	protected final long _start;
-	protected long _end;
+	protected  TimeInterval _timeInterval;
 	
 	public static final int PRIMITIVE=0;
 	public static final int EVENT=1;
@@ -22,10 +22,10 @@ public class Element {
 	public static final int TREND=4;
 	public static final int PATTERN=5;
 	
-	public Element( String name,long start, long end){
+	public Element( String name,TimeInterval timeInterval){
 		  _name = name;
-		  _start = start;
-		  _end = end;
+		  _timeInterval = timeInterval;
+
 	}
 	
 	public String getName() {
@@ -36,26 +36,20 @@ public class Element {
 	
 	
 
-	public long getStart() {
-		return _start;
+	public TimeInterval getTimeInterval() {
+		return _timeInterval;
 	}
 
-	public long getEnd() {
-		return _end;
-	}
-	
-	public long getDuration(){
-		return _end - _start;
-	}
+
 
 	@Override
 	public boolean equals(Object o) {
-		// TODO compare by name and start and end
-		return super.equals(o);
+		Element element=(Element)o;
+		return element.getName()==_name && element.getTimeInterval().equals(_timeInterval);
 	}
 
-	public void setEnd(long end){
-		this._end = end;
+	public void setInterval(TimeInterval ti){
+		_timeInterval = ti;
 	}
 	
 	

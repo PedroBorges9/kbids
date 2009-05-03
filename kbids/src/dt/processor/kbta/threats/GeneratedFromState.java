@@ -33,7 +33,7 @@ public class GeneratedFromState extends GeneratedFrom {
 		}
 
 		String value = state.getValue();
-		long dur = state.getDuration();
+		long dur = state.getTimeInterval().getDuration();
 
 		return (_symbolicValueCondition == null ? true
 				: _symbolicValueCondition.check(value))

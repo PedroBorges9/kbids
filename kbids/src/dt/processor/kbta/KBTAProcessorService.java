@@ -170,7 +170,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 	private void createContexts() {
 		ArrayList<ContextDef> contextDefs=_ontology.getContextDefiners();
 		for (ContextDef cd : contextDefs){
-			cd.createContext(_allInstances);
+			cd.createContext(_allInstances,_iteration);
 		}
 			
 

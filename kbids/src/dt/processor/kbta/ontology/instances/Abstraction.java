@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author rahamime
@@ -12,8 +13,8 @@ import dt.processor.kbta.ontology.defs.ElementDef;
 public class Abstraction extends Element {
 	protected final String _value;
 	
-	public Abstraction( String name, String value, long start, long end) {
-		super( name, start, end);
+	public Abstraction( String name, String value, TimeInterval timeInterval) {
+		super( name,timeInterval);
 		_value = value;
 	}
 	

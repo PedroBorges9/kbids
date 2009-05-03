@@ -46,7 +46,7 @@ public class PrimitiveContainer implements ElementContainer{
 		while(currentIter.hasNext()){
 			Map.Entry<String, Primitive> currentPrimitive = currentIter.next();
 			String name=currentPrimitive.getKey();
-			if (currentPrimitive.getValue().getEnd()<time){
+			if (currentPrimitive.getValue().getTimeInterval().getEndTime()<time){
 				_oldElements.remove(name);
 				currentIter.remove();
 			}
@@ -55,7 +55,7 @@ public class PrimitiveContainer implements ElementContainer{
 		Iterator<Map.Entry<String, Primitive>> oldIter=_oldElements.entrySet().iterator();
 		while(oldIter.hasNext()){
 			Map.Entry<String, Primitive> oldPrimitive = oldIter.next();
-			if (oldPrimitive.getValue().getEnd()<time){
+			if (oldPrimitive.getValue().getTimeInterval().getEndTime()<time){
 				oldIter.remove();
 			}
 		}
