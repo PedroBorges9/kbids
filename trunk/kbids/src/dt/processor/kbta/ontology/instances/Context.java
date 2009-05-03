@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author 
@@ -11,13 +12,13 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Context extends Element {
 
-	public Context( String name, long start, long end) {
-		super( name, start, end);
+	public Context( String name,TimeInterval timeInterval) {
+		super( name, timeInterval);
 	}
 	
 	@Override
 	public String toString(){
-		return "Context "+_name+" starts at "+_start+" and ends at "+_end;
+		return "Context "+_name+" starts at "+_timeInterval.getStartTime()+" and ends at "+_timeInterval.getEndTime();
 	}
 
 }

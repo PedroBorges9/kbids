@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author 
@@ -11,8 +12,8 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Pattern extends Element {
 
-	public Pattern(  String name, long start, long end) {
-		super( name, start, end);
+	public Pattern(  String name,TimeInterval timeInterval) {
+		super( name, timeInterval);
 		// TODO Auto-generated constructor stub
 	}
 	

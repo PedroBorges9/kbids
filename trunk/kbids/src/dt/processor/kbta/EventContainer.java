@@ -67,7 +67,7 @@ public class EventContainer implements ElementContainer{
 			Iterator<Event> iterator=currentEvents.getValue().iterator();
 			while(iterator.hasNext()){
 				Event currentEvent = iterator.next();
-				if (currentEvent.getEnd()<time){
+				if (currentEvent.getTimeInterval().getEndTime()<time){
 					iterator.remove();
 				}
 				else{
@@ -79,7 +79,7 @@ public class EventContainer implements ElementContainer{
 			Iterator<Event> iterator=oldEvents.getValue().iterator();
 			while(iterator.hasNext()){
 				Event currentEvent = iterator.next();
-				if (currentEvent.getEnd()<time){
+				if (currentEvent.getTimeInterval().getEndTime()<time){
 					iterator.remove();
 				}
 				else{

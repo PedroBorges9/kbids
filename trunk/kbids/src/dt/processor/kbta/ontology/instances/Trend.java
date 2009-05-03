@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author 
@@ -11,9 +12,8 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  */
 public class Trend extends Abstraction {
 
-	public Trend(  String name, String value, long start,
-			long end) {
-		super( name, value, start, end);
+	public Trend(  String name, String value, TimeInterval timeInterval) {
+		super( name, value,timeInterval);
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 
 import dt.fe.MonitoredData;
 import dt.processor.kbta.ontology.instances.Event;
+import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author 
@@ -35,8 +36,9 @@ public class EventDef extends ElementDef{
 			if(eventTime<=_latestEventTime){
 				break;
 			}
+			
 
-			Event e= new Event(_name, eventTime,eventTime);
+			Event e= new Event(_name, new TimeInterval(eventTime,eventTime));
 			events.add(e);			
 		}
 		

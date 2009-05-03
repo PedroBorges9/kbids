@@ -55,7 +55,7 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 		while(iter.hasNext()){
 			 Map.Entry<String, T> currentElement = iter.next();
 			 String name=currentElement.getKey();
-			if (currentElement.getValue().getEnd()<time){
+			if (currentElement.getValue().getTimeInterval().getEndTime()<time){
 				_oldElements.remove(name);
 				iter.remove();
 			}
@@ -64,7 +64,7 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 			Iterator<T> iterator=oldElements.getValue().iterator();
 			while(iterator.hasNext()){
 				T currentElement = iterator.next();
-				if (currentElement.getEnd()<time){
+				if (currentElement.getTimeInterval().getEndTime()<time){
 					iterator.remove();
 				}
 				else{
