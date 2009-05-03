@@ -9,11 +9,11 @@ import dt.processor.kbta.ontology.instances.Event;
 
 public class EventContainer implements ElementContainer{
 	private final HashMap<String, ArrayList<Event>> _oldElements;
-	private final HashMap<String, Event> _currentElements; 
+	private final HashMap<String, ArrayList<Event>> _currentElements; 
 	
 	public EventContainer(){
 		_oldElements = new HashMap<String, ArrayList<Event>>();
-		_currentElements = new HashMap<String, Event>();
+		_currentElements = new HashMap<String, ArrayList<Event>>();
 		
 		// TODO Auto-generated constructor stub
 	}
@@ -21,10 +21,16 @@ public class EventContainer implements ElementContainer{
 
 	public void addEvent(Event p){
 		String name = p.getName();
-		_currentElements.put(name, p);
+		ArrayList<Event> events=_currentElements.get(name);
+		if (events==null){
+			events=new ArrayList<Event>();
+			_currentElements.put(name, events);
+		}
+		events.add(p);
+		
 	}
 	
-	public Event getCurrentEvent(String st){
+	public ArrayList<Event> getCurrentEvent(String st){
 		return _currentElements.get(st);	 
 	}
 	
@@ -42,14 +48,14 @@ public class EventContainer implements ElementContainer{
 	}
 	
 	public void shiftBack(){
-		for (Map.Entry<String, Event> currentEvent: _currentElements.entrySet()){
+		for (Map.Entry<String, ArrayList<Event>> currentEvent: _currentElements.entrySet()){
 			String name=currentEvent.getKey();
 			ArrayList<Event> old=_oldElements.get(name);
 			if (old==null){
 				old=new ArrayList<Event>();
 				_oldElements.put(name, old);
 			}
-			old.add(currentEvent.getValue());
+			old.addAll((currentEvent.getValue()));
 		}
 		_currentElements.clear();
 	}
@@ -57,16 +63,18 @@ public class EventContainer implements ElementContainer{
 
 	@Override
 	public void discardOlderThen(long time){
-		Iterator<Map.Entry<String, Event>> iter=_currentElements.entrySet().iterator();
-		while(iter.hasNext()){
-			 Map.Entry<String, Event> currentEvent = iter.next();
-			 String name=currentEvent.getKey();
-			if (currentEvent.getValue().getEnd()<time){
-				_oldElements.remove(name);
-				iter.remove();
-			}
+		for (Map.Entry<String, ArrayList<Event>> currentEvents: _currentElements.entrySet()){
+			Iterator<Event> iterator=currentEvents.getValue().iterator();
+			while(iterator.hasNext()){
+				Event currentEvent = iterator.next();
+				if (currentEvent.getEnd()<time){
+					iterator.remove();
+				}
+				else{
+					break;
+				}
+			}			
 		}
-		
 		for (Map.Entry<String, ArrayList<Event>> oldEvents: _oldElements.entrySet()){
 			Iterator<Event> iterator=oldEvents.getValue().iterator();
 			while(iterator.hasNext()){
@@ -78,8 +86,6 @@ public class EventContainer implements ElementContainer{
 					break;
 				}
 			}
-			
-			
 		}
 			
 		
