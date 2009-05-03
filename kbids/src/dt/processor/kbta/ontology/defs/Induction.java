@@ -62,7 +62,7 @@ public class Induction {
 		long start=-1;
 		long end=-1;
 		boolean create=false;
-		Trend t=container.getTrends().getMostRecent(_from);
+		Trend t=container.getTrends().getNewestElement(_from);
 		if (t!=null){
 			if (_symbolicValue.equalsIgnoreCase(t.getValue())){
 				create=true;
@@ -81,7 +81,7 @@ public class Induction {
 		long start=-1;
 		long end=-1;
 		boolean create=false;
-		State s=container.getStates().getMostRecent(_from);
+		State s=container.getStates().getNewestElement(_from);
 		if (s!=null){
 			if (_symbolicValue.equalsIgnoreCase(s.getValue())){
 				create = true;
@@ -98,7 +98,7 @@ public class Induction {
 	}
 
 	private void inductFromEvent(AllInstanceContainer container){
-		ArrayList<Event> events=container.getEvents().getNewElements(_from);
+		ArrayList<Event> events=container.getEvents().getOldEvent(_from);//TODO//
 		if (events!=null){
 			for (Event e : events){
 				long start = -1;
@@ -117,7 +117,7 @@ public class Induction {
 		long start=-1;
 		long end=-1;
 		boolean create=false;
-		Primitive p=container.getPrimitives().getMostRecent(_from);
+		Primitive p=container.getPrimitives().getCurrentPrimitive(_from);
 		if (p!=null){
 			if (_numericValues.inRange(p.getValue())){
 				end = p.getEnd() + _gap;
@@ -131,7 +131,7 @@ public class Induction {
 	}
 
 	private void createContext(AllInstanceContainer container, long start, long end){
-		Context context=container.getContexts().getMostRecent(_name);
+		Context context=container.getContexts().getNewestElement(_from);
 		if (context!=null){
 			long contextEnd=context.getEnd();
 			if (contextEnd<start){

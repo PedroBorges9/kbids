@@ -1,7 +1,7 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.AllInstanceContainer;
-import dt.processor.kbta.ElementContainer;
+import dt.processor.kbta.ComplexContainer;
 import dt.processor.kbta.ontology.instances.State;
 
 public class GeneratedFromState extends GeneratedFrom {
@@ -26,8 +26,8 @@ public class GeneratedFromState extends GeneratedFrom {
 
 	@Override
 	public boolean matchConditions(AllInstanceContainer allInstances) {
-		ElementContainer<State> states = allInstances.getStates();
-		State state = states.getMostRecent(_name);
+		ComplexContainer<State> states = allInstances.getStates();
+		State state = states.getNewestElement(_name); //TODO CHECK IT
 		if (state == null) {
 			return false;
 		}
