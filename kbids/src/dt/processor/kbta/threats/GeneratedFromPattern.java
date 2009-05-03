@@ -1,6 +1,6 @@
 package dt.processor.kbta.threats;
 
-import dt.processor.kbta.AllInstanceContainer;
+import dt.processor.kbta.container.AllInstanceContainer;
 
 public class GeneratedFromPattern extends GeneratedFrom {
 

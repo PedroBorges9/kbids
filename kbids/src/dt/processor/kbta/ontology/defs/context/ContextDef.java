@@ -1,11 +1,12 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology.defs;
+package dt.processor.kbta.ontology.defs.context;
 
 import java.util.List;
 
-import dt.processor.kbta.AllInstanceContainer;
+import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 
 

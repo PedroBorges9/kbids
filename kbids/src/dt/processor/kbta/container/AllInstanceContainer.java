@@ -1,4 +1,4 @@
-package dt.processor.kbta;
+package dt.processor.kbta.container;
 
 import dt.processor.kbta.ontology.*;
 import dt.processor.kbta.ontology.instances.Context;
@@ -71,6 +71,20 @@ public class AllInstanceContainer {
 
 	public ComplexContainer<Pattern> getPatterns() {
 		return _patterns;
+	}
+
+	public boolean hasNew() {
+		return (_contexts.hasNew() || _states.hasNew() || _trends.hasNew());
+	}
+
+	public void shiftBackAll() {
+		_primitives.shiftBack();
+		_contexts.shiftBack();
+		_events.shiftBack();
+		_states.shiftBack();
+		_trends.shiftBack();
+		_patterns.shiftBack();
+		
 	}	
 	
 	

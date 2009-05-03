@@ -22,10 +22,11 @@ import android.os.RemoteException;
 import android.util.Log;
 import dt.fe.MonitoredData;
 import dt.processor.Processor;
+import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.*;
-import dt.processor.kbta.ontology.defs.ContextDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
 import dt.processor.kbta.ontology.instances.State;
@@ -144,17 +145,18 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 		boolean cont = false;
 
 		do {
-	//		_allInstances.getContexts().CheckAllUsed();
+			_allInstances.getContexts().shiftBack();
 			createContexts();
 			
 			System.out.println("********CONTEXTS:***********\n"+ _allInstances.getContexts());
-//			_allInstances.getStates().CheckAllUsed();
-//			_allInstances.getTrends().CheckAllUsed();
-			createAbstractions();
-			// cont = whether something new happened
-		} while (cont);
 
+			
+			createAbstractions();
+			 cont = _allInstances.hasNew();
+		} while (cont);
+		
 		createPatterns();
+		_allInstances.shiftBackAll();
 	}
 
 	private void createPatterns() {
@@ -163,7 +165,10 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 	}
 
 	private void createAbstractions() {
-		// TODO Auto-generated method stub
+		_allInstances.getStates().shiftBack();
+		//TODO createStates
+		_allInstances.getTrends().shiftBack();
+		// TODO createTrends
 
 	}
 
