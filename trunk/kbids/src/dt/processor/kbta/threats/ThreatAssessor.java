@@ -3,7 +3,7 @@ package dt.processor.kbta.threats;
 import java.util.*;
 
 import dt.processor.kbta.AllInstanceContainer;
-import dt.processor.kbta.ElementContainer;
+import dt.processor.kbta.ComplexContainer;
 import dt.processor.kbta.ontology.instances.State;
 
 public class ThreatAssessor {

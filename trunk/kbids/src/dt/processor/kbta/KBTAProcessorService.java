@@ -144,12 +144,12 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 		boolean cont = false;
 
 		do {
-			_allInstances.getContexts().CheckAllUsed();
+	//		_allInstances.getContexts().CheckAllUsed();
 			createContexts();
 			
 			System.out.println("********CONTEXTS:***********\n"+ _allInstances.getContexts());
-			_allInstances.getStates().CheckAllUsed();
-			_allInstances.getTrends().CheckAllUsed();
+//			_allInstances.getStates().CheckAllUsed();
+//			_allInstances.getTrends().CheckAllUsed();
 			createAbstractions();
 			// cont = whether something new happened
 		} while (cont);
