@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.defs.abstractions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import dt.processor.kbta.container.*;
 import dt.processor.kbta.ontology.instances.Context;
@@ -68,9 +69,9 @@ public class StateDef extends AbstractionDef{
 		if (value == null){
 			return;
 		}
-		
+
 		// From this point on, we are certain that a state can be created
-		
+
 		// Attempting to interpolate the newly created state with
 		// an older state (which can only reside in the current elements)
 		ComplexContainer<State> states = instances.getStates();
@@ -90,7 +91,8 @@ public class StateDef extends AbstractionDef{
 		}
 		// Setting the newly created / interpolated state as the newest state of it's name
 		states.setNewestElement(state);
-		// Marking that the state of this name has already been created during this iteration
+		// Marking that the state of this name has already been created during this
+		// iteration
 		setLastCreated(iteration);
 	}
 
@@ -163,8 +165,8 @@ public class StateDef extends AbstractionDef{
 	@Override
 	public String toString(){
 		String st = "name=" + _name + "\n";
-		st += " AbstractedFrom\n" + _abstractedFrom + "\n";
-		st += " NecessaryContexts\n" + _necessaryContexts + "\n";
+		st += " AbstractedFrom\n" + Arrays.toString(_abstractedFrom) + "\n";
+		st += " NecessaryContexts\n" + Arrays.toString(_necessaryContexts) + "\n";
 		st += _mappingFunction;
 		st += _interpolationFunction;
 

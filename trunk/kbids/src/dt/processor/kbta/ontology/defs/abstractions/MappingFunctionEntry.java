@@ -36,9 +36,9 @@ public class MappingFunctionEntry {
 	@Override
 	public String toString() {
 		String st = "value=" + _value + "\n";
-//		for (ElementCondition ec : _elementCondition) {
-//			st += ec + "\n";
-//		}
+		for (ElementCondition ec : _elementCondition.values()) {
+			st += ec + "\n";
+		}
 		return st;
 	}
 
