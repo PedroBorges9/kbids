@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -26,6 +27,7 @@ import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.*;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
@@ -168,10 +170,19 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 
 	private void createAbstractions() {
 		_allInstances.getStates().shiftBack();
-		//TODO createStates
+		createStates();
 		_allInstances.getTrends().shiftBack();
-		// TODO createTrends
 
+	}
+
+	private void createStates() {
+		HashMap<String,StateDef> stateDefs=_ontology.getStateDefiners();
+		for (StateDef sd : stateDefs.values()){
+			if(sd.assertNotCreatedIn(_iteration)){
+				sd.createState(_allInstances,_iteration);
+			}
+		}
+		
 	}
 
 	private void createContexts() {

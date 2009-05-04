@@ -62,7 +62,7 @@ public class EventContainer implements ElementContainer{
 
 
 	@Override
-	public void discardOlderThen(long time){
+	public void discardOlderThan(long time){
 		for (Map.Entry<String, ArrayList<Event>> currentEvents: _currentElements.entrySet()){
 			Iterator<Event> iterator=currentEvents.getValue().iterator();
 			while(iterator.hasNext()){

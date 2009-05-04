@@ -13,7 +13,7 @@ import dt.processor.kbta.util.TimeInterval;
 public class Context extends Element {
 
 	public Context( String name,TimeInterval timeInterval) {
-		super( name, timeInterval);
+		super(Element.CONTEXT, name, timeInterval);
 	}
 	
 	@Override

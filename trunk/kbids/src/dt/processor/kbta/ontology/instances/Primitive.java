@@ -16,7 +16,7 @@ public class Primitive extends Element {
 	private final double _value;
 	
 	public Primitive( String name, double value, Date start, Date end) {
-		 super( name, new TimeInterval(start.getTime(), end.getTime()));
+		 super(Element.PRIMITIVE, name, new TimeInterval(start.getTime(), end.getTime()));
 		_value=value;
 	}
 	

@@ -10,11 +10,11 @@ import dt.processor.kbta.util.TimeInterval;
  * @author rahamime
  *
  */
-public class Abstraction extends Element {
+public abstract class Abstraction extends Element {
 	protected final String _value;
 	
-	public Abstraction( String name, String value, TimeInterval timeInterval) {
-		super( name,timeInterval);
+	public Abstraction(int type, String name, String value, TimeInterval timeInterval) {
+		super(type, name,timeInterval);
 		_value = value;
 	}
 	

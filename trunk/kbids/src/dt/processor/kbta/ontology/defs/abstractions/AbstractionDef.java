@@ -1,17 +1,18 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology.defs;
+package dt.processor.kbta.ontology.defs.abstractions;
 
 import java.util.ArrayList;
 
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 
 /**
  * @author 
  *
  */
-public class AbstractionDef extends ElementDef{
+public abstract class AbstractionDef extends ElementDef{
 
 	protected String abstracteFrom;
 	//TODO represent PersistenceFunction

@@ -13,7 +13,7 @@ import dt.processor.kbta.util.TimeInterval;
 public class Trend extends Abstraction {
 
 	public Trend(  String name, String value, TimeInterval timeInterval) {
-		super( name, value,timeInterval);
+		super(Element.TREND, name, value,timeInterval);
 	}
 
 }

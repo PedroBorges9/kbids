@@ -13,7 +13,7 @@ import dt.processor.kbta.util.TimeInterval;
 public class Pattern extends Element {
 
 	public Pattern(  String name,TimeInterval timeInterval) {
-		super( name, timeInterval);
+		super(Element.PATTERN, name, timeInterval);
 		// TODO Auto-generated constructor stub
 	}
 	

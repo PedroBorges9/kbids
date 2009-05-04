@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dt.processor.kbta.ontology.defs;
+package dt.processor.kbta.ontology.defs.abstractions;
 
 
 /**
