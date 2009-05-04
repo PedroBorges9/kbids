@@ -57,6 +57,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 				OntologyLoader ontologyLoader = new OntologyLoader();
 				_ontology = ontologyLoader
 						.loadOntology(KBTAProcessorService.this);
+				System.out.println("Finish load ontology");
 			}
 		}, "Ontology Loader Thread").start();
 
@@ -67,6 +68,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
 				_threatAssessor = threatAssessmentLoader
 						.loadThreatAssessments(KBTAProcessorService.this);
+				
 			}
 		}, "Threat Assessment Loader Thread");//.start();
 		
@@ -104,7 +106,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException {
 				try {
-					process(features);
+				//	process(features);
 
 					if (_threatAssessor == null) {
 						return;
@@ -153,7 +155,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 			
 			System.out.println("********CONTEXTS:***********\n"+ _allInstances.getContexts());
 
-			
+	
 			createAbstractions();
 			cont = _allInstances.hasNew();
 		} while (cont);
@@ -172,6 +174,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 		_allInstances.getStates().shiftBack();
 		createStates();
 		_allInstances.getTrends().shiftBack();
+		//TODO createTrends
 
 	}
 

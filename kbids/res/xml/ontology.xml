@@ -92,7 +92,7 @@
 				<Value name="High" maxGap="P10D" />
 			</InterpolationFunction>
 		</State>
-
+		
 		<State name="Garbage_Collections_Level">
 			<AbstractedFrom>
 				<Primitive name="Garbage_Collections" />
@@ -120,8 +120,7 @@
 				<Value name="High" maxGap="P10S" />
 			</InterpolationFunction>
 		</State>
-
-
+		
 		<State name="Minor_Page_Faults_Level">
 			<AbstractedFrom>
 				<Primitive name="Minor_Page_Faults" />
@@ -212,6 +211,8 @@
 				<Value name="High" maxGap="P10S" />
 			</InterpolationFunction>
 		</State>
+
+
 
 	</States>
 

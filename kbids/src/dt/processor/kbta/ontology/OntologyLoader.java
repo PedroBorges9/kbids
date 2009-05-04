@@ -63,8 +63,9 @@ public class OntologyLoader {
 					//	parseContexts(xpp);
 
 					} else if (name.equalsIgnoreCase("States")) {
-						// System.out.println("Before parseStates");
+					//	 System.out.println("Before parseStates");
 						 parseStates(xpp);
+						 System.out.println("Finish parse states");
 
 					} else if (name.equalsIgnoreCase("Trends")) {
 
@@ -322,11 +323,10 @@ public class OntologyLoader {
 				stateDef = loadState(xpp);
 				if (stateDef != null) {
 					_ontology.addStateDef(stateDef);
-
-					System.out.println(_ontology.printStates());
 				}
 			}
 		}
+		System.out.println(_ontology.printStates());
 
 	}
 
@@ -545,7 +545,8 @@ public class OntologyLoader {
 				}
 			}
 		}
-		if (elementConditions.isEmpty()) {
+		//TODO check
+		if (elementConditions.isEmpty() || abstractedFrom.size()!=elementConditions.size()) {
 			return null;
 		}
 		return new MappingFunctionEntry(stateValue, elementConditions);
