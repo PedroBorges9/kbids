@@ -18,7 +18,7 @@ public class Context extends Element {
 	
 	@Override
 	public String toString(){
-		return "Context "+_name+" starts at "+_timeInterval.getStartTime()+" and ends at "+_timeInterval.getEndTime();
+		return "Context "+_name+" time interval "+_timeInterval;
 	}
 
 }

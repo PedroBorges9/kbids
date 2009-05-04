@@ -42,6 +42,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 	private AllInstanceContainer _allInstances;
 	private ThreatAssessor _threatAssessor;
 	private int _iteration;
+	private long _time=1000;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -152,11 +153,12 @@ public class KBTAProcessorService extends Service implements ServiceConnection {
 
 			
 			createAbstractions();
-			 cont = _allInstances.hasNew();
+			cont = _allInstances.hasNew();
 		} while (cont);
 		
 		createPatterns();
 		_allInstances.shiftBackAll();
+		_allInstances.discardElementsNotWithinRange(_time);
 	}
 
 	private void createPatterns() {

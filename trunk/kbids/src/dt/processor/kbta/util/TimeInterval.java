@@ -1,5 +1,9 @@
 package dt.processor.kbta.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.util.TimeUtils;
 
 public class TimeInterval{
@@ -155,6 +159,14 @@ public class TimeInterval{
 
 	public void setEndTime(long end){
 		_endTime=end;		
+	}
+	
+	@Override
+	public String toString(){
+		SimpleDateFormat d=new SimpleDateFormat("HH:mm:ss");
+		String s=d.format(new Date(_startTime));
+		String e=d.format(new Date(_endTime));
+		return ("["+s+","+e+"]");
 	}
 
 }

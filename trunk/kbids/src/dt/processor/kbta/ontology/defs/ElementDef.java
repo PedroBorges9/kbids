@@ -9,7 +9,7 @@ package dt.processor.kbta.ontology.defs;
  */
 public class ElementDef {
 	protected final String _name;
-	private int _lastCreated;
+	protected int _lastCreated;
 	
 	public boolean assertNotCreatedIn(int iteration){
 		return _lastCreated!=iteration;

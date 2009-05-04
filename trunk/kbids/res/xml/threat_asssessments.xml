@@ -18,4 +18,15 @@
 			<DurationCondition min="P2D" max="P8D" />
 		</State>
 	</Assessment>
+	
+	<Assessment title="Abnormal System load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level" >
+		<State name="System_Load_level">
+			<SymbolicValueCondition>
+				<Value name="High" />
+			</SymbolicValueCondition>
+			<DurationCondition min="P1M" max="P8D" />
+		</State>
+	</Assessment>
+		
+		
 </Assessments>

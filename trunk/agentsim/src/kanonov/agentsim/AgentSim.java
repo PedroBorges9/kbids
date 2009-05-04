@@ -97,7 +97,7 @@ public class AgentSim extends Activity implements ServiceConnection{
 				@Override
 				public void run(){
 					int loop = 0;
-					while (!isInterrupted() && loop++ < 2){
+					while (!isInterrupted() ){
 						SystemClock.sleep(getInterval() * 1000);
 						
 						if (_processor != null){
