@@ -1,9 +1,12 @@
 <Ontology name="Android">
 	<Primitives>
-		<Primitive name="CPU_Usage" minE="0" maxE="100" />		
+		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
+		<Primitive name="Running_Processes" minE="0" maxE="*" />
+		<Primitive name="Minor_Page_Faults" minE="0" maxE="*" />
+		<Primitive name="Context_Switches" minE="0" maxE="*" />
 	</Primitives>
-	
+
 	<Events>
 		<Event name="Picture_Taken" />
 		<Event name="Keyboard_Opening" />
@@ -16,8 +19,8 @@
 				<Induction>
 					<Event name="Keyboard_Opening" />
 
-					<Ends relativeTo="end" gap="PT2H" /> 
-					
+					<Ends relativeTo="end" gap="PT2H" />
+
 				</Induction>
 				<Induction>
 					<Trend name="CPU_Usage_Change" value="Rising" />
@@ -25,30 +28,41 @@
 					<Ends relativeTo="end" gap="PT1M" />
 				</Induction>
 			</Inductions>
-			
-			<Destructions>
-			</Destructions> 
-		</Context> 
-		
+
+			<Destructions></Destructions>
+		</Context>
+
 		<Context name="High_CPU_Usage">
 			<Inductions>
 				<Induction>
 					<Primitive name="CPU_Usage" min="80" maxE="100" />
 
-					<Ends relativeTo="end" gap="PT1M" />
-				</Induction>			
+					<Ends relativeTo="end" gap="PT2S" />
+				</Induction>
 				<Induction>
 					<State name="CPU_Usage_Level" value="High" />
 					<Ends relativeTo="end" gap="PT1S" />
 				</Induction>
 			</Inductions>
-			
+
 			<Destructions>
 				<Primitive name="CPU_Usage" min="20" maxE="60" />
-				</Destructions>
+			</Destructions>
 		</Context>
+		<Context name="Amount_of_Processes_High">
+			<Inductions>
+				<Induction>
+					<Primitive name="Running_Processes" min="30"
+						maxE="*" />
+					<Ends relativeTo="end" gap="PT5S" />
+				</Induction>
+			</Inductions>
+
+			<Destructions></Destructions>
+		</Context>
+
 	</Contexts>
-	
+
 	<States>
 		<State name="CPU_Usage_Level">
 			<AbstractedFrom>
@@ -60,16 +74,16 @@
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Low">
-					<Primitive name="CPU_Usage" minE="0" maxE="30" />
-					<State name="blabla" value="Low"/>
+					<Primitive name="CPU_Usage" minE="0" maxE="20" />
+					<State name="blabla" value="Low" />
 				</Value>
 				<Value name="Normal">
-					<Primitive name="CPU_Usage" minE="31" maxE="70" />
-					<State name="blabla" value="Low"/>
+					<Primitive name="CPU_Usage" minE="21" maxE="70" />
+					<State name="blabla" value="Low" />
 				</Value>
 				<Value name="High">
 					<Primitive name="CPU_Usage" minE="71" maxE="100" />
-					<State name="blabla" value="High"/>
+					<State name="blabla" value="High" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
@@ -78,93 +92,222 @@
 				<Value name="High" maxGap="P10D" />
 			</InterpolationFunction>
 		</State>
-	</States>
-	
-	<!--
-	<Gradients>
-		<Gradient name="Blood Pressure Gradient">
-			<AbstractedFrom>
-				<Primitive name="Blood Pressure"/>
-			</AbstractedFrom>
-			<SymbolicValues scale="ordinal">
-				<Value name="Increasing" />
-				<Value name="Same" />
-				<Value name="Decreasing" />
-			</SymbolicValues>
-			<NecessaryContexts>
-				<Context name="After Running"/>
-			</NecessaryContexts>
-			<PersistenceFunction>
-				<Value name="Increasing">
-					<PersistenceTable timeUnit="minute" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-				<Value name="Same">
-					<PersistenceTable timeUnit="day" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-				<Value name="Decreasing">
-					<PersistenceTable timeUnit="day" type="positive-positive">
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-						<Gaps>10 10 10 10 10 10</Gaps>
-					</PersistenceTable>
-				</Value>
-			</PersistenceFunction>
-			<GradientMappingFunction significantVariation="3" />
-		</Gradient>
-	</Gradients>
 
-	<Patterns>
+		<State name="Garbage_Collections_Level">
+			<AbstractedFrom>
+				<Primitive name="Garbage_Collections" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Amount_of_Processes_High" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Low">
+					<Primitive name="Garbage_Collections" minE="0"
+						maxE="3" />
+				</Value>
+				<Value name="Normal">
+					<Primitive name="Garbage_Collections" minE="3"
+						maxE="10" />
+				</Value>
+				<Value name="High">
+					<Primitive name="Garbage_Collections" minE="11"
+						maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P30S" />
+				<Value name="High" maxGap="P10S" />
+			</InterpolationFunction>
+		</State>
+
+
+		<State name="Minor_Page_Faults_Level">
+			<AbstractedFrom>
+				<Primitive name="Minor_Page_Faults" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Amount_of_Processes_High" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Low">
+					<Primitive name="Minor_Page_Faults" minE="0"
+						maxE="100" />
+				</Value>
+				<Value name="Normal">
+					<Primitive name="Minor_Page_Faults" minE="101"
+						maxE="300" />
+				</Value>
+				<Value name="High">
+					<Primitive name="Minor_Page_Faults" minE="301"
+						maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P30S" />
+				<Value name="High" maxGap="P10S" />
+			</InterpolationFunction>
+		</State>
+
+		<State name="Context_Switches_Level">
+			<AbstractedFrom>
+				<Primitive name="Context_Switches" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Amount_of_Processes_High" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Low">
+					<Primitive name="Context_Switches" minE="0"
+						maxE="200" />
+				</Value>
+				<Value name="Normal">
+					<Primitive name="Context_Switches" minE="201"
+						maxE="600" />
+				</Value>
+				<Value name="High">
+					<Primitive name="Context_Switches" minE="601"
+						maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P30S" />
+				<Value name="High" maxGap="P10S" />
+			</InterpolationFunction>
+		</State>
+
+		<State name="System_Load_level">
+			<AbstractedFrom>
+				<State name="Garbage_Collections_Level" />
+				<State name="Page_Activation_Level" />
+				<State name="Context_Switches_Level" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="High_CPU_Usage" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Low">
+					<State name="Garbage_Collections_Level" value="Low" />
+					<State name="Page_Activation_Level" value="Low" />
+					<State name="Context_Switches_Level" value="Low" />
+				</Value>
+				<Value name="Normal">
+					<State name="Garbage_Collections_Level"
+						value="Normal" />
+					<State name="Page_Activation_Level" value="Normal" />
+					<State name="Context_Switches_Level" value="Normal" />
+				</Value>
+				<Value name="High">
+					<State name="Garbage_Collections_Level"
+						value="High" />
+					<State name="Page_Activation_Level" value="High" />
+					<State name="Context_Switches_Level" value="High" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P30S" />
+				<Value name="High" maxGap="P10S" />
+			</InterpolationFunction>
+		</State>
+
+	</States>
+
+
+
+
+
+
+
+
+
+	<!--
+		<Gradients>
+		<Gradient name="Blood Pressure Gradient">
+		<AbstractedFrom>
+		<Primitive name="Blood Pressure"/>
+		</AbstractedFrom>
+		<SymbolicValues scale="ordinal">
+		<Value name="Increasing" />
+		<Value name="Same" />
+		<Value name="Decreasing" />
+		</SymbolicValues>
+		<NecessaryContexts>
+		<Context name="After Running"/>
+		</NecessaryContexts>
+		<PersistenceFunction>
+		<Value name="Increasing">
+		<PersistenceTable timeUnit="minute" type="positive-positive">
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		</PersistenceTable>
+		</Value>
+		<Value name="Same">
+		<PersistenceTable timeUnit="day" type="positive-positive">
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		</PersistenceTable>
+		</Value>
+		<Value name="Decreasing">
+		<PersistenceTable timeUnit="day" type="positive-positive">
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		<Gaps>10 10 10 10 10 10</Gaps>
+		</PersistenceTable>
+		</Value>
+		</PersistenceFunction>
+		<GradientMappingFunction significantVariation="3" />
+		</Gradient>
+		</Gradients>
+		
+		<Patterns>
 		<Pattern name="DDoS Attack" componentType="">
-			<Elements>
-				<Element name="Heart Rate-2">
-					<Primitive name="Heart Rate">
-						<SymbolicValueCondition>
-							<Value name="Normal" />
-						</SymbolicValueCondition>
-						<DurationCondition>
-							<Duration min="P2D" max="P8D" />
-						</DurationCondition>
-						<BoundpointCondition>
-							<StartPoint timeUnit="Month" min="9" max="11" />
-							<EndPoint />
-						</BoundpointCondition>
-					</Primitive>
-				</Element>
-				
-				<Element name="Drug Admin-2">
-					<Event name="Drug Admin" attributeName="Dose">						
-						<NumericValueCondition>
-							<Value minE="200" maxE="400" />
-						</NumericValueCondition>
-						<DurationCondition>
-							<Duration min="P2D" max="P8D" />
-						</DurationCondition>
-						<BoundpointCondition>
-							<StartPoint timeUnit="Month" min="9" max="11" />
-							<EndPoint />
-						</BoundpointCondition>
-					</Event>
-				</Element>
-				
-			</Elements>
+		<Elements>
+		<Element name="Heart Rate-2">
+		<Primitive name="Heart Rate">
+		<SymbolicValueCondition>
+		<Value name="Normal" />
+		</SymbolicValueCondition>
+		<DurationCondition>
+		<Duration min="P2D" max="P8D" />
+		</DurationCondition>
+		<BoundpointCondition>
+		<StartPoint timeUnit="Month" min="9" max="11" />
+		<EndPoint />
+		</BoundpointCondition>
+		</Primitive>
+		</Element>
+		
+		<Element name="Drug Admin-2">
+		<Event name="Drug Admin" attributeName="Dose">						
+		<NumericValueCondition>
+		<Value minE="200" maxE="400" />
+		</NumericValueCondition>
+		<DurationCondition>
+		<Duration min="P2D" max="P8D" />
+		</DurationCondition>
+		<BoundpointCondition>
+		<StartPoint timeUnit="Month" min="9" max="11" />
+		<EndPoint />
+		</BoundpointCondition>
+		</Event>
+		</Element>
+		
+		</Elements>
 		</Pattern>
-	</Patterns>
+		</Patterns>
 	-->
 </Ontology>

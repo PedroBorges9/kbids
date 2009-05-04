@@ -13,26 +13,26 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 		_newElements = new HashMap<String, T>();
 		_currentElements = new HashMap<String, T>();
 	}
-	
+
 	public void addElement(T element){
 		String name = element.getName();
 		_newElements.put(name, element);
 	}
-	
+
 	public ArrayList<T> getOldElements(String st){
 		return _oldElements.get(st);
 	}
-	
+
 	public T getNewestElement(String st){
 		return _newElements.get(st);	 
 	}
-	
+
 	public T getCurrentElement(String st){
 		return _currentElements.get(st);
 	}
-		
+
 	public void shiftBack(){
-		
+
 		for (Map.Entry<String, T> newElement: _newElements.entrySet()){
 			String name=newElement.getKey();
 			T current=_currentElements.get(name);
@@ -53,8 +53,8 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	public void discardOlderThen(long time){
 		Iterator<Map.Entry<String, T>> iter=_currentElements.entrySet().iterator();
 		while(iter.hasNext()){
-			 Map.Entry<String, T> currentElement = iter.next();
-			 String name=currentElement.getKey();
+			Map.Entry<String, T> currentElement = iter.next();
+			String name=currentElement.getKey();
 			if (currentElement.getValue().getTimeInterval().getEndTime()<time){
 				_oldElements.remove(name);
 				iter.remove();
@@ -73,15 +73,15 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 			}
 		}
 	}
-	
-	
+
+
 	@Override
 	public String toString(){
-		
+
 		return "Complex Element Container\n Contains :\n" +
-				"New Elements: \n"+_newElements+"\n" +
-				"current Elements: "+_currentElements+"\n" +
-				"old Elements:"+_oldElements;
+		"New Elements: \n"+_newElements+"\n" +
+		"current Elements: "+_currentElements+"\n" +
+		"old Elements:"+_oldElements;
 	}
 
 	public boolean hasNew() {

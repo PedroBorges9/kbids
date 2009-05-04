@@ -7,7 +7,6 @@ import java.util.List;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.instances.Context;
 
 
 /**
@@ -29,14 +28,16 @@ public class ContextDef extends ElementDef {
 	public void createContext(AllInstanceContainer aic, int iteration){
 		if (assertNotCreatedIn(iteration)){
 			for (Induction i: _inductions){
-				i.induct(aic);
+				if (i.induct(aic)){
+					_lastCreated=iteration;
+					return;
+				}
 			}
 		}
 	}
 
 	@Override
 	public String toString(){
-		// TODO Auto-generated method stub
 		return "contextDef "+ _name +"\n inductions: "+_inductions;
 	}
 

@@ -1,5 +1,7 @@
 package dt.processor.kbta.container;
 
+import java.util.Date;
+
 import dt.processor.kbta.ontology.*;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Event;
@@ -84,8 +86,18 @@ public class AllInstanceContainer {
 		_states.shiftBack();
 		_trends.shiftBack();
 		_patterns.shiftBack();
-		
 	}	
+	
+	public void discardElementsNotWithinRange(long time){
+		long current=new Date().getTime();
+		long cutOffTime=current-time;
+		_primitives.discardOlderThen(cutOffTime);
+		_contexts.discardOlderThen(cutOffTime);
+		_events.discardOlderThen(cutOffTime);
+		_patterns.discardOlderThen(cutOffTime);
+		_states.discardOlderThen(cutOffTime);
+		_trends.discardOlderThen(cutOffTime);
+	}
 	
 	
 }

@@ -39,28 +39,24 @@ public class Induction {
 		_gap=gap;
 	}
 
-	public void induct(AllInstanceContainer container){
+	public boolean induct(AllInstanceContainer container){
 		switch (_type){
 		case Element.PRIMITIVE:
-			inductFromPrimitive(container);
-			break;
+			return inductFromPrimitive(container);
 		case Element.EVENT:
-			inductFromEvent(container);
-			break;	
+			return inductFromEvent(container);
 		case Element.STATE:
-			inductFromState(container);
-			break;
+			return inductFromState(container);
 		case Element.TREND:
-			inductFromTrend(container);
-			break;
+			return inductFromTrend(container);
 		default:
 			Log.e(TAG,"ILLEGAL TYPE ( "+_type+" )TO INDUCT CONTEXT "+_name+" NOT SUPPOSED TO HAPPEN");
-		break;
+		return false;
 		}
 
 	}
 
-	private void inductFromTrend(AllInstanceContainer container){
+	private boolean inductFromTrend(AllInstanceContainer container){
 		long start=-1;
 		long end=-1;
 		boolean create=false;
@@ -77,12 +73,13 @@ public class Induction {
 				}
 			}
 			if (create){
-				createContext(container, start, end);
+				return (createContext(container, start, end));
 			}
 		}
+		return false;
 	}
 
-	private void inductFromState(AllInstanceContainer container){
+	private boolean inductFromState(AllInstanceContainer container){
 		long start=-1;
 		long end=-1;
 		boolean create=false;
@@ -99,13 +96,15 @@ public class Induction {
 				}
 			}
 			if (create){
-				createContext(container, start, end);
+				return (createContext(container, start, end));
 			}
 		}
+		return false;
 	}
 
-	private void inductFromEvent(AllInstanceContainer container){
-		ArrayList<Event> events=container.getEvents().getCurrentEvent(_from);//TODO//
+	private boolean inductFromEvent(AllInstanceContainer container){
+		ArrayList<Event> events=container.getEvents().getCurrentEvent(_from);
+		boolean created=false;
 		if (events!=null){
 			for (Event e : events){
 				long start = -1;
@@ -117,12 +116,15 @@ public class Induction {
 				else{
 					end = e.getTimeInterval().getEndTime() + _gap;
 				}
-				createContext(container, start, end);
+				if (createContext(container, start, end)){
+					created=true;
+				}
 			}
 		}
+		return false;
 	}
 
-	private void inductFromPrimitive(AllInstanceContainer container){
+	private boolean inductFromPrimitive(AllInstanceContainer container){
 		long start=-1;
 		long end=-1;
 		boolean create=false;
@@ -134,26 +136,31 @@ public class Induction {
 				create = true;
 			}
 			if (create){
-				createContext(container, start, end);
+				return (createContext(container, start, end));
 			}
 		}
+		return false;
 	}
 
-	private void createContext(AllInstanceContainer container, long start, long end){
+	private boolean createContext(AllInstanceContainer container, long start, long end){
 		Context context=container.getContexts().getCurrentElement(_name);
-		
 		if (context!=null){
 			long contextEnd=context.getTimeInterval().getEndTime();
 			if (contextEnd<start){
 				container.addContext( new Context( _name, new TimeInterval(start, end)));
+				return true;
 			}
 			else if(contextEnd<end){
 				context.getTimeInterval().setEndTime(end);
+				return false;
 			}
 		}
 		else {
 			container.addContext( new Context( _name, new TimeInterval(start, end)));
+			return true;
 		}
+		Log.e(TAG,"unreacheable code in induction createContext has been reached");
+		return false;
 
 	}
 
