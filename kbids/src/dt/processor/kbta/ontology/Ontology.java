@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 
 public class Ontology {
@@ -26,6 +26,11 @@ public class Ontology {
 		return _contextDefiners;
 	}
 
+
+	public HashMap<String, StateDef> getStateDefiners() {
+		return _stateDefiners;
+	}
+	
 	public void AddContextDefiners(ContextDef c){
 		_contextDefiners.add(c);
 	}

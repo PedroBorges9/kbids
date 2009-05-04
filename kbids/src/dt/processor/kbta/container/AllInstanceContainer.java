@@ -91,12 +91,12 @@ public class AllInstanceContainer {
 	public void discardElementsNotWithinRange(long time){
 		long current=new Date().getTime();
 		long cutOffTime=current-time;
-		_primitives.discardOlderThen(cutOffTime);
-		_contexts.discardOlderThen(cutOffTime);
-		_events.discardOlderThen(cutOffTime);
-		_patterns.discardOlderThen(cutOffTime);
-		_states.discardOlderThen(cutOffTime);
-		_trends.discardOlderThen(cutOffTime);
+		_primitives.discardOlderThan(cutOffTime);
+		_contexts.discardOlderThan(cutOffTime);
+		_events.discardOlderThan(cutOffTime);
+		_patterns.discardOlderThan(cutOffTime);
+		_states.discardOlderThan(cutOffTime);
+		_trends.discardOlderThan(cutOffTime);
 	}
 	
 	

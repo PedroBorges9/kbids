@@ -77,7 +77,7 @@
 					<Primitive name="CPU_Usage" minE="0" maxE="20" />
 					<State name="blabla" value="Low" />
 				</Value>
-				<Value name="Normal">
+				<Value name="Normal">	
 					<Primitive name="CPU_Usage" minE="21" maxE="70" />
 					<State name="blabla" value="Low" />
 				</Value>

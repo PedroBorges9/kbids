@@ -41,7 +41,7 @@ public class PrimitiveContainer implements ElementContainer{
 	}
 
 	@Override
-	public void discardOlderThen(long time){
+	public void discardOlderThan(long time){
 		Iterator<Map.Entry<String, Primitive>> currentIter=_currentElements.entrySet().iterator();
 		while(currentIter.hasNext()){
 			Map.Entry<String, Primitive> currentPrimitive = currentIter.next();

@@ -17,7 +17,7 @@ import android.os.Bundle;
 public class Event extends Element {
 	
 	public Event(  String name, TimeInterval timeInterval) {
-		 super( name, timeInterval);
+		 super(Element.EVENT, name, timeInterval);
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ public class State extends Abstraction {
 	
 
 	public State(  String name, String value, TimeInterval timeInterval) {
-		super( name, value,timeInterval);
+		super(Element.STATE, name, value,timeInterval);
 	}
 
 }

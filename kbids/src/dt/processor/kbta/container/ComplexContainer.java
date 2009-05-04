@@ -26,11 +26,15 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	public T getNewestElement(String st){
 		return _newElements.get(st);	 
 	}
-
+	
 	public T getCurrentElement(String st){
 		return _currentElements.get(st);
 	}
-
+	
+	public void setNewestElement(T t){
+		_newElements.put(t.getName(), t);
+	}
+		
 	public void shiftBack(){
 
 		for (Map.Entry<String, T> newElement: _newElements.entrySet()){
@@ -50,7 +54,7 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	}
 
 	@Override
-	public void discardOlderThen(long time){
+	public void discardOlderThan(long time){
 		Iterator<Map.Entry<String, T>> iter=_currentElements.entrySet().iterator();
 		while(iter.hasNext()){
 			Map.Entry<String, T> currentElement = iter.next();
@@ -74,7 +78,12 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 		}
 	}
 
-
+	public void removeCurrentElement(String name){
+		_currentElements.remove(name);
+		
+	}
+	
+	
 	@Override
 	public String toString(){
 
