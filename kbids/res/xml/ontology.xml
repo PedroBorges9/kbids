@@ -19,7 +19,7 @@
 				<Induction>
 					<Event name="Keyboard_Opening" />
 
-					<Ends relativeTo="end" gap="PT2H" />
+					<Ends relativeTo="end" gap="PT1M" />
 
 				</Induction>
 				<Induction>
@@ -37,11 +37,7 @@
 				<Induction>
 					<Primitive name="CPU_Usage" min="80" maxE="100" />
 
-					<Ends relativeTo="end" gap="PT2S" />
-				</Induction>
-				<Induction>
-					<State name="CPU_Usage_Level" value="High" />
-					<Ends relativeTo="end" gap="PT1S" />
+					<Ends relativeTo="end" gap="PT20S" />
 				</Induction>
 			</Inductions>
 
@@ -49,6 +45,7 @@
 				<Primitive name="CPU_Usage" min="20" maxE="60" />
 			</Destructions>
 		</Context>
+
 		<Context name="Amount_of_Processes_High">
 			<Inductions>
 				<Induction>
@@ -64,35 +61,31 @@
 	</Contexts>
 
 	<States>
-		<State name="CPU_Usage_Level">
+		<!-- 		<State name="CPU_Usage_Level">
 			<AbstractedFrom>
-				<Primitive name="CPU_Usage" />
-				<State name="blabla" />
+			<Primitive name="CPU_Usage" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<Context name="Keyboard_Open" />
+			<Context name="Keyboard_Open" />
 			</NecessaryContexts>
 			<MappingFunction>
-				<Value name="Low">
-					<Primitive name="CPU_Usage" minE="0" maxE="20" />
-					<State name="blabla" value="Low" />
-				</Value>
-				<Value name="Normal">	
-					<Primitive name="CPU_Usage" minE="21" maxE="70" />
-					<State name="blabla" value="Low" />
-				</Value>
-				<Value name="High">
-					<Primitive name="CPU_Usage" minE="71" maxE="100" />
-					<State name="blabla" value="High" />
-				</Value>
+			<Value name="Low">
+			<Primitive name="CPU_Usage" minE="0" maxE="20" />
+			</Value>
+			<Value name="Normal">	
+			<Primitive name="CPU_Usage" minE="21" maxE="70" />
+			</Value>
+			<Value name="High">
+			<Primitive name="CPU_Usage" minE="71" maxE="100" />
+			</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P10D" />
-				<Value name="High" maxGap="P10D" />
+			<Value name="Low" maxGap="PT1M" />
+			<Value name="Normal" maxGap="P10D" />
+			<Value name="High" maxGap="P10D" />
 			</InterpolationFunction>
-		</State>
-		
+			</State>
+		-->
 		<State name="Garbage_Collections_Level">
 			<AbstractedFrom>
 				<Primitive name="Garbage_Collections" />
@@ -103,14 +96,14 @@
 			<MappingFunction>
 				<Value name="Low">
 					<Primitive name="Garbage_Collections" minE="0"
-						maxE="3" />
+						maxE="30" />
 				</Value>
 				<Value name="Normal">
-					<Primitive name="Garbage_Collections" minE="3"
-						maxE="10" />
+					<Primitive name="Garbage_Collections" minE="31"
+						maxE="100" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Garbage_Collections" minE="11"
+					<Primitive name="Garbage_Collections" minE="101"
 						maxE="*" />
 				</Value>
 			</MappingFunction>
@@ -120,7 +113,7 @@
 				<Value name="High" maxGap="P10S" />
 			</InterpolationFunction>
 		</State>
-		
+
 		<State name="Minor_Page_Faults_Level">
 			<AbstractedFrom>
 				<Primitive name="Minor_Page_Faults" />
@@ -163,10 +156,10 @@
 				</Value>
 				<Value name="Normal">
 					<Primitive name="Context_Switches" minE="201"
-						maxE="600" />
+						maxE="1500" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Context_Switches" minE="601"
+					<Primitive name="Context_Switches" minE="1501"
 						maxE="*" />
 				</Value>
 			</MappingFunction>
@@ -180,7 +173,7 @@
 		<State name="System_Load_level">
 			<AbstractedFrom>
 				<State name="Garbage_Collections_Level" />
-				<State name="Page_Activation_Level" />
+				<State name="Minor_Page_Faults_Level" />
 				<State name="Context_Switches_Level" />
 			</AbstractedFrom>
 			<NecessaryContexts>
@@ -189,19 +182,20 @@
 			<MappingFunction>
 				<Value name="Low">
 					<State name="Garbage_Collections_Level" value="Low" />
-					<State name="Page_Activation_Level" value="Low" />
+					<State name="Minor_Page_Faults_Level" value="Low" />
 					<State name="Context_Switches_Level" value="Low" />
 				</Value>
 				<Value name="Normal">
 					<State name="Garbage_Collections_Level"
 						value="Normal" />
-					<State name="Page_Activation_Level" value="Normal" />
+					<State name="Minor_Page_Faults_Level"
+						value="Normal" />
 					<State name="Context_Switches_Level" value="Normal" />
 				</Value>
 				<Value name="High">
 					<State name="Garbage_Collections_Level"
 						value="High" />
-					<State name="Page_Activation_Level" value="High" />
+					<State name="Minor_Page_Faults_Level" value="High" />
 					<State name="Context_Switches_Level" value="High" />
 				</Value>
 			</MappingFunction>

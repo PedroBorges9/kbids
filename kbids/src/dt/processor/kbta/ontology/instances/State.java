@@ -16,5 +16,12 @@ public class State extends Abstraction {
 	public State(  String name, String value, TimeInterval timeInterval) {
 		super(Element.STATE, name, value,timeInterval);
 	}
+	
+
+	@Override
+	public String toString(){
+		return super.toString() + " value= "+_value;
+	}
+
 
 }

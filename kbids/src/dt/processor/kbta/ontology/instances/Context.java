@@ -18,7 +18,7 @@ public class Context extends Element {
 	
 	@Override
 	public String toString(){
-		return "Context "+_name+" time interval "+_timeInterval;
+		return "Context "+super.toString();
 	}
 
 }

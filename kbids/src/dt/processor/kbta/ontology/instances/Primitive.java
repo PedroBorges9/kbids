@@ -27,7 +27,7 @@ public class Primitive extends Element {
 
 
 	public String toString(){	
-		return "Primitive "+" name= "+_name+" start= "+_timeInterval.getStartTime()+" end= "+_timeInterval.getEndTime()+" value= "+_value;
+		return "Primitive "+" name= "+_name+" time interval "+_timeInterval+" value= "+_value;
 	}
 
 	
