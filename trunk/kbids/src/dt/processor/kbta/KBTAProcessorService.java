@@ -1,9 +1,7 @@
 package dt.processor.kbta;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Service;
@@ -23,13 +21,11 @@ import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
-import dt.processor.kbta.ontology.instances.Event;
-import dt.processor.kbta.ontology.instances.Primitive;
 import dt.processor.kbta.threats.ThreatAssessment;
 import dt.processor.kbta.threats.ThreatAssessmentLoader;
 import dt.processor.kbta.threats.ThreatAssessor;
 
-public class KBTAProcessorService extends Service implements ServiceConnection{
+public final class KBTAProcessorService extends Service implements ServiceConnection{
 	public static final String TAG = "KBTAProcessor";
 
 	private TWU _twu;
@@ -111,8 +107,9 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 					Collection<ThreatAssessment> threats = _threatAssessor
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
-						Log.w("KBTAThreats", "**********THREATS********\n" + threats
-								+ "\n");
+						for (ThreatAssessment ta : threats){
+							Log.d("KBTAThreats", ta.toString());							
+						}
 					}
 					if (_twu != null){
 						// Sending the processor's name, threat title, threat
@@ -122,7 +119,8 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 						// (0 - 100)%
 						for (ThreatAssessment ta : threats){
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
-									.getTitle(), ta.getDescription(), ta.getCertainty());
+									.getTitle(), ta.getDescription(), ta.getCertainty(),
+								null); // TODO add bundle
 						}
 					}
 				}catch(Throwable t){
@@ -133,8 +131,7 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 
 			@Override
 			public void stoppedMonitoring() throws RemoteException{
-				// Called by the agent when he stops running
-				// do whatever you want here
+				// Called by the agent when it stops running
 			}
 		};
 	}
@@ -144,16 +141,14 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 			return;
 		}
 		++_iteration;
-		featuresToElements(features);
-
+		createPrimitivesAndEvents(features);
+		System.out.println("\n----------- Global iteration #" + _iteration + "-----------\n");
 		boolean cont = false;
 		int i = 1;
 		do{
+			System.out.println("-- Inner iteration #" + i++ + "--");
 			_allInstances.getContexts().shiftBack();
 			createContexts();
-			System.out.println("Inner iteration #" + i++);
-			System.out.println("\n********CONTEXTS:***********\n"
-					+ _allInstances.getContexts());
 			createAbstractions();
 			cont = _allInstances.hasNew();
 		}while (cont);
@@ -163,84 +158,61 @@ public class KBTAProcessorService extends Service implements ServiceConnection{
 		_allInstances.discardElementsNotWithinRange(_time);
 	}
 
-	private void createPatterns(){
-		// TODO Auto-generated method stub
-
+	private void createContexts(){
+		ContextDef[] contextDefs = _ontology.getContextDefiners();
+		for (ContextDef cd : contextDefs){
+			cd.createContext(_allInstances, _iteration);
+		}
+		System.out.println("******** Contexts: ***********\n"
+				+ _allInstances.getContexts());
 	}
 
 	private void createAbstractions(){
 		_allInstances.getStates().shiftBack();
 		createStates();
-		System.out.println("\n*******states**********\n" + _allInstances.getStates());
 		_allInstances.getTrends().shiftBack();
-		// TODO createTrends
-
+		createTrends();
 	}
 
 	private void createStates(){
-		HashMap<String, StateDef> stateDefs = _ontology.getStateDefiners();
-		for (StateDef sd : stateDefs.values()){
-			if (sd.assertNotCreatedIn(_iteration)){
-				sd.createState(_allInstances, _iteration);
-			}
+		StateDef[] stateDefs = _ontology.getStateDefiners();
+		for (StateDef sd : stateDefs){
+			sd.createState(_allInstances, _iteration);
 		}
-
+		System.out.println("******** States: ***********\n" + _allInstances.getStates());
 	}
 
-	private void createContexts(){
-		ArrayList<ContextDef> contextDefs = _ontology.getContextDefiners();
-		for (ContextDef cd : contextDefs){
-			cd.createContext(_allInstances, _iteration);
-		}
-
+	private void createTrends(){
+		// TODO create trends
 	}
 
-	private void featuresToElements(List<MonitoredData> features){
-		for (MonitoredData m : features){
+	private void createPatterns(){
+		// TODO create patterns
+	}
+
+	private void createPrimitivesAndEvents(List<MonitoredData> features){
+		for (MonitoredData md : features){
 			// Extracting the properties of the feature
-			String name = m.getName();
-			Date start = m.getStartTime();
-			Date end = m.getEndTime();
-			Double value = valueToDouble(m);
+			String name = md.getName();
+			Date start = md.getStartTime();
+			Date end = md.getEndTime();
+			Double value = md.mdToDouble();
 			if (name == null || start == null || end == null || value == null){
 				continue;
 			}
 
 			// Matching feature to a primitive
 			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
-			// System.out.println("\nPRIMITIVES:");
 			if (pd != null){
-				Primitive primitive = pd.definePrimitive(start, end, value);
-				_allInstances.addPrimitive(primitive);
-				// System.out.println(primitive.toString()); // TODO Remove
+				pd.createPrimitive(start, end, value, _allInstances);
 			}
 
+			// Matching feature to an event
 			EventDef ed = _ontology.getEventDef(name);
 			if (ed != null){
-				Collection<Event> events = ed.defineEvents(m);
-				if (events != null){
-					// System.out.println("\nEVENTS:");
-					for (Event event : events){
-						_allInstances.addEvent(event);
-						// System.out.println(event); // TODO Remove
-					}
-				}
+				ed.createEvents(md.getExtras(), _allInstances);
 			}
 		}
-	}
-
-	public Double valueToDouble(MonitoredData md){
-		Object value = md.getValue();
-
-		if (value instanceof Integer){
-			return ((Integer)value).doubleValue();
-		}else if (value instanceof Long){
-			return ((Long)value).doubleValue();
-		}else if (value instanceof Double){
-			return ((Double)value).doubleValue();
-		}
-		return null;
-
 	}
 
 	@Override

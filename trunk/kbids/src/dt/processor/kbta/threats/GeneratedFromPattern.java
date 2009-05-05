@@ -2,31 +2,22 @@ package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 
-public class GeneratedFromPattern extends GeneratedFrom {
+public final class GeneratedFromPattern extends GeneratedFrom{
 
 	public GeneratedFromPattern(String name,
-			SymbolicValueCondition symbolicValueCondition,
-			DurationCondition durationCondition) {
+		SymbolicValueCondition symbolicValueCondition, DurationCondition durationCondition){
 		super(name, symbolicValueCondition, durationCondition);
-		
 	}
 
-	
 	@Override
-	public String toString() {
-		String st="";
-		st += "< Pattern"  + " name=" + _name + ">\n";
-		st += _symbolicValueCondition;
-		st += "\n";
-		st += _durationCondition;
-
-		return st;
-	}
-
-
-	@Override
-	public boolean matchConditions(AllInstanceContainer allInstances) {
-		// TODO Auto-generated method stub
+	public boolean matchConditions(AllInstanceContainer allInstances){
+		// TODO Implement threat generation from patterns
 		return false;
 	}
+
+	@Override
+	public String toString(){
+		return "Pattern: " + super.toString();
+	}
+
 }

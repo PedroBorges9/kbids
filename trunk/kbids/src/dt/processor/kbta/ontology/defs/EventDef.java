@@ -3,11 +3,8 @@
  */
 package dt.processor.kbta.ontology.defs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import android.os.Bundle;
-import dt.fe.MonitoredData;
+import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.instances.Event;
 
 /**
@@ -21,29 +18,25 @@ public class EventDef extends ElementDef{
 		_latestEventTime = 0;
 	}
 
-	public Collection<Event> defineEvents(MonitoredData m){
-		Collection<Event> events = new ArrayList<Event>();
-		Bundle bundle = m.getExtras();
+	public final void createEvents(Bundle extras, AllInstanceContainer allInstances){		
 		long[] eventTimes;
 
-		if (bundle == null || (eventTimes = bundle.getLongArray("Events")) == null
+		if (extras == null || (eventTimes = extras.getLongArray("Events")) == null
 				|| eventTimes.length == 0){
-			return null;
+			return;
 		}
-
+		
 		for (int i = eventTimes.length - 1; i >= 0; --i){
 			long eventTime = eventTimes[i];
 			if (eventTime <= _latestEventTime){
 				break;
 			}
 
-			Event e = new Event(_name, eventTime, eventTime);
-			events.add(e);
+			Event event = new Event(_name, eventTime, eventTime);
+			allInstances.addEvent(event);
 		}
 
 		_latestEventTime = eventTimes[eventTimes.length - 1];
-
-		return events;
 	}
 
 	@Override

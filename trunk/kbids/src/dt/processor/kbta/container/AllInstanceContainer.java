@@ -88,7 +88,7 @@ public class AllInstanceContainer {
 	}	
 	
 	public void discardElementsNotWithinRange(long time){
-		long current=new Date().getTime();
+		long current= System.currentTimeMillis();
 		long cutOffTime=current-time;
 		_primitives.discardOlderThan(cutOffTime);
 		_contexts.discardOlderThan(cutOffTime);

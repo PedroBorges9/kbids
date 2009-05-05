@@ -3,16 +3,14 @@
  */
 package dt.processor.kbta.ontology.instances;
 
-import java.util.Date;
-
 /**
  * @author
  */
-public class Primitive extends Element{
+public final class Primitive extends Element{
 	private final double _value;
 
-	public Primitive(String name, double value, Date start, Date end){
-		super(PRIMITIVE, name, start.getTime(), end.getTime());
+	public Primitive(String name, double value, long start, long end){
+		super(PRIMITIVE, name, start, end);
 		_value = value;
 	}
 
@@ -20,8 +18,9 @@ public class Primitive extends Element{
 		return _value;
 	}
 
+	@Override
 	public String toString(){
-		return "Primitive " + super.toString() + " value= " + _value;
+		return super.toString() + " value= " + _value;
 	}
 
 }

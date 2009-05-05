@@ -8,28 +8,31 @@ import java.util.List;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.defs.ElementDef;
 
-
 /**
- * @author 
- *
+ * @author
  */
-public class ContextDef extends ElementDef {
+public final class ContextDef extends ElementDef{
+	private final Induction[] _inductions;
 
-	private List<Induction> _inductions;
-	private List<Destruction> _destructions;
+	private final Destruction[] _destructions;
 
 	public ContextDef(String name, List<Induction> inductions,
 		List<Destruction> destructions){
 		super(name);
-		this._inductions = inductions;
-		this._destructions = destructions;
+		_inductions = inductions.toArray(new Induction[inductions.size()]);
+		
+		if (destructions == null){
+			_destructions = null;	
+		}else{
+			_destructions = destructions.toArray(new Destruction[destructions.size()]);		
+		}
 	}
 
 	public void createContext(AllInstanceContainer aic, int iteration){
 		if (assertNotCreatedIn(iteration)){
-			for (Induction i: _inductions){
-				if (i.induct(aic)){
-					_lastCreated=iteration;
+			for (Induction induction : _inductions){
+				if (induction.induce(aic)){
+					setLastCreated(iteration);
 					return;
 				}
 			}
@@ -38,7 +41,6 @@ public class ContextDef extends ElementDef {
 
 	@Override
 	public String toString(){
-		return "contextDef "+ _name +"\n inductions: "+_inductions;
+		return "contextDef " + _name + "\n inductions: " + _inductions;
 	}
-
 }
