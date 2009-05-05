@@ -3,7 +3,7 @@ package dt.processor.kbta.ontology.defs.abstractions;
 import dt.processor.kbta.ontology.instances.Element;
 
 public class AbstractedFrom{
-	private final int _type;// TODO change to int
+	private final int _type;
 
 	private final String _name;
 
@@ -15,8 +15,6 @@ public class AbstractedFrom{
 		_hashCode = (_type + _name).hashCode();
 	}
 	
-
-
 	public String getName(){
 		return _name;
 	}

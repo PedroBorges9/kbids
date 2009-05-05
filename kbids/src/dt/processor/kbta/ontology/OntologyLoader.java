@@ -25,312 +25,289 @@ import dt.processor.kbta.ontology.defs.abstractions.PrimitiveCondition;
 import dt.processor.kbta.ontology.defs.abstractions.StateCondition;
 import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
+import dt.processor.kbta.ontology.defs.context.Destruction;
+import dt.processor.kbta.ontology.defs.context.EventInduction;
 import dt.processor.kbta.ontology.defs.context.Induction;
+import dt.processor.kbta.ontology.defs.context.PrimitiveInduction;
+import dt.processor.kbta.ontology.defs.context.StateInduction;
+import dt.processor.kbta.ontology.defs.context.TrendInduction;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.util.ISODuration;
-import dt.processor.kbta.util.InvalidDateException;
 
 /**
  * @author
- * 
  */
-public class OntologyLoader {
+public class OntologyLoader{
 	public static final String TAG = "OntologyLoader";
-	private Ontology _ontology;
 
-	public Ontology loadOntology(Context context) {
-		_ontology = new Ontology();
+	private final HashMap<String, PrimitiveDef> _primitives;
 
-		int eventType;
-		try {
+	private final HashMap<String, EventDef> _events;
+
+	private final ArrayList<ContextDef> _contexts;
+
+	private final ArrayList<StateDef> _states;
+
+	public OntologyLoader(){
+		_primitives = new HashMap<String, PrimitiveDef>();
+		_events = new HashMap<String, EventDef>();
+		_contexts = new ArrayList<ContextDef>();
+		_states = new ArrayList<StateDef>();
+	}
+
+	public Ontology loadOntology(Context context){
+		try{
 			XmlPullParser xpp = context.getResources().getXml(R.xml.ontology);
 
-			eventType = xpp.getEventType();
-
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				if (eventType == XmlPullParser.START_DOCUMENT) {
-				} else if (eventType == XmlPullParser.START_TAG) {
-					String name = xpp.getName();
-					if (TextUtils.isEmpty(name))
-						continue;
-					else if (name.equalsIgnoreCase("Primitives")) {
-						parsePrimitives(xpp);
-					} else if (name.equalsIgnoreCase("Events")) {
-						parseEvents(xpp);
-
-					} else if (name.equalsIgnoreCase("Contexts")) {
-						parseContexts(xpp);
-
-					} else if (name.equalsIgnoreCase("States")) {
-					//	 System.out.println("Before parseStates");
-						 parseStates(xpp);
-//						 System.out.println("Finish parse states");
-
-					} else if (name.equalsIgnoreCase("Trends")) {
-
-					}
-
-					else if (name.equalsIgnoreCase("Patterns")) {
-
-					}
-				} else if (eventType == XmlPullParser.END_TAG) {
-				} else if (eventType == XmlPullParser.TEXT) {
+			for (int eventType = xpp.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xpp
+					.next()){
+				String tag;
+				if (eventType != XmlPullParser.START_TAG || isEmpty(tag = xpp.getName())){
+					continue;
 				}
-				eventType = xpp.next();
+
+				if (tag.equalsIgnoreCase("Primitives")){
+					parsePrimitives(xpp);
+				}else if (tag.equalsIgnoreCase("Events")){
+					parseEvents(xpp);
+				}else if (tag.equalsIgnoreCase("Contexts")){
+					parseContexts(xpp);
+				}else if (tag.equalsIgnoreCase("States")){
+					parseStates(xpp);
+				}else if (tag.equalsIgnoreCase("Trends")){
+					// TODO Parse Trends
+				}else if (tag.equalsIgnoreCase("Patterns")){
+					// TODO Parse patterns
+				}
 			}
 
-			return _ontology;
+			return new Ontology(_primitives, _events, _contexts, _states);
 
-		} catch (Exception e) {
+		}catch(Exception e){
 			Log.e(TAG, "Error while loading Ontology", e);
 		}
 
 		return null;
 	}
 
-	private void parsePrimitives(XmlPullParser xmlOntology)
-			throws XmlPullParserException, IOException {
+	private void parsePrimitives(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
 		// System.out.println("parsing primitives");
-		String name;
-		String minS;
-		String maxS;
-		boolean minE = true;
-		boolean maxE = true;
-		double min;
-		double max;
-		int eventType;
-		String tag;
-		PrimitiveDef p = null;
-		eventType = xmlOntology.next();
-
-		while (eventType != XmlPullParser.END_TAG
-				|| !(tag = xmlOntology.getName())
-						.equalsIgnoreCase("Primitives")) {
-			tag = xmlOntology.getName();
-			if (eventType == XmlPullParser.START_TAG
-					&& tag.equalsIgnoreCase("Primitive")) {
-				name = xmlOntology.getAttributeValue(null, "name");
-				if (TextUtils.isEmpty(name)) {
+		for (int eventType = xpp.next(); eventType != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Primitives"); eventType = xpp.next()){
+			String tag = xpp.getName();
+			if (eventType == XmlPullParser.START_TAG && tag.equalsIgnoreCase("Primitive")){
+				String name = xpp.getAttributeValue(null, "name");
+				if (TextUtils.isEmpty(name)){
 					Log.e(TAG, "Missing name for a primitive");
 					continue;
 				}
-				NumericRange range = NumericRange.parseRange(xmlOntology);
-				if (range != null) {
-					p = new PrimitiveDef(name, range);
-					_ontology.addPrimitiveDef(p);
-				} else {
-					Log.e(TAG, "Invalid numeric range for the primitive "
-							+ name);
+				NumericRange range = parseNumericRange(xpp);
+				if (range == null){
+					Log.e(TAG, "Invalid numeric range for the primitive " + name);
+					continue;
 				}
+				PrimitiveDef pd = new PrimitiveDef(name, range);
+				_primitives.put(pd.getName(), pd);
 			}
-			eventType = xmlOntology.next();
 		}
 	}
 
-	private void parseEvents(XmlPullParser xmlOntology)
-			throws XmlPullParserException, IOException {
-		int eventType;
-		String name;
-		String tag;
+	private void parseEvents(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
+		for (int eventType = xpp.next(); eventType != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Events"); eventType = xpp.next()){
 
-		eventType = xmlOntology.next();
-
-		while (eventType != XmlPullParser.END_TAG
-				|| !(tag = xmlOntology.getName()).equalsIgnoreCase("Events")) {
-			tag = xmlOntology.getName();
 			if (eventType == XmlPullParser.START_TAG
-					&& tag.equalsIgnoreCase("Event")) {
-				name = xmlOntology.getAttributeValue(null, "name");
-				if (TextUtils.isEmpty(name)) {
+					&& xpp.getName().equalsIgnoreCase("Event")){
+				String name = xpp.getAttributeValue(null, "name");
+				if (TextUtils.isEmpty(name)){
 					Log.e(TAG, "Missing name for an event");
 					continue;
 				}
-
 				EventDef ed = new EventDef(name);
-				_ontology.addEventDef(ed);
+				_events.put(ed.getName(), ed);
 			}
-			eventType = xmlOntology.next();
 		}
 	}
 
-	private void parseContexts(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+	private void parseContexts(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
 		int eventType;
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("Contexts")) {
-			if (eventType == XmlPullParser.START_TAG
-					&& "Context".equals(xpp.getName())) {
+				|| !xpp.getName().equalsIgnoreCase("Contexts")){
+			if (eventType == XmlPullParser.START_TAG && "Context".equals(xpp.getName())){
 				loadContext(xpp);
 			}
 		}
 	}
 
 	private void loadContext(XmlPullParser xpp) throws XmlPullParserException,
-			IOException {
-		int eventType;
-		String tag;
-		String contextName = null;
+			IOException{
 		ArrayList<Induction> inductions = null;
+		ArrayList<Destruction> destructions = null;
 
-		contextName = xpp.getAttributeValue(null, "name");
-		if (contextName == null) {
+		String contextName = xpp.getAttributeValue(null, "name");
+		if (contextName == null){
 			Log.e(TAG, "No name for context");
 			return;
 		}
 
+		// Parsing inductions and destructions
+		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !(tag = xpp.getName()).equalsIgnoreCase("Context")) {
-
-			if (eventType == XmlPullParser.START_TAG
-					&& "Inductions".equals(xpp.getName())) {
-
-				inductions = parseInductions(xpp, contextName);
-
-			} else if ("Destructions".equals(xpp.getName())) {
-
+				|| !xpp.getName().equalsIgnoreCase("Context")){
+			if (eventType == XmlPullParser.START_TAG){
+				String tag = xpp.getName();
+				if ("Inductions".equalsIgnoreCase(tag)){
+					inductions = parseInductions(xpp, contextName);
+				}else if ("Destructions".equalsIgnoreCase(tag)){
+					// TODO parse destructions
+				}
 			}
+
 		}
-		if (contextName != null) {
-			ContextDef cd = new ContextDef(contextName, inductions, null);
-			_ontology.AddContextDefiners(cd);
+		if (inductions == null || inductions.isEmpty()){
+			Log.e(TAG, "No inductions for context: " + contextName);
+			return;
 		}
+
+		ContextDef cd = new ContextDef(contextName, inductions, destructions);
+		_contexts.add(cd);
 	}
 
-	private ArrayList<Induction> parseInductions(XmlPullParser xpp,
-			String context) throws XmlPullParserException, IOException {
-		int eventType;
-		String tag;
+	private ArrayList<Induction> parseInductions(XmlPullParser xpp, String contextName)
+			throws XmlPullParserException, IOException{
 		ArrayList<Induction> inductions = new ArrayList<Induction>();
-		Induction i = null;
+		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("Inductions")) {
-
-			if (eventType == XmlPullParser.START_TAG
-					&& "Induction".equals(xpp.getName())) {
-
-				i = loadInduction(xpp, context);
-				if (i != null)
-					inductions.add(i);
+				|| !xpp.getName().equalsIgnoreCase("Inductions")){
+			if (eventType == XmlPullParser.START_TAG && "Induction".equals(xpp.getName())){
+				Induction induction = loadInduction(xpp, contextName);
+				if (induction != null){
+					inductions.add(induction);
+				}
 			}
 		}
-		if (inductions.isEmpty())
-			return null;
 		return inductions;
 	}
 
-	private Induction loadInduction(XmlPullParser xpp, String context)
-			throws XmlPullParserException, IOException {
+	private Induction loadInduction(XmlPullParser xpp, String contextName)
+			throws XmlPullParserException, IOException{
+		Long gap = null;
+		Boolean relativeToStart = null;
 		int eventType;
-		String tag;
-		String name = null;
-		int type = -1;
-		String value = null;
-		NumericRange range = null;
-		String relative = null;
-		long gap = -1;
-
+		Induction induction = null;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("Induction")) {
-			if (eventType == XmlPullParser.START_TAG) {
-				tag = xpp.getName();
-				if ("Primitive".equalsIgnoreCase(tag)) {
-					type = Element.PRIMITIVE;
-					name = xpp.getAttributeValue(null, "name");
-					if (name == null) {
-						Log
-								.e(TAG,
-										"missing name for primitive based induction");
-						return null;
-					}
-					range = NumericRange.parseRange(xpp);
-					if (range == null) {
-						Log.e(TAG, "invalid numeric range for " + name
-								+ " based induction");
+				|| !xpp.getName().equalsIgnoreCase("Induction")){
+			if (eventType == XmlPullParser.START_TAG){
+				String tag = xpp.getName();
+				
+				// Parsing the ends tag
+				if ("Ends".equalsIgnoreCase(tag)){
+					try{
+						gap = new ISODuration(xpp.getAttributeValue(null, "gap"))
+								.toMillis();
+					}catch(Exception e){
+						Log.e(TAG,
+							"Invalid \"ends\" tag (gap attribute) in induction for context: "
+									+ contextName, e);
 						return null;
 					}
 
-				} else if ("State".equalsIgnoreCase(tag)) {
-					type = Element.STATE;
-					name = xpp.getAttributeValue(null, "name");
-					if (name == null) {
-						Log.e(TAG, "missing name for state based induction");
+					String relativeTo = xpp.getAttributeValue(null, "relativeTo");
+					if ("End".equalsIgnoreCase(relativeTo)){
+						relativeToStart = false;
+					}else if ("Start".equalsIgnoreCase(relativeTo)){
+						relativeToStart = true;
+					}else{
+						Log.e(TAG,
+							"Invalid \"ends\" tag (relativeTo attribute) in induction for context: "
+									+ contextName);
 						return null;
 					}
-					value = xpp.getAttributeValue(null, "value");
-					if (value == null) {
-						Log.e(TAG, "invalid symbolic value for " + name
-								+ " based induction");
+				}else{
+					// Parsing the element tag
+					if ((induction = parseInductionElement(xpp, contextName, tag)) == null){
 						return null;
 					}
-
-				} else if ("Trend".equalsIgnoreCase(tag)) {
-					type = Element.TREND;
-					name = xpp.getAttributeValue(null, "name");
-					if (name == null) {
-						Log.e(TAG, "missing name for state based induction");
-						return null;
-					}
-					value = xpp.getAttributeValue(null, "value");
-					if (value == null) {
-						Log.e(TAG, "invalid symbolic value for " + name
-								+ " based induction");
-						return null;
-					}
-				} else if ("Event".equalsIgnoreCase(tag)) {
-					type = Element.EVENT;
-					name = xpp.getAttributeValue(null, "name");
-					if (name == null) {
-						Log.e(TAG, "missing name for event based induction");
-						return null;
-					}
-				} else if ("Ends".equalsIgnoreCase(tag)) {
-					relative = xpp.getAttributeValue(null, "relativeTo");
-					if (!"End".equalsIgnoreCase(relative)
-							&& !"Start".equalsIgnoreCase(relative)) {
-						relative = null;
-					}
-					try {
-						gap = (new ISODuration(xpp.getAttributeValue(null,
-								"gap"))).toMillis();
-					} catch (InvalidDateException e) {
-						Log.e(TAG, "invalid ISO Duration in induction", e);
-						return null;
-					}
-				}
+				}				
 			}
-
 		}
 
-		if (name != null && relative != null && gap != -1 && type != -1) {
-			return new Induction(type, name, context, value, range, relative,
-					gap);
+		if (induction == null || gap == null || relativeToStart == null){
+			return null;
 		}
-		return null;
 
+		return induction.setRelativeToAndGap(relativeToStart, gap);
+	}
+
+	/**
+	 * Parses the element tag of the induction and instantiates the proper induction type
+	 * according to the element type
+	 * 
+	 * @return The instantiated induction or null if the tag is not a supported element or
+	 *         the element is corrupt
+	 */
+	private Induction parseInductionElement(XmlPullParser xpp, String contextName,
+		String tag){
+		Induction induction = null;
+		String elementName = xpp.getAttributeValue(null, "name");
+		if (elementName == null){
+			Log.e(TAG, "Missing name for a " + tag + " based induction");
+			return null;
+		}
+
+		if ("Primitive".equalsIgnoreCase(tag)){
+			NumericRange range = parseNumericRange(xpp);
+			if (range == null){
+				Log.e(TAG, "Invalid numeric range for a " + tag + " based induction");
+				return null;
+			}
+			induction = new PrimitiveInduction(elementName, contextName, range);
+		}else if ("State".equalsIgnoreCase(tag)){
+			String value = xpp.getAttributeValue(null, "value");
+			if (value == null){
+				Log.e(TAG, "Invalid symbolic value for a " + tag + " based induction");
+				return null;
+			}
+			induction = new StateInduction(elementName, contextName, value);
+		}else if ("Trend".equalsIgnoreCase(tag)){
+			String value = xpp.getAttributeValue(null, "value");
+			if (value == null){
+				Log.e(TAG, "Invalid symbolic value for a " + tag + " based induction");
+				return null;
+			}
+			induction = new TrendInduction(elementName, contextName, value);
+		}else if ("Event".equalsIgnoreCase(tag)){
+			induction = new EventInduction(elementName, contextName);
+
+		}else{
+			Log.e(TAG, "Unsupported element type (" + tag + ") at context: "
+					+ contextName);
+			return null;
+		}
+		return induction;
 	}
 
 	private void parseStates(XmlPullParser xpp) throws XmlPullParserException,
-			IOException {
-	//	System.out.println("******parseStates******");
-		StateDef stateDef = null;
+			IOException{
+		// System.out.println("******parseStates******");
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("States")) {
-			if (eventType == XmlPullParser.START_TAG
-					&& "State".equals(xpp.getName())) {
-				stateDef = loadState(xpp);
-				if (stateDef != null) {
-					_ontology.addStateDef(stateDef);
+				|| !xpp.getName().equalsIgnoreCase("States")){
+			if (eventType == XmlPullParser.START_TAG && "State".equals(xpp.getName())){
+				StateDef stateDef = loadState(xpp);
+				if (stateDef != null){
+					_states.add(stateDef);
 				}
 			}
 		}
-	//	System.out.println(_ontology.printStates());
-
 	}
 
-	private StateDef loadState(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+	private StateDef loadState(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
 		int eventType;
 		ArrayList<AbstractedFrom> abstractedFrom = null;
 		ArrayList<String> necessaryContexts = null;
@@ -342,45 +319,39 @@ public class OntologyLoader {
 		// + (name = xpp.getAttributeValue(null, "name")) + ">");
 		name = xpp.getAttributeValue(null, "name");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("State")) {
-			if (eventType == XmlPullParser.START_TAG) {
-
-				if ("AbstractedFrom".equals(xpp.getName())) {
+				|| !xpp.getName().equalsIgnoreCase("State")){
+			if (eventType == XmlPullParser.START_TAG){
+				if ("AbstractedFrom".equals(xpp.getName())){
 					abstractedFrom = parseAbstractedFrom(xpp);
-				} else if ("NecessaryContexts".equals(xpp.getName())) {
+				}else if ("NecessaryContexts".equals(xpp.getName())){
 					necessaryContexts = parseNecessaryContexts(xpp);
-
-				} else if ("MappingFunction".equals(xpp.getName())) {
-					mappingFunction = parseMappingFunction(xpp,abstractedFrom);
-
-				} else if ("InterpolationFunction".equals(xpp.getName())) {
+				}else if ("MappingFunction".equals(xpp.getName())){
+					mappingFunction = parseMappingFunction(xpp, abstractedFrom);
+				}else if ("InterpolationFunction".equals(xpp.getName())){
 					interpolationFunction = parseInterpolationFunction(xpp);
-
 				}
 			}
 		}
 
 		if (abstractedFrom == null || necessaryContexts == null
-				|| mappingFunction == null || interpolationFunction == null) {
+				|| mappingFunction == null || interpolationFunction == null){
 			return null;
 		}
-		return new StateDef(name, abstractedFrom, necessaryContexts,
-				mappingFunction, interpolationFunction);
+		return new StateDef(name, abstractedFrom, necessaryContexts, mappingFunction,
+				interpolationFunction);
 
 	}
 
 	private InterpolationFunction parseInterpolationFunction(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
-
+			throws XmlPullParserException, IOException{
 		int eventType;
-
 		HashMap<String, Long> interpolationFunctionHash = new HashMap<String, Long>();
 
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("InterpolationFunction")) {
+				|| !xpp.getName().equalsIgnoreCase("InterpolationFunction")){
 
 			if (eventType == XmlPullParser.START_TAG
-					&& xpp.getName().equalsIgnoreCase("Value")) {
+					&& xpp.getName().equalsIgnoreCase("Value")){
 				// System.out.println("name="
 				// + xpp.getAttributeValue(null, "name") + " maxGap="
 				// + xpp.getAttributeValue(null, "maxGap") + " timeUnit="
@@ -388,43 +359,42 @@ public class OntologyLoader {
 
 				String maxGap = xpp.getAttributeValue(null, "maxGap");
 				long maxGapLong;
-				try {
+				try{
 					maxGapLong = new ISODuration(maxGap).toMillis();
-				} catch (Exception e) {
+				}catch(Exception e){
 					Log.e(TAG, "Corrupt maxgap value " + maxGap, e);
 					return null;
 				}
 
-				interpolationFunctionHash.put(xpp.getAttributeValue(null,
-						"name"), maxGapLong);
+				interpolationFunctionHash.put(xpp.getAttributeValue(null, "name"),
+					maxGapLong);
 			}
 
 		}
-		if (!interpolationFunctionHash.isEmpty()) {
+		if (!interpolationFunctionHash.isEmpty()){
 			return new InterpolationFunction(interpolationFunctionHash);
 		}
 		return null;
 	}
 
 	private ArrayList<String> parseNecessaryContexts(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+			throws XmlPullParserException, IOException{
 		int eventType;
 		ArrayList<String> necessaryContexts = new ArrayList<String>();
 		// System.out.println("NecessaryContexts");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("NecessaryContexts")) {
+				|| !xpp.getName().equalsIgnoreCase("NecessaryContexts")){
 			String tag = xpp.getName();
-			if (eventType == XmlPullParser.START_TAG
-					&& tag.equalsIgnoreCase("Context")) {
+			if (eventType == XmlPullParser.START_TAG && tag.equalsIgnoreCase("Context")){
 				// System.out.println(xpp.getAttributeValue(null, "name"));
 				String name = xpp.getAttributeValue(null, "name");
-				if (!isEmpty(name)) {
+				if (!isEmpty(name)){
 					necessaryContexts.add(name);
 				}
 
 			}
 		}
-		if (necessaryContexts.isEmpty()) {
+		if (necessaryContexts.isEmpty()){
 			return null;
 		}
 		return necessaryContexts;
@@ -432,20 +402,20 @@ public class OntologyLoader {
 	}
 
 	private ArrayList<AbstractedFrom> parseAbstractedFrom(XmlPullParser xpp)
-			throws XmlPullParserException, IOException {
+			throws XmlPullParserException, IOException{
 		int eventType;
 		ArrayList<AbstractedFrom> abstractedFromList = new ArrayList<AbstractedFrom>();
-		int type=-1;
+		int type = -1;
 		// System.out.println("AbstractedFrom");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("AbstractedFrom")) {
+				|| !xpp.getName().equalsIgnoreCase("AbstractedFrom")){
 			String tag = xpp.getName();
-			if (eventType == XmlPullParser.START_TAG) {
-				if (tag.equalsIgnoreCase("Primitive")) {
+			if (eventType == XmlPullParser.START_TAG){
+				if (tag.equalsIgnoreCase("Primitive")){
 					type = Element.PRIMITIVE;
-				} else if (tag.equalsIgnoreCase("State")) {
+				}else if (tag.equalsIgnoreCase("State")){
 					type = Element.STATE;
-				} else if (tag.equalsIgnoreCase("Trend")) {
+				}else if (tag.equalsIgnoreCase("Trend")){
 					type = Element.TREND;
 				}
 				// System.out.println(tag + " name="
@@ -453,99 +423,104 @@ public class OntologyLoader {
 
 				String name = xpp.getAttributeValue(null, "name");
 				if (isEmpty(name) || type < 0){
-					Log.e(TAG,"Missing name or type for abstractedFrom");
+					Log.e(TAG, "Missing name or type for abstractedFrom");
 				}else{
 					abstractedFromList.add(new AbstractedFrom(type, name));
 				}
 
 			}
 		}
-		if (abstractedFromList.isEmpty()) {
+		if (abstractedFromList.isEmpty()){
 			return null;
 		}
 		return abstractedFromList;
 	}
 
-	private MappingFunction parseMappingFunction(XmlPullParser xpp,ArrayList<AbstractedFrom> abstractedFrom)
-			throws XmlPullParserException, IOException {
+	private MappingFunction parseMappingFunction(XmlPullParser xpp,
+		ArrayList<AbstractedFrom> abstractedFrom) throws XmlPullParserException,
+			IOException{
 		int eventType;
 		ArrayList<MappingFunctionEntry> mappingFunction = new ArrayList<MappingFunctionEntry>();
 
 		// System.out.println("MappingFunction");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("MappingFunction")) {
+				|| !xpp.getName().equalsIgnoreCase("MappingFunction")){
 			if (eventType == XmlPullParser.START_TAG
-					&& xpp.getName().equalsIgnoreCase("Value")) {
+					&& xpp.getName().equalsIgnoreCase("Value")){
 
-				MappingFunctionEntry mappingFunctionEntry = parseValueTag(xpp,abstractedFrom);
-				if (mappingFunctionEntry == null) {
+				MappingFunctionEntry mappingFunctionEntry = parseValueTag(xpp,
+					abstractedFrom);
+				if (mappingFunctionEntry == null){
 					return null;
 				}
 				mappingFunction.add(mappingFunctionEntry);
 			}
 		}
-		if (mappingFunction.isEmpty()) {
+		if (mappingFunction.isEmpty()){
 			return null;
 		}
 		return new MappingFunction(mappingFunction);
 
 	}
 
-	private MappingFunctionEntry parseValueTag(XmlPullParser xpp,ArrayList<AbstractedFrom> abstractedFrom)
-			throws XmlPullParserException, IOException {
+	private MappingFunctionEntry parseValueTag(XmlPullParser xpp,
+		ArrayList<AbstractedFrom> abstractedFrom) throws XmlPullParserException,
+			IOException{
 		int eventType;
-		AbstractedFrom isExistAf=null;
-		HashMap<AbstractedFrom,ElementCondition> elementConditions = new HashMap<AbstractedFrom,ElementCondition>();
+		AbstractedFrom isExistAf = null;
+		HashMap<AbstractedFrom, ElementCondition> elementConditions = new HashMap<AbstractedFrom, ElementCondition>();
 
 		String stateValue = xpp.getAttributeValue(null, "name");
 		// System.out.println();
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase("Value")) {
+				|| !xpp.getName().equalsIgnoreCase("Value")){
 			String tag = xpp.getName();
-			if (eventType == XmlPullParser.START_TAG) {
-				
+			if (eventType == XmlPullParser.START_TAG){
+
 				String name = xpp.getAttributeValue(null, "name");
-				if (isEmpty(name)) {
+				if (isEmpty(name)){
 					return null;
 				}
-				if ("Primitive".equalsIgnoreCase(tag)) {
-					isExistAf= existInAbstracedFrom(Element.PRIMITIVE,name,abstractedFrom);
-					if(isExistAf==null){
+				if ("Primitive".equalsIgnoreCase(tag)){
+					isExistAf = existInAbstracedFrom(Element.PRIMITIVE, name,
+						abstractedFrom);
+					if (isExistAf == null){
 						return null;
 					}
-					
-					NumericRange numericRange = NumericRange.parseRange(xpp);
+
+					NumericRange numericRange = parseNumericRange(xpp);
 					// System.out.println("Primitive "
 					// + xpp.getAttributeValue(null, "name") + " "
 					// + numericRange + "\n");
-					if (numericRange == null) {
+					if (numericRange == null){
 						return null;
 					}
-					ElementCondition elementCondition = new PrimitiveCondition(
-							name, numericRange);
-					elementConditions.put(isExistAf,elementCondition);
-				} else if ("State".equalsIgnoreCase(tag)) {
-					isExistAf= existInAbstracedFrom(Element.STATE,name,abstractedFrom);
-					if(isExistAf==null){
+					ElementCondition elementCondition = new PrimitiveCondition(name,
+							numericRange);
+					elementConditions.put(isExistAf, elementCondition);
+				}else if ("State".equalsIgnoreCase(tag)){
+					isExistAf = existInAbstracedFrom(Element.STATE, name, abstractedFrom);
+					if (isExistAf == null){
 						return null;
 					}
 					// System.out.println("State "
 					// + xpp.getAttributeValue(null, "name") + " "
 					// + xpp.getAttributeValue(null, "value") + "\n");
 					String elementValue = xpp.getAttributeValue(null, "value");
-					if (isEmpty(elementValue)) {
+					if (isEmpty(elementValue)){
 						return null;
 					}
-					ElementCondition elementCondition = new StateCondition(
-							name, elementValue);
-					elementConditions.put(isExistAf,elementCondition);
-				} else if ("Trend".equalsIgnoreCase(tag)) {
+					ElementCondition elementCondition = new StateCondition(name,
+							elementValue);
+					elementConditions.put(isExistAf, elementCondition);
+				}else if ("Trend".equalsIgnoreCase(tag)){
 					// TODO implement trend entry
 				}
 			}
 		}
-		//TODO check
-		if (elementConditions.isEmpty() || abstractedFrom.size()!=elementConditions.size()) {
+		// TODO check
+		if (elementConditions.isEmpty()
+				|| abstractedFrom.size() != elementConditions.size()){
 			return null;
 		}
 		return new MappingFunctionEntry(stateValue, elementConditions);
@@ -554,10 +529,53 @@ public class OntologyLoader {
 	private AbstractedFrom existInAbstracedFrom(int type, String name,
 		ArrayList<AbstractedFrom> abstractedFrom){
 		for (AbstractedFrom af : abstractedFrom){
-			if(type==af.getType() && name.equalsIgnoreCase(af.getName())){
+			if (type == af.getType() && name.equalsIgnoreCase(af.getName())){
 				return af;
 			}
 		}
 		return null;
+	}
+
+	private NumericRange parseNumericRange(XmlPullParser xpp){
+		String minS;
+		String maxS;
+		boolean minE = true;
+		boolean maxE = true;
+		double min;
+		double max;
+		// Parsing the minimum value
+		minS = xpp.getAttributeValue(null, "minE");
+		if (minS == null){
+			minS = xpp.getAttributeValue(null, "min");
+			minE = false;
+		}
+		if ("*".equals(minS)){
+			min = Double.NEGATIVE_INFINITY;
+		}else{
+			try{
+				min = Double.parseDouble(minS);
+			}catch(NumberFormatException e){
+				Log.e(TAG, "Erroneous minimum " + "value for numeric range: ", e);
+				return null;
+			}
+		}
+
+		// Parsing the maximum value
+		maxS = xpp.getAttributeValue(null, "maxE");
+		if (maxS == null){
+			maxS = xpp.getAttributeValue(null, "max");
+			maxE = false;
+		}
+		if ("*".equals(maxS)){
+			max = Double.POSITIVE_INFINITY;
+		}else{
+			try{
+				max = Double.parseDouble(maxS);
+			}catch(NumberFormatException e){
+				Log.e(TAG, "Erroneous maximum " + "value for numeric range: ", e);
+				return null;
+			}
+		}
+		return new NumericRange(min, max, minE, maxE);
 	}
 }

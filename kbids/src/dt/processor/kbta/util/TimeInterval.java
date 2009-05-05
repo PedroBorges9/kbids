@@ -3,6 +3,8 @@ package dt.processor.kbta.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dt.processor.kbta.ontology.instances.Element;
+
 public class TimeInterval{
 	private final long _startTime;
 
@@ -164,6 +166,23 @@ public class TimeInterval{
 		String s=d.format(new Date(_startTime));
 		String e=d.format(new Date(_endTime));
 		return ("["+s+","+e+"]");
+	}
+
+	public static TimeInterval intersection(Element[] elements, TimeInterval initialInterval){
+		long endMin = (initialInterval == null) ? Long.MAX_VALUE : initialInterval
+				.getEndTime();
+		long startMax = (initialInterval == null) ? 0 : initialInterval.getStartTime();
+		for (Element element : elements){
+			TimeInterval timeInterval = element.getTimeInterval();
+			long startTime = timeInterval.getStartTime();
+			long endTime = timeInterval.getEndTime();
+			startMax = (startTime > startMax) ? startTime : startMax;
+			endMin = (endTime < endMin) ? endTime : endMin;
+		}
+		if (startMax <= endMin){
+			return new TimeInterval(startMax, endMin);
+		}
+		return null;
 	}
 
 }

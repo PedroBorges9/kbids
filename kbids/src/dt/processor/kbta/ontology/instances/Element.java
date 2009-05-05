@@ -10,7 +10,6 @@ import dt.processor.kbta.util.TimeInterval;
  * @author
  */
 public abstract class Element{
-
 	public static final int PRIMITIVE = 0, EVENT = 1, CONTEXT = 2, STATE = 3, TREND = 4,
 			PATTERN = 5;
 
@@ -33,15 +32,15 @@ public abstract class Element{
 		_hashCode = (_type + _name).hashCode();
 	}
 
-	public String getName(){
+	public final String getName(){
 		return _name;
 	}
 
-	public TimeInterval getTimeInterval(){
+	public final TimeInterval getTimeInterval(){
 		return _timeInterval;
 	}
 
-	public int getType(){
+	public final int getType(){
 		return _type;
 	}
 
@@ -59,13 +58,34 @@ public abstract class Element{
 	}
 
 	@Override
-	public int hashCode(){
+	public final int hashCode(){
 		return _hashCode;
 	}
 
 	@Override
 	public String toString(){
-		return _name + " " + _timeInterval;
+		String type = null;
+		switch (_type){
+			case PRIMITIVE: 
+				type = "Primitive";
+				break;
+			case EVENT: 
+				type = "Event";
+				break;
+			case CONTEXT: 
+				type = "Context";
+				break;
+			case STATE: 
+				type = "State";
+				break;
+			case TREND: 
+				type = "Trend";
+				break;
+			case PATTERN: 
+				type = "Pattern";
+				break;
+		}
+		return type + " " + _name + " " + _timeInterval;
 	}
 
 }

@@ -3,40 +3,33 @@ package dt.processor.kbta.threats;
 import dt.processor.kbta.container.AllInstanceContainer;
 
 public abstract class GeneratedFrom {
-	protected final String _name;
+	protected final String _elementName;
 	protected final SymbolicValueCondition _symbolicValueCondition;
 	protected final DurationCondition _durationCondition;
 
 	public GeneratedFrom(String name,
 			SymbolicValueCondition symbolicValueCondition,
 			DurationCondition durationCondition) {
-		_name = name;
+		_elementName = name;
 		_symbolicValueCondition = symbolicValueCondition;
 		_durationCondition = durationCondition;
 
 	}
-
-	public SymbolicValueCondition getSymbolicValueCondition() {
-		return _symbolicValueCondition;
-	}
-
-	public DurationCondition getDurationCondition() {
-		return _durationCondition;
-	}
-
-
-
-	public String getName() {
-		return _name;
-	}
-
 	
 	public abstract boolean matchConditions(AllInstanceContainer allInstances);
 
+	public final String getName() {
+		return _elementName;
+	}
+
 	@Override
 	public String toString() {
-		String st = "GeneratedFrom\n";
-		return st;
+		StringBuilder sb = new StringBuilder(_elementName).append(" (");
+		if (_symbolicValueCondition != null){
+			sb.append(_symbolicValueCondition).append(", ");
+		}
+		sb.append(_durationCondition).append(")");
+		return sb.toString();
 	}
 
 }

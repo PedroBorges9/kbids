@@ -5,12 +5,13 @@ package dt.processor.kbta.ontology.defs;
 
 import java.util.Date;
 
+import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.instances.Primitive;
 
 /**
  * @author
  */
-public class PrimitiveDef extends ElementDef{
+public final class PrimitiveDef extends ElementDef{
 	private final NumericRange _range;
 
 	public PrimitiveDef(String name, NumericRange range){
@@ -18,12 +19,11 @@ public class PrimitiveDef extends ElementDef{
 		_range = range;
 	}
 
-	public Primitive definePrimitive(Date start, Date end, double value){
-		Primitive p = null;
-		if (_range.inRange(value)){
-			p = new Primitive(_name, value, start, end);
+	public void createPrimitive(Date start, Date end, double value, AllInstanceContainer allInstances){
+		if (_range.isInRange(value)){
+			Primitive primitive = new Primitive(_name, value, start.getTime(), end.getTime());
+			allInstances.addPrimitive(primitive);
 		}
-		return p;
 	}
 
 	@Override

@@ -8,66 +8,37 @@ import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 
-public class Ontology{
-	private HashMap<String, PrimitiveDef> _primitiveDefiners;
+public final class Ontology{
+	private final HashMap<String, PrimitiveDef> _primitives;
 
-	private HashMap<String, EventDef> _eventDefiners;
+	private final HashMap<String, EventDef> _events;
 
-	private ArrayList<ContextDef> _contextDefiners;
+	private final ContextDef[] _contexts;
 
-	private HashMap<String, StateDef> _stateDefiners;
+	private final StateDef[] _states;
 
-	public Ontology(){
-		_primitiveDefiners = new HashMap<String, PrimitiveDef>();
-		_eventDefiners = new HashMap<String, EventDef>();
-		_stateDefiners = new HashMap<String, StateDef>();
-		_contextDefiners = new ArrayList<ContextDef>();
+	Ontology(HashMap<String, PrimitiveDef> primitives,
+		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
+		ArrayList<StateDef> states){
+		_primitives = primitives;
+		_events = events;
+		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
+		_states = states.toArray(new StateDef[states.size()]);
 	}
 
-	public ArrayList<ContextDef> getContextDefiners(){
-		return _contextDefiners;
+	public ContextDef[] getContextDefiners(){
+		return _contexts;
 	}
 
-	public HashMap<String, StateDef> getStateDefiners(){
-		return _stateDefiners;
-	}
-
-	public void AddContextDefiners(ContextDef c){
-		_contextDefiners.add(c);
-	}
-
-	public void addPrimitiveDef(PrimitiveDef p){
-		_primitiveDefiners.put(p.getName(), p);
-	}
-
-	public void addEventDef(EventDef e){
-		_eventDefiners.put(e.getName(), e);
-	}
-
-	public void addStateDef(StateDef s){
-		_stateDefiners.put(s.getName(), s);
+	public StateDef[] getStateDefiners(){
+		return _states;
 	}
 
 	public PrimitiveDef getPrimitiveDef(String name){
-		return _primitiveDefiners.get(name);
+		return _primitives.get(name);
 	}
 
 	public EventDef getEventDef(String name){
-		return _eventDefiners.get(name);
+		return _events.get(name);
 	}
-
-	public StateDef getStateDef(String name){
-		return _stateDefiners.get(name);
-	}
-
-	public String printStates(){
-
-		String st = "";
-		for (StateDef sd : _stateDefiners.values()){
-			st += "*************************\n" + sd + "\n";
-		}
-
-		return st;
-	}
-
 }

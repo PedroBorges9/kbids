@@ -1,7 +1,7 @@
 package dt.processor.kbta.threats;
 
 
-public class ThreatAssessment {
+public final class ThreatAssessment {
 	private final String _title;
 	private final String _description;
 	private final int _certainty;
@@ -33,10 +33,11 @@ public class ThreatAssessment {
 
 	@Override
 	public String toString() {
-		String st = "Assessment\n";
-		st += "title=" + _title + " description=" + _description + " certainty"
-				+ _certainty + "\n" + _generatedFrom;
-		return st;
+		StringBuilder sb = new StringBuilder("Assessment\n");
+		sb.append(_title).append("[").append(_certainty).append("]");
+		sb.append("\nDescription: ").append(_description);
+		sb.append("\nGenerated From: ").append(_generatedFrom).append("\n");
+		return sb.toString();
 	}
 
 }

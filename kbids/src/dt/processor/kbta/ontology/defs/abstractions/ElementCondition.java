@@ -9,17 +9,10 @@ public abstract class ElementCondition {
 		_name = name;
 	}
 	
-	public String getName() {
+	public final String getName() {
 		return _name;
 	}
 	
 	public abstract boolean checkValue(Element element); 
 	
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-	
-
 }
