@@ -97,7 +97,7 @@ public class AgentSim extends Activity implements ServiceConnection{
 				@Override
 				public void run(){
 					int loop = 0;
-					while (!isInterrupted() ){
+					while (!isInterrupted() && loop++ < 2){
 						SystemClock.sleep(getInterval() * 1000);
 						
 						if (_processor != null){
@@ -105,10 +105,10 @@ public class AgentSim extends Activity implements ServiceConnection{
 							ParcelableDate d = new ParcelableDate();
 							Random r=new Random();
 							list.add(new MonitoredData("CPU_Usage", r.nextInt(10)+81, d));
-							list.add(new MonitoredData("Garbage_Collections", r.nextInt(20)+11, d));
+							list.add(new MonitoredData("Garbage_Collections", r.nextInt(20)+101, d));
 							list.add(new MonitoredData("Running_Processes", r.nextInt(20)+30, d));
 							list.add(new MonitoredData("Minor_Page_Faults", r.nextInt(20)+301, d));
-							list.add(new MonitoredData("Context_Switches", r.nextInt(20)+601, d));
+							list.add(new MonitoredData("Context_Switches", r.nextInt(20)+1501, d));
 							
 //							MonitoredData md;
 //							md = new MonitoredData("Keyboard_Opening", 1, d);
