@@ -103,17 +103,20 @@ public class AgentSim extends Activity implements ServiceConnection{
 						if (_processor != null){
 							List<MonitoredData> list = new ArrayList<MonitoredData>();
 							ParcelableDate d = new ParcelableDate();
+							Random r=new Random();
+							list.add(new MonitoredData("CPU_Usage", r.nextInt(10)+81, d));
+							list.add(new MonitoredData("Garbage_Collections", r.nextInt(20)+11, d));
+							list.add(new MonitoredData("Running_Processes", r.nextInt(20)+30, d));
+							list.add(new MonitoredData("Minor_Page_Faults", r.nextInt(20)+301, d));
+							list.add(new MonitoredData("Context_Switches", r.nextInt(20)+601, d));
 							
-							list.add(new MonitoredData("CPU_Usage", (int)(Math.random() * 100), d));
-							list.add(new MonitoredData("Garbage_Collections", (int)(Math.random() * 300), d));
-							
-							MonitoredData md;
-							md = new MonitoredData("Keyboard_Opening", 1, d);
-							Bundle extras = new Bundle();
-							extras.putLongArray("Events", 
-									new long[]{d.getTime() - 5000, d.getTime() - 3000, d.getTime()});
-							md.setExtras(extras);
-							list.add(md);
+//							MonitoredData md;
+//							md = new MonitoredData("Keyboard_Opening", 1, d);
+//							Bundle extras = new Bundle();
+//							extras.putLongArray("Events", 
+//									new long[]{d.getTime() - 5000, d.getTime() - 3000, d.getTime()});
+//							md.setExtras(extras);
+//							list.add(md);
 							try{
 								_processor.receiveMonitoredData(list);
 							}catch(RemoteException e){

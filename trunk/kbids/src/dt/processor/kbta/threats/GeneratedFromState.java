@@ -27,7 +27,7 @@ public class GeneratedFromState extends GeneratedFrom {
 	@Override
 	public boolean matchConditions(AllInstanceContainer allInstances) {
 		ComplexContainer<State> states = allInstances.getStates();
-		State state = states.getNewestElement(_name); //TODO CHECK IT
+		State state = states.getCurrentElement(_name); 
 		if (state == null) {
 			return false;
 		}

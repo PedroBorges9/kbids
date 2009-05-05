@@ -154,13 +154,12 @@ public class Induction {
 				context.getTimeInterval().setEndTime(end);
 				return false;
 			}
+			return false;
 		}
 		else {
 			container.addContext( new Context( _name, new TimeInterval(start, end)));
 			return true;
 		}
-		Log.e(TAG,"unreacheable code in induction createContext has been reached");
-		return false;
 
 	}
 

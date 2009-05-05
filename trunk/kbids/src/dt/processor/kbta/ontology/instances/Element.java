@@ -28,7 +28,7 @@ public abstract class Element{
 	public static final int TREND = 4;
 
 	public static final int PATTERN = 5;
-	
+
 	private final int _hashCode;
 
 	public Element(int type, String name, TimeInterval timeInterval){
@@ -50,6 +50,7 @@ public abstract class Element{
 	public int getType(){
 		return _type;
 	}
+
 	@Override
 	public boolean equals(Object o){
 		if (o instanceof Element){
@@ -66,10 +67,15 @@ public abstract class Element{
 	public void setInterval(TimeInterval ti){
 		_timeInterval = ti;
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return _hashCode;
+	}
+
+	@Override
+	public String toString(){
+		return _name + " " + _timeInterval;
 	}
 
 }

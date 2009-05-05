@@ -24,7 +24,7 @@
 			<SymbolicValueCondition>
 				<Value name="High" />
 			</SymbolicValueCondition>
-			<DurationCondition min="P1M" max="P8D" />
+			<DurationCondition min="PT1S" max="P8D" />
 		</State>
 	</Assessment>
 		

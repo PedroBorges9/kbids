@@ -60,12 +60,12 @@ public class OntologyLoader {
 						parseEvents(xpp);
 
 					} else if (name.equalsIgnoreCase("Contexts")) {
-					//	parseContexts(xpp);
+						parseContexts(xpp);
 
 					} else if (name.equalsIgnoreCase("States")) {
 					//	 System.out.println("Before parseStates");
 						 parseStates(xpp);
-						 System.out.println("Finish parse states");
+//						 System.out.println("Finish parse states");
 
 					} else if (name.equalsIgnoreCase("Trends")) {
 
@@ -313,7 +313,7 @@ public class OntologyLoader {
 
 	private void parseStates(XmlPullParser xpp) throws XmlPullParserException,
 			IOException {
-		System.out.println("******parseStates******");
+	//	System.out.println("******parseStates******");
 		StateDef stateDef = null;
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
@@ -326,7 +326,7 @@ public class OntologyLoader {
 				}
 			}
 		}
-		System.out.println(_ontology.printStates());
+	//	System.out.println(_ontology.printStates());
 
 	}
 

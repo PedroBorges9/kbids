@@ -87,10 +87,10 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	@Override
 	public String toString(){
 
-		return "Complex Element Container\n Contains :\n" +
-		"New Elements: \n"+_newElements+"\n" +
-		"current Elements: "+_currentElements+"\n" +
-		"old Elements:"+_oldElements;
+		return 
+		"New: "+_newElements.values()+"\n" +
+		"Current: "+_currentElements.values()+"\n" +
+		"Old:"+_oldElements.values();
 	}
 
 	public boolean hasNew() {
