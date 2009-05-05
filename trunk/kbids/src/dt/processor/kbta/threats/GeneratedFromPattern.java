@@ -1,6 +1,7 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Element;
 
 public final class GeneratedFromPattern extends GeneratedFrom{
 
@@ -10,9 +11,9 @@ public final class GeneratedFromPattern extends GeneratedFrom{
 	}
 
 	@Override
-	public boolean matchConditions(AllInstanceContainer allInstances){
+	public Element locateMatchingElement(AllInstanceContainer allInstances){
 		// TODO Implement threat generation from patterns
-		return false;
+		return null;
 	}
 
 	@Override

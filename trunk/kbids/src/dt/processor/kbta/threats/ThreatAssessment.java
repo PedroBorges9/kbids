@@ -36,7 +36,7 @@ public final class ThreatAssessment {
 		StringBuilder sb = new StringBuilder("Assessment\n");
 		sb.append(_title).append("[").append(_certainty).append("]");
 		sb.append("\nDescription: ").append(_description);
-		sb.append("\nGenerated From: ").append(_generatedFrom).append("\n");
+		sb.append("\nGenerated From: ").append(_generatedFrom);
 		return sb.toString();
 	}
 

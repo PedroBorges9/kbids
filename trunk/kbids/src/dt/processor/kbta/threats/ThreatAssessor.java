@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.util.Pair;
 
 public class ThreatAssessor {
 	private final ArrayList<ThreatAssessment> _containerAssessments;
@@ -16,14 +18,14 @@ public class ThreatAssessor {
 		_containerAssessments.add(ta);
 	}
 
-	public Collection<ThreatAssessment> assess(AllInstanceContainer allInstances) {
-		Collection<ThreatAssessment> assessments = new ArrayList<ThreatAssessment>();
+	public Collection<Pair<ThreatAssessment, Element>> assess(AllInstanceContainer allInstances) {
+		Collection<Pair<ThreatAssessment, Element>> assessments = new ArrayList<Pair<ThreatAssessment, Element>>();
 
 		for (ThreatAssessment ta : _containerAssessments) {
-			GeneratedFrom genratedFrom = ta.getGeneratedFrom();
-
-			if (genratedFrom.matchConditions(allInstances)) {
-				assessments.add(ta);
+			GeneratedFrom gf = ta.getGeneratedFrom();
+			Element element = gf.locateMatchingElement(allInstances);
+			if (element != null) {
+				assessments.add(new Pair<ThreatAssessment, Element>(ta, element));
 			}
 		}
 

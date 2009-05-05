@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.instances;
 
+import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
 
 /**
@@ -11,8 +12,8 @@ import dt.processor.kbta.util.TimeInterval;
 public abstract class Abstraction extends Element{
 	protected final String _value;
 
-	public Abstraction(int type, String name, String value, TimeInterval timeInterval){
-		super(type, name, timeInterval);
+	public Abstraction(int type, String name, String value, TimeInterval timeInterval, Bundle extras){
+		super(type, name, timeInterval, extras);
 		_value = value;
 	}
 
