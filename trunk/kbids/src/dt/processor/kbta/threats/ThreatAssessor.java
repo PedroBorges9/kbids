@@ -1,10 +1,9 @@
 package dt.processor.kbta.threats;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import dt.processor.kbta.container.AllInstanceContainer;
-import dt.processor.kbta.container.ComplexContainer;
-import dt.processor.kbta.ontology.instances.State;
 
 public class ThreatAssessor {
 	private final ArrayList<ThreatAssessment> _containerAssessments;

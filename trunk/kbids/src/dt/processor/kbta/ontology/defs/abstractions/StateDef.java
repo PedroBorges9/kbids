@@ -6,7 +6,8 @@ package dt.processor.kbta.ontology.defs.abstractions;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import dt.processor.kbta.container.*;
+import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Primitive;

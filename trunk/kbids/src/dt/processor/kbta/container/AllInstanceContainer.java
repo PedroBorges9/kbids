@@ -2,7 +2,6 @@ package dt.processor.kbta.container;
 
 import java.util.Date;
 
-import dt.processor.kbta.ontology.*;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Pattern;

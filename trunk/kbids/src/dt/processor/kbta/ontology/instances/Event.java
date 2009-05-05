@@ -3,12 +3,6 @@
  */
 package dt.processor.kbta.ontology.instances;
 
-import java.util.Date;
-
-import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.util.TimeInterval;
-
-import android.os.Bundle;
 
 /**
  * @author rahamime
@@ -16,8 +10,8 @@ import android.os.Bundle;
  */
 public class Event extends Element {
 	
-	public Event(  String name, TimeInterval timeInterval) {
-		 super(Element.EVENT, name, timeInterval);
+	public Event(  String name, long start, long end) {
+		 super(EVENT, name, start, end);
 	}
 	
 	@Override

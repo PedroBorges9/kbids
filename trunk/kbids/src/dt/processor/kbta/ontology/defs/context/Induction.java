@@ -3,6 +3,8 @@
  */
 package dt.processor.kbta.ontology.defs.context;
 
+import static dt.processor.kbta.KBTAProcessorService.TAG;
+
 import java.util.ArrayList;
 
 import android.util.Log;
@@ -15,7 +17,6 @@ import dt.processor.kbta.ontology.instances.Primitive;
 import dt.processor.kbta.ontology.instances.State;
 import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.util.TimeInterval;
-import static dt.processor.kbta.KBTAProcessorService.TAG;
 /**
  * @author 
  *

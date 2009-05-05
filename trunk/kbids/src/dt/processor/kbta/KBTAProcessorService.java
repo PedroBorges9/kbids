@@ -1,40 +1,33 @@
 package dt.processor.kbta;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.text.*;
-import android.R.string;
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.XmlResourceParser;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import dt.agent.twu.TWU;
 import dt.fe.MonitoredData;
 import dt.processor.Processor;
 import dt.processor.kbta.container.AllInstanceContainer;
-import dt.processor.kbta.ontology.*;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.OntologyLoader;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
-import dt.processor.kbta.ontology.instances.State;
-import dt.processor.kbta.ontology.instances.Trend;
-import dt.processor.kbta.threats.*;
-import dt.agent.twu.TWU;
+import dt.processor.kbta.threats.ThreatAssessment;
+import dt.processor.kbta.threats.ThreatAssessmentLoader;
+import dt.processor.kbta.threats.ThreatAssessor;
 
 public class KBTAProcessorService extends Service implements ServiceConnection{
 	public static final String TAG = "KBTAProcessor";

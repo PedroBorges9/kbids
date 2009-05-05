@@ -1,8 +1,5 @@
 package dt.processor.kbta.threats;
 
-import java.util.ArrayList;
-
-import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.util.ISODuration;
 import dt.processor.kbta.util.InvalidDateException;
 

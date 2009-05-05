@@ -1,6 +1,8 @@
 package dt.processor.kbta.threats;
 
-import static org.xmlpull.v1.XmlPullParser.*;
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.END_TAG;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,12 +10,11 @@ import java.util.ArrayList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import dt.processor.kbta.R;
-import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.util.InvalidDateException;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import dt.processor.kbta.R;
+import dt.processor.kbta.util.InvalidDateException;
 
 public class ThreatAssessmentLoader {
 	private static final String TAG = "ThreatAssessmentLoader";

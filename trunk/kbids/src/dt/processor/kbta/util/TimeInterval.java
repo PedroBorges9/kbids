@@ -1,10 +1,7 @@
 package dt.processor.kbta.util;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import android.util.TimeUtils;
 
 public class TimeInterval{
 	private final long _startTime;
