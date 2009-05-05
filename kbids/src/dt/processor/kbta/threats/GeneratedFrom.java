@@ -1,6 +1,7 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Element;
 
 public abstract class GeneratedFrom {
 	protected final String _elementName;
@@ -16,7 +17,7 @@ public abstract class GeneratedFrom {
 
 	}
 	
-	public abstract boolean matchConditions(AllInstanceContainer allInstances);
+	public abstract Element locateMatchingElement(AllInstanceContainer allInstances);
 
 	public final String getName() {
 		return _elementName;

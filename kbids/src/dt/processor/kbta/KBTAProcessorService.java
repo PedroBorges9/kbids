@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -21,9 +22,11 @@ import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
+import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.ThreatAssessment;
 import dt.processor.kbta.threats.ThreatAssessmentLoader;
 import dt.processor.kbta.threats.ThreatAssessor;
+import dt.processor.kbta.util.Pair;
 
 public final class KBTAProcessorService extends Service implements ServiceConnection{
 	public static final String TAG = "KBTAProcessor";
@@ -104,23 +107,20 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 					if (_threatAssessor == null){
 						return;
 					}
-					Collection<ThreatAssessment> threats = _threatAssessor
+					Collection<Pair<ThreatAssessment, Element>> threats = _threatAssessor
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
-						for (ThreatAssessment ta : threats){
-							Log.d("KBTAThreats", ta.toString());							
+						for (Pair<ThreatAssessment, Element> p : threats){
+							Log.d("KBTAThreats", p.first.toString());
+							Log.d("KBTAThreats", "Element: " + p.second.toString());
 						}
 					}
 					if (_twu != null){
-						// Sending the processor's name, threat title, threat
-						// description
-						// and the certainty of the processor that the threat
-						// exists
-						// (0 - 100)%
-						for (ThreatAssessment ta : threats){
+						for (Pair<ThreatAssessment, Element> p : threats){
+							ThreatAssessment ta = p.first;
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
 									.getTitle(), ta.getDescription(), ta.getCertainty(),
-								null); // TODO add bundle
+								p.second.getExtras());
 						}
 					}
 				}catch(Throwable t){
@@ -142,11 +142,12 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		}
 		++_iteration;
 		createPrimitivesAndEvents(features);
-		System.out.println("\n----------- Global iteration #" + _iteration + "-----------\n");
+		System.out.println("\n--------------- Global iteration #" + _iteration
+				+ "---------------\n");
 		boolean cont = false;
 		int i = 1;
 		do{
-			System.out.println("-- Inner iteration #" + i++ + "--");
+			System.out.println("---- Inner iteration #" + i++ + "----");
 			_allInstances.getContexts().shiftBack();
 			createContexts();
 			createAbstractions();
@@ -163,7 +164,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		for (ContextDef cd : contextDefs){
 			cd.createContext(_allInstances, _iteration);
 		}
-		System.out.println("******** Contexts: ***********\n"
+		System.out.println("** Contexts: **\n"
 				+ _allInstances.getContexts());
 	}
 
@@ -179,7 +180,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		for (StateDef sd : stateDefs){
 			sd.createState(_allInstances, _iteration);
 		}
-		System.out.println("******** States: ***********\n" + _allInstances.getStates());
+		System.out.println("** States: **\n" + _allInstances.getStates());
 	}
 
 	private void createTrends(){
@@ -197,6 +198,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			Date start = md.getStartTime();
 			Date end = md.getEndTime();
 			Double value = md.mdToDouble();
+			Bundle extras = md.getExtras();
 			if (name == null || start == null || end == null || value == null){
 				continue;
 			}
@@ -204,13 +206,13 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			// Matching feature to a primitive
 			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
 			if (pd != null){
-				pd.createPrimitive(start, end, value, _allInstances);
+				pd.createPrimitive(start, end, value, extras, _allInstances);
 			}
 
 			// Matching feature to an event
 			EventDef ed = _ontology.getEventDef(name);
 			if (ed != null){
-				ed.createEvents(md.getExtras(), _allInstances);
+				ed.createEvents(extras, _allInstances);
 			}
 		}
 	}

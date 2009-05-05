@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.instances;
 
+import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
 
 /**
@@ -10,6 +11,6 @@ import dt.processor.kbta.util.TimeInterval;
  */
 public final class Context extends Element{
 	public Context(String name, TimeInterval timeInterval){
-		super(CONTEXT, name, timeInterval);
-	}
+		super(CONTEXT, name, timeInterval, null);
+	}	
 }

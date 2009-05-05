@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.instances;
 
+import android.os.Bundle;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractedFrom;
 import dt.processor.kbta.util.TimeInterval;
 
@@ -20,16 +21,19 @@ public abstract class Element{
 	protected int _type;
 
 	private final int _hashCode;
+	
+	private final Bundle _extras;
 
-	public Element(int type, String name, long start, long end){
-		this(type, name, new TimeInterval(start, end));
+	public Element(int type, String name, long start, long end, Bundle extras){
+		this(type, name, new TimeInterval(start, end), extras);
 	}
 
-	public Element(int type, String name, TimeInterval timeInterval){
+	public Element(int type, String name, TimeInterval timeInterval, Bundle extras){
 		_name = name;
 		_timeInterval = timeInterval;
 		_type = type;
 		_hashCode = (_type + _name).hashCode();
+		_extras = extras;
 	}
 
 	public final String getName(){
@@ -42,6 +46,22 @@ public abstract class Element{
 
 	public final int getType(){
 		return _type;
+	}
+	
+	public final Bundle getExtras(){
+		return _extras;
+	}
+	
+	public final void addInnerExtras(Bundle dest){
+		if (_extras != null && dest != null){
+			dest.putAll(_extras);
+		}
+	}
+	
+	public final void addToInnerExtras(Bundle src){
+		if (_extras != null && src != null){
+			_extras.putAll(src);
+		}
 	}
 
 	@Override
@@ -85,7 +105,7 @@ public abstract class Element{
 				type = "Pattern";
 				break;
 		}
-		return type + " " + _name + " " + _timeInterval;
+		return type + " " + _name + " " + _timeInterval + ((_extras == null) ? "" : " " + _extras);
 	}
 
 }

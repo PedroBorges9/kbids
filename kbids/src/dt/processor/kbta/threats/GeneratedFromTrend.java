@@ -1,6 +1,7 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Element;
 
 public class GeneratedFromTrend extends GeneratedFrom{
 
@@ -10,9 +11,9 @@ public class GeneratedFromTrend extends GeneratedFrom{
 	}
 
 	@Override
-	public boolean matchConditions(AllInstanceContainer allInstances){
+	public Element locateMatchingElement(AllInstanceContainer allInstances){
 		// TODO Implement threat generation from trends
-		return false;
+		return null;
 	}
 
 	@Override
