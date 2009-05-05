@@ -5,13 +5,10 @@ package dt.processor.kbta.ontology.defs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import android.os.Bundle;
-
 import dt.fe.MonitoredData;
 import dt.processor.kbta.ontology.instances.Event;
-import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author
@@ -40,7 +37,7 @@ public class EventDef extends ElementDef{
 				break;
 			}
 
-			Event e = new Event(_name, new TimeInterval(eventTime, eventTime));
+			Event e = new Event(_name, eventTime, eventTime);
 			events.add(e);
 		}
 

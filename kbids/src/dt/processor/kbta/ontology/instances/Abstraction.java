@@ -3,7 +3,6 @@
  */
 package dt.processor.kbta.ontology.instances;
 
-import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.util.TimeInterval;
 
 /**

@@ -1,12 +1,9 @@
 package dt.processor.kbta.container;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
-import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
 
 public class PrimitiveContainer implements ElementContainer{

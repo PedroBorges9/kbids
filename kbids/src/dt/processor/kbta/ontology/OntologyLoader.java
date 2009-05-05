@@ -9,7 +9,6 @@ import java.util.HashMap;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.R.string;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;

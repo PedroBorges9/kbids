@@ -1,6 +1,5 @@
 package dt.processor.kbta.threats;
 
-import java.util.ArrayList;
 
 public class ThreatAssessment {
 	private final String _title;

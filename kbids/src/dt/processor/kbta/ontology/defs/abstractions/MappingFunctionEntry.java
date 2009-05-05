@@ -1,11 +1,8 @@
 package dt.processor.kbta.ontology.defs.abstractions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.Primitive;
-import dt.processor.kbta.ontology.instances.State;
 
 public class MappingFunctionEntry {
 	private final String _value;

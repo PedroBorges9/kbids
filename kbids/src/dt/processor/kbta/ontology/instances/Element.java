@@ -3,7 +3,6 @@
  */
 package dt.processor.kbta.ontology.instances;
 
-import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractedFrom;
 import dt.processor.kbta.util.TimeInterval;
 
@@ -11,32 +10,27 @@ import dt.processor.kbta.util.TimeInterval;
  * @author
  */
 public abstract class Element{
+
+	public static final int PRIMITIVE = 0, EVENT = 1, CONTEXT = 2, STATE = 3, TREND = 4,
+			PATTERN = 5;
+
 	protected final String _name;
 
-	protected TimeInterval _timeInterval;
+	protected final TimeInterval _timeInterval;
 
 	protected int _type;
 
-	public static final int PRIMITIVE = 0;
-
-	public static final int EVENT = 1;
-
-	public static final int CONTEXT = 2;
-
-	public static final int STATE = 3;
-
-	public static final int TREND = 4;
-
-	public static final int PATTERN = 5;
-
 	private final int _hashCode;
+
+	public Element(int type, String name, long start, long end){
+		this(type, name, new TimeInterval(start, end));
+	}
 
 	public Element(int type, String name, TimeInterval timeInterval){
 		_name = name;
 		_timeInterval = timeInterval;
 		_type = type;
 		_hashCode = (_type + _name).hashCode();
-
 	}
 
 	public String getName(){
@@ -62,10 +56,6 @@ public abstract class Element{
 			return (_type == af.getType() && _name.equals(af.getName()));
 		}
 		return false;
-	}
-
-	public void setInterval(TimeInterval ti){
-		_timeInterval = ti;
 	}
 
 	@Override

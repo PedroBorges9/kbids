@@ -2,9 +2,6 @@ package dt.processor.kbta.threats;
 
 import java.util.ArrayList;
 
-import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.State;
-
 public class SymbolicValueCondition {
 	private final ArrayList<String> _symbolicValueConditions;
 
