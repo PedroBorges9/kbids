@@ -21,15 +21,14 @@
 		</State>
 	</Assessment>
 	
-	<Assessment title="Abnormal System load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level"  
-		baseCertainty="40">
+	<Assessment title="Abnormal System Load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level"  
+		baseCertainty="30">
 		<State name="System_Load_level">
 			<SymbolicValueCondition>
 				<Value name="High" />
 			</SymbolicValueCondition>
 			<DurationCondition min="PT2S" max="P8D" />
 		</State>
-	</Assessment>
-		
+	</Assessment>		
 		
 </Assessments>

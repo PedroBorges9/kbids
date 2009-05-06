@@ -31,6 +31,8 @@ import dt.processor.kbta.util.Pair;
 public final class KBTAProcessorService extends Service implements ServiceConnection{
 	public static final String TAG = "KBTAProcessor";
 
+	public static final boolean DEBUG = false;
+
 	private TWU _twu;
 
 	private Ontology _ontology;
@@ -70,10 +72,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		}, "Threat Assessment Loader Thread").start();
 
 		// Connecting to the TWU so we can send threat assessments
-		/*
-		 * bindService(new Intent("dt.agent.action.BIND_SERVICE")
-		 * .addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE);
-		 */
+		bindService(new Intent("dt.agent.action.BIND_SERVICE")
+				.addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE);
 	}
 
 	/**
@@ -82,8 +82,6 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-
-		// Destructor, clean up... shut down computation units, etc.
 
 		if (_twu != null){ // Unbinding from the TWU if connected
 			unbindService(this);
@@ -117,8 +115,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							ThreatAssessment ta = p.first;
 							Element element = p.second;
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
-									.getTitle(), ta.getDescription(), ta.getCertainty(element),
-									element.getExtras());
+									.getTitle(), ta.getDescription(), ta
+									.getCertainty(element), element.getExtras());
 						}
 					}
 				}catch(Throwable t){
@@ -140,12 +138,14 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		}
 		++_iteration;
 		createPrimitivesAndEvents(features);
-		System.out.println("\n--------------- Global iteration #" + _iteration
-				+ "---------------\n");
+		if (DEBUG)
+			System.out.println("\n--------------- Global iteration #" + _iteration
+					+ "---------------\n");
 		boolean cont = false;
 		int i = 1;
 		do{
-			System.out.println("---- Inner iteration #" + i++ + "----");
+			if (DEBUG)
+				System.out.println("---- Inner iteration #" + i++ + "----");
 			_allInstances.getContexts().shiftBack();
 			createContexts();
 			createAbstractions();
@@ -162,8 +162,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		for (ContextDef cd : contextDefs){
 			cd.createContext(_allInstances, _iteration);
 		}
-		System.out.println("** Contexts: **\n"
-				+ _allInstances.getContexts());
+		if (DEBUG)
+			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
 	}
 
 	private void createAbstractions(){
@@ -178,7 +178,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		for (StateDef sd : stateDefs){
 			sd.createState(_allInstances, _iteration);
 		}
-		System.out.println("** States: **\n" + _allInstances.getStates());
+		if (DEBUG)
+			System.out.println("** States: **\n" + _allInstances.getStates());
 	}
 
 	private void createTrends(){
