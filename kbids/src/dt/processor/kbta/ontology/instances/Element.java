@@ -16,12 +16,12 @@ public abstract class Element{
 
 	protected final String _name;
 
-	protected final int _type;	
+	protected final int _type;
 
 	private final TimeInterval _timeInterval;
 
 	private final int _hashCode;
-	
+
 	private final Bundle _extras;
 
 	public Element(int type, String name, long start, long end, Bundle extras){
@@ -47,17 +47,17 @@ public abstract class Element{
 	public final int getType(){
 		return _type;
 	}
-	
+
 	public final Bundle getExtras(){
 		return _extras;
 	}
-	
+
 	public final void addInnerExtras(Bundle dest){
 		if (_extras != null && dest != null){
 			dest.putAll(_extras);
 		}
 	}
-	
+
 	public final void addToInnerExtras(Bundle src){
 		if (_extras != null && src != null){
 			_extras.putAll(src);
@@ -86,26 +86,27 @@ public abstract class Element{
 	public String toString(){
 		String type = null;
 		switch (_type){
-			case PRIMITIVE: 
+			case PRIMITIVE:
 				type = "Primitive";
 				break;
-			case EVENT: 
+			case EVENT:
 				type = "Event";
 				break;
-			case CONTEXT: 
+			case CONTEXT:
 				type = "Context";
 				break;
-			case STATE: 
+			case STATE:
 				type = "State";
 				break;
-			case TREND: 
+			case TREND:
 				type = "Trend";
 				break;
-			case PATTERN: 
+			case PATTERN:
 				type = "Pattern";
 				break;
 		}
-		return type + " " + _name + " " + _timeInterval + ((_extras == null) ? "" : " " + _extras);
+		return type + " " + _name + " " + _timeInterval
+				+ ((_extras == null || _extras.isEmpty()) ? "" : " " + _extras);
 	}
 
 }

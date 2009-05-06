@@ -156,10 +156,10 @@
 				</Value>
 				<Value name="Normal">
 					<Primitive name="Context_Switches" minE="201"
-						maxE="1500" />
+						maxE="700" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Context_Switches" minE="1501"
+					<Primitive name="Context_Switches" minE="701"
 						maxE="*" />
 				</Value>
 			</MappingFunction>
