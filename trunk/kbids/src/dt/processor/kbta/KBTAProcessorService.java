@@ -69,9 +69,6 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			}
 		}, "Threat Assessment Loader Thread").start();
 
-		// This is the constructor, do any initialization you require here
-		// like reading the ontology, parsing stuff and so on...
-
 		// Connecting to the TWU so we can send threat assessments
 		/*
 		 * bindService(new Intent("dt.agent.action.BIND_SERVICE")
@@ -111,16 +108,17 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
 						for (Pair<ThreatAssessment, Element> p : threats){
-							Log.d("KBTAThreats", p.first.toString());
+							Log.d("KBTAThreats", p.first.toString(p.second));
 							Log.d("KBTAThreats", "Element: " + p.second.toString());
 						}
 					}
 					if (_twu != null){
 						for (Pair<ThreatAssessment, Element> p : threats){
 							ThreatAssessment ta = p.first;
+							Element element = p.second;
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
-									.getTitle(), ta.getDescription(), ta.getCertainty(),
-								p.second.getExtras());
+									.getTitle(), ta.getDescription(), ta.getCertainty(element),
+									element.getExtras());
 						}
 					}
 				}catch(Throwable t){

@@ -1,5 +1,6 @@
 package dt.processor.kbta.threats;
 
+import static android.text.TextUtils.isEmpty;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
@@ -65,6 +66,19 @@ public class ThreatAssessmentLoader{
 			if (eventType == START_TAG && "Assessment".equalsIgnoreCase(xpp.getName())){
 				String title = xpp.getAttributeValue(null, "title");
 				String description = xpp.getAttributeValue(null, "description");
+				String baseCertaintyStr = xpp.getAttributeValue(null, "baseCertainty");
+
+				if (isEmpty(title)){
+					Log.e(TAG, "Faulty threat assessment without title");
+					continue;
+				}
+
+				int baseCertainty;
+				if (!(TextUtils.isDigitsOnly(baseCertaintyStr)
+						&& (baseCertainty = Integer.parseInt(baseCertaintyStr)) > 0 && baseCertainty <= 100)){
+					Log.e(TAG, "Faulty threat asssessment base certainty");
+					continue;
+				}
 
 				while ((eventType = xpp.next()) != END_TAG
 						|| !xpp.getName().equalsIgnoreCase("Assessment")){
@@ -73,8 +87,7 @@ public class ThreatAssessmentLoader{
 
 				if (generatedFrom != null){
 					ThreatAssessment threatAssessment = new ThreatAssessment(title,
-							description, /* TODO change certainty */
-							100, generatedFrom);
+							description, baseCertainty, generatedFrom);
 					_ta.addThreatAssessment(threatAssessment);
 				}
 			}
@@ -158,8 +171,7 @@ public class ThreatAssessmentLoader{
 			}
 		}
 		if (!symbolicValueConditions.isEmpty()){
-			symbolicValueCondition = new SymbolicValueCondition(
-					symbolicValueConditions);
+			symbolicValueCondition = new SymbolicValueCondition(symbolicValueConditions);
 		}
 
 		return symbolicValueCondition;

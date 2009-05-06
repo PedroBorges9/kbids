@@ -1,5 +1,6 @@
 <Assessments>
-	<Assessment title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" >
+	<Assessment title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" 
+		baseCertainty="70">
 		<State name="CPU_Usage_Level">
 			<SymbolicValueCondition>
 				<Value name="Normal" />
@@ -9,7 +10,8 @@
 		</State>
 	</Assessment>
 	
-	<Assessment title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)" >
+	<Assessment title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)"  
+		baseCertainty="70">
 		<State name="Garbage_Collections_Level">
 			<SymbolicValueCondition>
 				<Value name="Low" />
@@ -19,12 +21,13 @@
 		</State>
 	</Assessment>
 	
-	<Assessment title="Abnormal System load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level" >
+	<Assessment title="Abnormal System load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level"  
+		baseCertainty="40">
 		<State name="System_Load_level">
 			<SymbolicValueCondition>
 				<Value name="High" />
 			</SymbolicValueCondition>
-			<DurationCondition min="PT1S" max="P8D" />
+			<DurationCondition min="PT2S" max="P8D" />
 		</State>
 	</Assessment>
 		
