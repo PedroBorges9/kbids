@@ -14,13 +14,16 @@ public abstract class GeneratedFrom {
 		_elementName = name;
 		_symbolicValueCondition = symbolicValueCondition;
 		_durationCondition = durationCondition;
-
 	}
 	
 	public abstract Element locateMatchingElement(AllInstanceContainer allInstances);
 
 	public final String getName() {
 		return _elementName;
+	}
+	
+	public final long getMinDuration(){
+		return _durationCondition.getMinDuration();
 	}
 
 	@Override

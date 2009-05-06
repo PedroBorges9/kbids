@@ -16,9 +16,9 @@ public abstract class Element{
 
 	protected final String _name;
 
-	protected final TimeInterval _timeInterval;
+	protected final int _type;	
 
-	protected int _type;
+	private final TimeInterval _timeInterval;
 
 	private final int _hashCode;
 	

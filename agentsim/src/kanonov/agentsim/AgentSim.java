@@ -20,12 +20,9 @@ import android.widget.*;
 public class AgentSim extends Activity implements ServiceConnection{
 	private static final String PROCESSOR_INTENT_ACTION = "dt.processor.kbta.action.PROCESSOR_SERVICE";
 	
-	
 	private ToggleButton _controlButton;
-	private Button _plus;
-	private Button _minus;
+	private Button _plus, _minus;
 	private TextView _interval;
-
 	private Processor _processor;
 	
 	private Thread _thread;
@@ -97,7 +94,7 @@ public class AgentSim extends Activity implements ServiceConnection{
 				@Override
 				public void run(){
 					int loop = 0;
-					while (!isInterrupted() && loop++ < 2){
+					while (!isInterrupted() && loop++ < 4){
 						SystemClock.sleep(getInterval() * 1000);
 						
 						if (_processor != null){
