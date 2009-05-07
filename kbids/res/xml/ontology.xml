@@ -1,4 +1,4 @@
-<Ontology name="Android">
+<Ontology name="Android" elementTimeout="PT10S">
 	<Primitives>
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />

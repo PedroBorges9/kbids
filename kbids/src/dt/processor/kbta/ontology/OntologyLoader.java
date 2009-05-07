@@ -48,6 +48,14 @@ public class OntologyLoader{
 
 	private final ArrayList<StateDef> _states;
 
+	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
+
+	private Long _elementTimeout;
+
+	private static final String DEFAULT_NAME = "Android";
+
+	private String _ontologyName;
+
 	public OntologyLoader(){
 		_primitives = new HashMap<String, PrimitiveDef>();
 		_events = new HashMap<String, EventDef>();
@@ -66,7 +74,9 @@ public class OntologyLoader{
 					continue;
 				}
 
-				if (tag.equalsIgnoreCase("Primitives")){
+				if (tag.equalsIgnoreCase("Ontology")){
+					parseOntologyTag(xpp);
+				}else if (tag.equalsIgnoreCase("Primitives")){
 					parsePrimitives(xpp);
 				}else if (tag.equalsIgnoreCase("Events")){
 					parseEvents(xpp);
@@ -81,8 +91,22 @@ public class OntologyLoader{
 				}
 			}
 
-			return new Ontology(_primitives, _events, _contexts, _states);
+			if (_elementTimeout == null){
+				Log.w(TAG,
+					"Missing/corrupt \"elementTimeout\" attribute in Ontology element, using default: "
+							+ DEFAULT_ELEMENT_TIMEOUT);
+				_elementTimeout = DEFAULT_ELEMENT_TIMEOUT;
+			}
 
+			if (isEmpty(_ontologyName)){
+				Log.w(TAG,
+					"Missing/corrupt \"name\" attribute in Ontology element, using default: "
+							+ DEFAULT_NAME);
+				_ontologyName = DEFAULT_NAME;
+			}
+
+			return new Ontology(_primitives, _events, _contexts, _states,
+					_elementTimeout, _ontologyName);
 		}catch(Exception e){
 			Log.e(TAG, "Error while loading Ontology", e);
 		}
@@ -90,9 +114,24 @@ public class OntologyLoader{
 		return null;
 	}
 
+	private void parseOntologyTag(XmlPullParser xpp){
+		_ontologyName = xpp.getAttributeValue(null, "name");
+		
+		try{
+			long elementTimeout = new ISODuration(xpp.getAttributeValue(null, "elementTimeout")).toMillis();
+			if (elementTimeout > 1000){
+				_elementTimeout = elementTimeout;
+			}else{
+				Log.w(TAG,
+					"Element timeout must be at least 1 second");
+			}
+		}catch(Exception e){
+			Log.w(TAG,"Missing/corrupt \"elementTimeout\" attribute in Ontology element", e);
+		}
+	}
+
 	private void parsePrimitives(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
-		// System.out.println("parsing primitives");
 		for (int eventType = xpp.next(); eventType != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Primitives"); eventType = xpp.next()){
 			String tag = xpp.getName();
@@ -203,7 +242,7 @@ public class OntologyLoader{
 				|| !xpp.getName().equalsIgnoreCase("Induction")){
 			if (eventType == XmlPullParser.START_TAG){
 				String tag = xpp.getName();
-				
+
 				// Parsing the ends tag
 				if ("Ends".equalsIgnoreCase(tag)){
 					try{
@@ -232,7 +271,7 @@ public class OntologyLoader{
 					if ((induction = parseInductionElement(xpp, contextName, tag)) == null){
 						return null;
 					}
-				}				
+				}
 			}
 		}
 
@@ -482,7 +521,7 @@ public class OntologyLoader{
 					return null;
 				}
 				if ("Primitive".equalsIgnoreCase(tag)){
-					isExistAf = existInAbstracedFrom(Element.PRIMITIVE, name,
+					isExistAf = existsInAbstracedFrom(Element.PRIMITIVE, name,
 						abstractedFrom);
 					if (isExistAf == null){
 						return null;
@@ -499,7 +538,7 @@ public class OntologyLoader{
 							numericRange);
 					elementConditions.put(isExistAf, elementCondition);
 				}else if ("State".equalsIgnoreCase(tag)){
-					isExistAf = existInAbstracedFrom(Element.STATE, name, abstractedFrom);
+					isExistAf = existsInAbstracedFrom(Element.STATE, name, abstractedFrom);
 					if (isExistAf == null){
 						return null;
 					}
@@ -518,7 +557,7 @@ public class OntologyLoader{
 				}
 			}
 		}
-		// TODO check
+		
 		if (elementConditions.isEmpty()
 				|| abstractedFrom.size() != elementConditions.size()){
 			return null;
@@ -526,7 +565,7 @@ public class OntologyLoader{
 		return new MappingFunctionEntry(stateValue, elementConditions);
 	}
 
-	private AbstractedFrom existInAbstracedFrom(int type, String name,
+	private AbstractedFrom existsInAbstracedFrom(int type, String name,
 		ArrayList<AbstractedFrom> abstractedFrom){
 		for (AbstractedFrom af : abstractedFrom){
 			if (type == af.getType() && name.equalsIgnoreCase(af.getName())){
