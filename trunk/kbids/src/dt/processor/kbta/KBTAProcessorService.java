@@ -29,7 +29,7 @@ import dt.processor.kbta.threats.ThreatAssessor;
 import dt.processor.kbta.util.Pair;
 
 public final class KBTAProcessorService extends Service implements ServiceConnection{
-	public static final String TAG = "KBTAProcessor";
+	public static final String TAG = "KBTA";
 
 	public static final boolean DEBUG = false;
 
@@ -43,7 +43,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 	private int _iteration;
 
-	private long _time = 10000;
+	private long _elementTimeout;
 
 	@Override
 	public void onCreate(){
@@ -56,7 +56,9 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			public void run(){
 				OntologyLoader ontologyLoader = new OntologyLoader();
 				_ontology = ontologyLoader.loadOntology(KBTAProcessorService.this);
-				System.out.println("Finish load ontology");
+				_elementTimeout = _ontology.getElementTimeout();
+				Log.i(TAG, "Finished loading the ontology: " + _ontology.getOntologyName());
+				
 			}
 		}, "Ontology Loader Thread").start();
 
@@ -67,7 +69,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
 				_threatAssessor = threatAssessmentLoader
 						.loadThreatAssessments(KBTAProcessorService.this);
-
+				Log.i(TAG, "Finished loading the threat assessments");
 			}
 		}, "Threat Assessment Loader Thread").start();
 
@@ -97,7 +99,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException{
 				try{
-					process(features);
+					compute(features);
 
 					if (_threatAssessor == null){
 						return;
@@ -106,8 +108,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
 						for (Pair<ThreatAssessment, Element> p : threats){
-							Log.d("KBTAThreats", p.first.toString(p.second));
-							Log.d("KBTAThreats", "Element: " + p.second.toString());
+							Log.d(TAG, p.first.toString(p.second));
+							Log.d(TAG, "Element: " + p.second.toString());
 						}
 					}
 					if (_twu != null){
@@ -132,7 +134,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		};
 	}
 
-	void process(List<MonitoredData> features){
+	void compute(List<MonitoredData> features){
 		if (_ontology == null){
 			return;
 		}
@@ -154,7 +156,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 		createPatterns();
 		_allInstances.shiftBackAll();
-		_allInstances.discardElementsNotWithinRange(_time);
+		_allInstances.discardElementsNotWithinRange(_elementTimeout);
 	}
 
 	private void createContexts(){
@@ -196,7 +198,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			String name = md.getName();
 			Date start = md.getStartTime();
 			Date end = md.getEndTime();
-			Double value = md.mdToDouble();
+			Double value = md.getValue();
 			Bundle extras = md.getExtras();
 			if (name == null || start == null || end == null || value == null){
 				continue;

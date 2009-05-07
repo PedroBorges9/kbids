@@ -24,8 +24,6 @@ public class ThreatAssessmentLoader{
 	public ThreatAssessor loadThreatAssessments(Context context){
 		_ta = new ThreatAssessor();
 
-		System.out.println("Loading Threat Assessments");
-
 		int eventType;
 		try{
 			XmlPullParser xpp = context.getResources().getXml(R.xml.threat_asssessments);

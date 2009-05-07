@@ -17,13 +17,19 @@ public final class Ontology{
 
 	private final StateDef[] _states;
 
+	private final long _elementTimeout;
+
+	private final String _ontologyName;
+
 	Ontology(HashMap<String, PrimitiveDef> primitives,
 		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
-		ArrayList<StateDef> states){
+		ArrayList<StateDef> states, long elementTimeout, String ontologyName){
 		_primitives = primitives;
 		_events = events;
 		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
 		_states = states.toArray(new StateDef[states.size()]);
+		_elementTimeout = elementTimeout;
+		_ontologyName = ontologyName;
 	}
 
 	public ContextDef[] getContextDefiners(){
@@ -40,5 +46,13 @@ public final class Ontology{
 
 	public EventDef getEventDef(String name){
 		return _events.get(name);
+	}
+	
+	public long getElementTimeout(){
+		return _elementTimeout;
+	}
+	
+	public String getOntologyName(){
+		return _ontologyName;
 	}
 }
