@@ -227,12 +227,11 @@
 	<!-- Assumptions: 
 		1. the time unit for the treshold is milliseconds
 		2. the angle is in degrees and not radians 
+		3. trends are created from primitives (and a single primitive at that)
 	-->
 	<Trends>
 		<Trend name="Network_Usage">
-			<AbstractedFrom>
-				<Primitive name="WiFi_TX_Bytes" />
-			</AbstractedFrom>
+			<AbstractedFrom name="WiFi_TX_Bytes" />
 			<NecessaryContexts>
 				<Context name="Connected_To_WiFi" />
 			</NecessaryContexts>
