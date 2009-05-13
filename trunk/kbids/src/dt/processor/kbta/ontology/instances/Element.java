@@ -106,7 +106,8 @@ public abstract class Element{
 				break;
 		}
 		return type + " " + _name + " " + _timeInterval
-				+ ((_extras == null || _extras.isEmpty()) ? "" : " " + _extras);
+				+ ((_extras == null || _extras.isEmpty()) ? "" : " " + _extras)
+				;
 	}
 
 }

@@ -31,4 +31,13 @@
 		</State>
 	</Assessment>		
 		
+	<Assessment title="Camera Abuse" description="Pictures are being taken too often!"  
+		baseCertainty="80">
+		<State name="Camera_Usage_level">
+			<SymbolicValueCondition>
+				<Value name="High" />
+			</SymbolicValueCondition>
+			<DurationCondition min="PT4S" max="PT4M" />
+		</State>
+	</Assessment>
 </Assessments>

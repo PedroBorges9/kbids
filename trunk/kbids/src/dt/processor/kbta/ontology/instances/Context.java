@@ -10,7 +10,7 @@ import dt.processor.kbta.util.TimeInterval;
  * @author
  */
 public final class Context extends Element{
-	public Context(String name, TimeInterval timeInterval){
-		super(CONTEXT, name, timeInterval, null);
+	public Context(String name, TimeInterval timeInterval, Bundle extras){
+		super(CONTEXT, name, timeInterval, extras);
 	}	
 }

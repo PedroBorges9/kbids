@@ -21,9 +21,9 @@ public final class PrimitiveDef extends ElementDef{
 		_range = range;
 	}
 
-	public void createPrimitive(Date start, Date end, double value, Bundle extras, AllInstanceContainer allInstances){
+	public void createPrimitive(Date end, double value, Bundle extras, AllInstanceContainer allInstances){
 		if (_range.isInRange(value)){
-			Primitive primitive = new Primitive(_name, value, start.getTime(), end.getTime(), extras);
+			Primitive primitive = new Primitive(_name, value, end.getTime(), end.getTime(), extras);
 			allInstances.addPrimitive(primitive);
 		}
 	}

@@ -21,7 +21,7 @@ public class EventInduction extends Induction{
 				TimeInterval ti = e.getTimeInterval();
 				long start = ti.getStartTime();
 				long end = (_relativeToStart ? start : ti.getEndTime()) + _gap;
-				createdContexts = createdContexts | createContext(container, start, end);
+				createdContexts = createdContexts | createContext(container, start, end, null);
 			}
 		}
 		return createdContexts;
