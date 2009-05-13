@@ -4,7 +4,7 @@
 package dt.processor.kbta.ontology.instances;
 
 import android.os.Bundle;
-import dt.processor.kbta.ontology.defs.abstractions.AbstractedFrom;
+import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.util.TimeInterval;
 
 /**

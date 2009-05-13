@@ -5,7 +5,8 @@ import java.util.HashMap;
 
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.abstractions.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 
 public final class Ontology{
@@ -17,17 +18,20 @@ public final class Ontology{
 
 	private final StateDef[] _states;
 
+	private final TrendDef[] _trends;
+	
 	private final long _elementTimeout;
 
 	private final String _ontologyName;
 
 	Ontology(HashMap<String, PrimitiveDef> primitives,
 		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
-		ArrayList<StateDef> states, long elementTimeout, String ontologyName){
+		ArrayList<StateDef> states,ArrayList<TrendDef> trends, long elementTimeout, String ontologyName){
 		_primitives = primitives;
 		_events = events;
 		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
 		_states = states.toArray(new StateDef[states.size()]);
+		_trends = trends.toArray(new TrendDef[trends.size()]);
 		_elementTimeout = elementTimeout;
 		_ontologyName = ontologyName;
 	}
@@ -40,6 +44,10 @@ public final class Ontology{
 		return _states;
 	}
 
+	public TrendDef[] getTrendDefiners(){
+		return _trends;
+	}
+	
 	public PrimitiveDef getPrimitiveDef(String name){
 		return _primitives.get(name);
 	}

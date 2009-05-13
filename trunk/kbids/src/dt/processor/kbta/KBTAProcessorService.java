@@ -20,7 +20,7 @@ import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.OntologyLoader;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.abstractions.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.ThreatAssessment;
