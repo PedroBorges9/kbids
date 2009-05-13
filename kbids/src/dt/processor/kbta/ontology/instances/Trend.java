@@ -14,23 +14,29 @@ public final class Trend extends Abstraction{
 
 	private Primitive _last;
 
-	private String _type;
 
 	public Trend(String name, String value, TimeInterval timeInterval, Bundle extras,
-		Primitive first, Primitive last, String type){
+		Primitive first, Primitive last){
 		super(TREND, name, value, timeInterval, extras);
 		_first = first;
 		_last = last;
-		_type = type;
+		
 
 	}
 
-	public void setFirst(Primitive first){
-		_first = first;
-	}
 
 	public void setLast(Primitive last){
 		_last = last;
+	}
+	
+	
+	
+	public Primitive getLast(){
+		return _last;
+	}
+	
+	public Primitive getFirst(){
+		return _first;
 	}
 
 }

@@ -21,6 +21,7 @@ import dt.processor.kbta.ontology.OntologyLoader;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.ThreatAssessment;
@@ -185,7 +186,12 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createTrends(){
-		// TODO create trends
+		TrendDef[] trendDefs = _ontology.getTrendDefiners();
+		for (TrendDef td : trendDefs){
+			td.createTrend(_allInstances, _iteration);
+		}
+		if (DEBUG)
+			System.out.println("** States: **\n" + _allInstances.getStates());
 	}
 
 	private void createPatterns(){
