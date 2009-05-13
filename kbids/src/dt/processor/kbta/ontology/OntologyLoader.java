@@ -16,14 +16,16 @@ import dt.processor.kbta.R;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.abstractions.AbstractedFrom;
-import dt.processor.kbta.ontology.defs.abstractions.ElementCondition;
-import dt.processor.kbta.ontology.defs.abstractions.InterpolationFunction;
-import dt.processor.kbta.ontology.defs.abstractions.MappingFunction;
-import dt.processor.kbta.ontology.defs.abstractions.MappingFunctionEntry;
-import dt.processor.kbta.ontology.defs.abstractions.PrimitiveCondition;
-import dt.processor.kbta.ontology.defs.abstractions.StateCondition;
-import dt.processor.kbta.ontology.defs.abstractions.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
+import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
+import dt.processor.kbta.ontology.defs.abstractions.state.InterpolationFunction;
+import dt.processor.kbta.ontology.defs.abstractions.state.MappingFunction;
+import dt.processor.kbta.ontology.defs.abstractions.state.MappingFunctionEntry;
+import dt.processor.kbta.ontology.defs.abstractions.state.PrimitiveCondition;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateCondition;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
+import dt.processor.kbta.ontology.defs.abstractions.trend.InterpolateMappingFunction;
+import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.defs.context.Destruction;
 import dt.processor.kbta.ontology.defs.context.EventInduction;
@@ -48,6 +50,8 @@ public class OntologyLoader{
 
 	private final ArrayList<StateDef> _states;
 
+	private final ArrayList<TrendDef> _trends;
+
 	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
 
 	private Long _elementTimeout;
@@ -61,6 +65,7 @@ public class OntologyLoader{
 		_events = new HashMap<String, EventDef>();
 		_contexts = new ArrayList<ContextDef>();
 		_states = new ArrayList<StateDef>();
+		_trends = new ArrayList<TrendDef>();
 	}
 
 	public Ontology loadOntology(Context context){
@@ -85,7 +90,7 @@ public class OntologyLoader{
 				}else if (tag.equalsIgnoreCase("States")){
 					parseStates(xpp);
 				}else if (tag.equalsIgnoreCase("Trends")){
-					// TODO Parse Trends
+					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
 					// TODO Parse patterns
 				}
@@ -105,7 +110,7 @@ public class OntologyLoader{
 				_ontologyName = DEFAULT_NAME;
 			}
 
-			return new Ontology(_primitives, _events, _contexts, _states,
+			return new Ontology(_primitives, _events, _contexts, _states,_trends,
 					_elementTimeout, _ontologyName);
 		}catch(Exception e){
 			Log.e(TAG, "Error while loading Ontology", e);
@@ -114,19 +119,97 @@ public class OntologyLoader{
 		return null;
 	}
 
+	private void parseTrends(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
+		System.out.println("******parseTrends******");
+		int eventType;
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Trends")){
+			if (eventType == XmlPullParser.START_TAG && "Trend".equals(xpp.getName())){
+				
+				TrendDef trendDef = loadTrend(xpp);
+				if (trendDef != null){
+					_trends.add(trendDef);
+				}
+			}
+		}
+		System.out.println(_trends);
+	}
+
+	private TrendDef loadTrend(XmlPullParser xpp) throws XmlPullParserException,
+			IOException{
+		int eventType;
+		String abstractedFrom = null;
+		ArrayList<String> necessaryContexts = null;
+		InterpolateMappingFunction mappingFunction = null;
+		String name = null;
+
+		name = xpp.getAttributeValue(null, "name");
+		if (TextUtils.isEmpty(name)){
+			Log.e(TAG, "Missing name for trend");
+			return null;
+		}
+
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Trend")){
+			if (eventType == XmlPullParser.START_TAG){
+				if ("AbstractedFrom".equals(xpp.getName())){
+					abstractedFrom = xpp.getAttributeValue(null, "name");
+					if (TextUtils.isEmpty(abstractedFrom)){
+						Log.e(TAG, "Missing name for an primitive");
+						return null;
+					}
+				}else if ("NecessaryContexts".equals(xpp.getName())){
+					necessaryContexts = parseNecessaryContexts(xpp);
+				}else if ("MappingFunction".equals(xpp.getName())){
+					Double treshold=null;
+					Double angle=null;
+					Long maxGap=null;
+					try{
+						treshold = Double.parseDouble(xpp.getAttributeValue(null,
+							"treshold"));
+						angle = Double.parseDouble(xpp.getAttributeValue(null, "angle"));
+					}catch(NumberFormatException e){
+						Log.e(TAG, "Corrupt treshold or angle " + treshold + " " + angle,
+							e);
+						return null;
+					}
+
+					try{
+						maxGap = new ISODuration(xpp.getAttributeValue(null, "maxGap"))
+								.toMillis();
+					}catch(Exception e){
+						Log.e(TAG, "Corrupt maxgap value " + maxGap, e);
+						return null;
+					}
+					
+					mappingFunction = new InterpolateMappingFunction(treshold,angle,maxGap);
+				}
+			}
+		}
+
+		if (abstractedFrom == null || necessaryContexts == null
+				|| mappingFunction == null){
+			return null;
+		}
+		return new TrendDef(name, abstractedFrom, necessaryContexts, mappingFunction);
+
+	}
+
 	private void parseOntologyTag(XmlPullParser xpp){
 		_ontologyName = xpp.getAttributeValue(null, "name");
-		
+
 		try{
-			long elementTimeout = new ISODuration(xpp.getAttributeValue(null, "elementTimeout")).toMillis();
+			long elementTimeout = new ISODuration(xpp.getAttributeValue(null,
+				"elementTimeout")).toMillis();
 			if (elementTimeout > 1000){
 				_elementTimeout = elementTimeout;
 			}else{
-				Log.w(TAG,
-					"Element timeout must be at least 1 second");
+				Log.w(TAG, "Element timeout must be at least 1 second");
 			}
 		}catch(Exception e){
-			Log.w(TAG,"Missing/corrupt \"elementTimeout\" attribute in Ontology element", e);
+			Log.w(TAG,
+				"Missing/corrupt \"elementTimeout\" attribute in Ontology element", e);
 		}
 	}
 
@@ -332,7 +415,6 @@ public class OntologyLoader{
 
 	private void parseStates(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
-		// System.out.println("******parseStates******");
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("States")){
@@ -354,8 +436,7 @@ public class OntologyLoader{
 		InterpolationFunction interpolationFunction = null;
 		String name = null;
 
-		// System.out.println("<State name="
-		// + (name = xpp.getAttributeValue(null, "name")) + ">");
+	
 		name = xpp.getAttributeValue(null, "name");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("State")){
@@ -391,11 +472,7 @@ public class OntologyLoader{
 
 			if (eventType == XmlPullParser.START_TAG
 					&& xpp.getName().equalsIgnoreCase("Value")){
-				// System.out.println("name="
-				// + xpp.getAttributeValue(null, "name") + " maxGap="
-				// + xpp.getAttributeValue(null, "maxGap") + " timeUnit="
-				// + xpp.getAttributeValue(null, "timeUnit"));
-
+			
 				String maxGap = xpp.getAttributeValue(null, "maxGap");
 				long maxGapLong;
 				try{
@@ -420,12 +497,12 @@ public class OntologyLoader{
 			throws XmlPullParserException, IOException{
 		int eventType;
 		ArrayList<String> necessaryContexts = new ArrayList<String>();
-		// System.out.println("NecessaryContexts");
+	
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("NecessaryContexts")){
 			String tag = xpp.getName();
 			if (eventType == XmlPullParser.START_TAG && tag.equalsIgnoreCase("Context")){
-				// System.out.println(xpp.getAttributeValue(null, "name"));
+			
 				String name = xpp.getAttributeValue(null, "name");
 				if (!isEmpty(name)){
 					necessaryContexts.add(name);
@@ -445,7 +522,7 @@ public class OntologyLoader{
 		int eventType;
 		ArrayList<AbstractedFrom> abstractedFromList = new ArrayList<AbstractedFrom>();
 		int type = -1;
-		// System.out.println("AbstractedFrom");
+	
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("AbstractedFrom")){
 			String tag = xpp.getName();
@@ -457,8 +534,7 @@ public class OntologyLoader{
 				}else if (tag.equalsIgnoreCase("Trend")){
 					type = Element.TREND;
 				}
-				// System.out.println(tag + " name="
-				// + xpp.getAttributeValue(null, "name"));
+			
 
 				String name = xpp.getAttributeValue(null, "name");
 				if (isEmpty(name) || type < 0){
@@ -481,7 +557,6 @@ public class OntologyLoader{
 		int eventType;
 		ArrayList<MappingFunctionEntry> mappingFunction = new ArrayList<MappingFunctionEntry>();
 
-		// System.out.println("MappingFunction");
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("MappingFunction")){
 			if (eventType == XmlPullParser.START_TAG
@@ -510,7 +585,6 @@ public class OntologyLoader{
 		HashMap<AbstractedFrom, ElementCondition> elementConditions = new HashMap<AbstractedFrom, ElementCondition>();
 
 		String stateValue = xpp.getAttributeValue(null, "name");
-		// System.out.println();
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Value")){
 			String tag = xpp.getName();
@@ -528,9 +602,7 @@ public class OntologyLoader{
 					}
 
 					NumericRange numericRange = parseNumericRange(xpp);
-					// System.out.println("Primitive "
-					// + xpp.getAttributeValue(null, "name") + " "
-					// + numericRange + "\n");
+			
 					if (numericRange == null){
 						return null;
 					}
@@ -542,9 +614,7 @@ public class OntologyLoader{
 					if (isExistAf == null){
 						return null;
 					}
-					// System.out.println("State "
-					// + xpp.getAttributeValue(null, "name") + " "
-					// + xpp.getAttributeValue(null, "value") + "\n");
+				
 					String elementValue = xpp.getAttributeValue(null, "value");
 					if (isEmpty(elementValue)){
 						return null;
@@ -557,7 +627,7 @@ public class OntologyLoader{
 				}
 			}
 		}
-		
+
 		if (elementConditions.isEmpty()
 				|| abstractedFrom.size() != elementConditions.size()){
 			return null;
