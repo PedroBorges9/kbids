@@ -7,10 +7,10 @@ import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
 
 /**
- * @author rahamime
+ *
  */
 public abstract class Abstraction extends Element{
-	protected final String _value;
+	protected String _value;
 
 	public Abstraction(int type, String name, String value, TimeInterval timeInterval, Bundle extras){
 		super(type, name, timeInterval, extras);
@@ -21,6 +21,9 @@ public abstract class Abstraction extends Element{
 		return _value;
 	}
 
+	public void setValue(String value){
+		_value = value;
+	}
 	@Override
 	public String toString(){
 		return super.toString() + " value=" + _value;
