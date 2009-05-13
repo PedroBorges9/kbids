@@ -21,7 +21,7 @@ public class PrimitiveInduction extends Induction{
 				// time is the same and avoid checking _relativeToStart
 				long start = p.getTimeInterval().getEndTime();
 				long end = start + _gap;
-				return createContext(container, start, end);
+				return createContext(container, start, end, p.getExtras());
 			}
 		}
 		return false;

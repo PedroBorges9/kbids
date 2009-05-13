@@ -1,19 +1,26 @@
-<Ontology name="Android" elementTimeout="PT10S">
+<Ontology name="Android" elementTimeout="PT10M">
 	<Primitives>
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
 		<Primitive name="Running_Processes" minE="0" maxE="*" />
 		<Primitive name="Minor_Page_Faults" minE="0" maxE="*" />
 		<Primitive name="Context_Switches" minE="0" maxE="*" />
+		<Primitive name="Camera" minE="0" maxE="*" />
+		<Primitive name="Perm_Camera" minE="0" maxE="*" />
+		<Primitive name="WiFi_TX_Bytes" minE="0" maxE="*" />
+		
+		
 	</Primitives>
 
 	<Events>
+		<!-- TODO: Add WiFi_Connection event -->
 		<Event name="Picture_Taken" />
 		<Event name="Keyboard_Opening" />
 		<Event name="Keyboard_Closing" />
 	</Events>
 
 	<Contexts>
+		<!-- TODO: Add Connected_To_WiFi context -->	
 		<Context name="Keyboard_Open">
 			<Inductions>
 				<Induction>
@@ -57,35 +64,21 @@
 
 			<Destructions></Destructions>
 		</Context>
+		
+		<Context name="Many_Apps_With_Camera_Permission">
+			<Inductions>
+				<Induction>
+					<Primitive name="Perm_Camera" minE="1"
+						maxE="*" />
+					<Ends relativeTo="end" gap="PT5S" />
+				</Induction>
+			</Inductions>
 
+			<Destructions></Destructions>
+		</Context>
 	</Contexts>
 
 	<States>
-		<!-- 		<State name="CPU_Usage_Level">
-			<AbstractedFrom>
-			<Primitive name="CPU_Usage" />
-			</AbstractedFrom>
-			<NecessaryContexts>
-			<Context name="Keyboard_Open" />
-			</NecessaryContexts>
-			<MappingFunction>
-			<Value name="Low">
-			<Primitive name="CPU_Usage" minE="0" maxE="20" />
-			</Value>
-			<Value name="Normal">	
-			<Primitive name="CPU_Usage" minE="21" maxE="70" />
-			</Value>
-			<Value name="High">
-			<Primitive name="CPU_Usage" minE="71" maxE="100" />
-			</Value>
-			</MappingFunction>
-			<InterpolationFunction>
-			<Value name="Low" maxGap="PT1M" />
-			<Value name="Normal" maxGap="P10D" />
-			<Value name="High" maxGap="P10D" />
-			</InterpolationFunction>
-			</State>
-		-->
 		<State name="Garbage_Collections_Level">
 			<AbstractedFrom>
 				<Primitive name="Garbage_Collections" />
@@ -151,8 +144,7 @@
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Low">
-					<Primitive name="Context_Switches" minE="0"
-						maxE="200" />
+					<Primitive name="Context_Switches" minE="0"	maxE="200" />
 				</Value>
 				<Value name="Normal">
 					<Primitive name="Context_Switches" minE="201"
@@ -205,104 +197,67 @@
 				<Value name="High" maxGap="P10S" />
 			</InterpolationFunction>
 		</State>
-
-
-
+		
+		<State name="Camera_Usage_level">
+			<AbstractedFrom>
+				<Primitive name="Camera" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Many_Apps_With_Camera_Permission" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Low">
+					<Primitive name="Camera" minE="0" maxE="2" />
+				</Value>
+				<Value name="Normal">
+					<Primitive name="Camera" minE="3" maxE="3" />
+				</Value>
+				<Value name="High">
+					<Primitive name="Camera" minE="4" maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Low" maxGap="PT1M" />
+				<Value name="Normal" maxGap="P30S" />
+				<Value name="High" maxGap="P10S" />
+			</InterpolationFunction>
+		</State>
 	</States>
-
-
-
-
-
-
-
-
-
-	<!--
-		<Gradients>
-		<Gradient name="Blood Pressure Gradient">
-		<AbstractedFrom>
-		<Primitive name="Blood Pressure"/>
-		</AbstractedFrom>
-		<SymbolicValues scale="ordinal">
-		<Value name="Increasing" />
-		<Value name="Same" />
-		<Value name="Decreasing" />
-		</SymbolicValues>
-		<NecessaryContexts>
-		<Context name="After Running"/>
-		</NecessaryContexts>
-		<PersistenceFunction>
-		<Value name="Increasing">
-		<PersistenceTable timeUnit="minute" type="positive-positive">
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		</PersistenceTable>
-		</Value>
-		<Value name="Same">
-		<PersistenceTable timeUnit="day" type="positive-positive">
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		</PersistenceTable>
-		</Value>
-		<Value name="Decreasing">
-		<PersistenceTable timeUnit="day" type="positive-positive">
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		<Gaps>10 10 10 10 10 10</Gaps>
-		</PersistenceTable>
-		</Value>
-		</PersistenceFunction>
-		<GradientMappingFunction significantVariation="3" />
-		</Gradient>
-		</Gradients>
-		
-		<Patterns>
-		<Pattern name="DDoS Attack" componentType="">
-		<Elements>
-		<Element name="Heart Rate-2">
-		<Primitive name="Heart Rate">
-		<SymbolicValueCondition>
-		<Value name="Normal" />
-		</SymbolicValueCondition>
-		<DurationCondition>
-		<Duration min="P2D" max="P8D" />
-		</DurationCondition>
-		<BoundpointCondition>
-		<StartPoint timeUnit="Month" min="9" max="11" />
-		<EndPoint />
-		</BoundpointCondition>
-		</Primitive>
-		</Element>
-		
-		<Element name="Drug Admin-2">
-		<Event name="Drug Admin" attributeName="Dose">						
-		<NumericValueCondition>
-		<Value minE="200" maxE="400" />
-		</NumericValueCondition>
-		<DurationCondition>
-		<Duration min="P2D" max="P8D" />
-		</DurationCondition>
-		<BoundpointCondition>
-		<StartPoint timeUnit="Month" min="9" max="11" />
-		<EndPoint />
-		</BoundpointCondition>
-		</Event>
-		</Element>
-		
-		</Elements>
-		</Pattern>
-		</Patterns>
+	
+	<!-- Assumptions: 
+		1. the time unit for the treshold is milliseconds
+		2. the angle is in degrees and not radians 
 	-->
+	<Trends>
+		<Trend name="Network_Usage">
+			<AbstractedFrom>
+				<Primitive name="WiFi_TX_Bytes" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Connected_To_WiFi" />
+			</NecessaryContexts>
+			<MappingFunction treshold="17" angle="70" maxGap="PT30S" /> 
+		</Trend>
+	</Trends>
+	
+	<Patterns>
+		<LinearPattern name="DDoS Attack">
+			<Elements>
+				<Primitive name="Heart Rate" ordinal="1">
+					<NumericValueConditon minE="31" maxE="100" />
+					<DurationCondition min="P2D" max="P8D" />
+				</Primitive>
+				<State name="Drug Admin" ordinal="2">		
+					<SymbolicValueCondition>
+						<Value name="Normal" />
+					</SymbolicValueCondition>
+					<DurationCondition min="P2D" max="P8D" />
+				</State>
+			</Elements>
+			<PairWiseConditions>
+				<PairWiseCondition first="1" second="2" value="Smaller" 
+					temporal="Before" minGap="PT10S" maxGap="PT30S" /> <!-- dont care in gaps will be * -->
+			</PairWiseConditions>
+		</LinearPattern>
+	</Patterns>
 </Ontology>

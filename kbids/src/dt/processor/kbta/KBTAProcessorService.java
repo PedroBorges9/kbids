@@ -207,7 +207,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			// Matching feature to a primitive
 			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
 			if (pd != null){
-				pd.createPrimitive(start, end, value, extras, _allInstances);
+				pd.createPrimitive(end, value, extras, _allInstances);
 			}
 
 			// Matching feature to an event

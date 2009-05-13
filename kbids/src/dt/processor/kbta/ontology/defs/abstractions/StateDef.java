@@ -17,12 +17,20 @@ import dt.processor.kbta.util.TimeInterval;
  * @author
  */
 public final class StateDef extends AbstractionDef{
+	private final AbstractedFrom[] _abstractedFrom;
+
+	private final MappingFunction _mappingFunction;
+
+	private final InterpolationFunction _interpolationFunction;
 
 	public StateDef(String name, ArrayList<AbstractedFrom> abstractedFrom,
 		ArrayList<String> necessaryContexts, MappingFunction mappingFunction,
 		InterpolationFunction interpolationFunction){
-		super(name, abstractedFrom, necessaryContexts, mappingFunction,
-				interpolationFunction);
+		super(name, necessaryContexts);
+		_abstractedFrom = abstractedFrom
+				.toArray(new AbstractedFrom[abstractedFrom.size()]);
+		_mappingFunction = mappingFunction;
+		_interpolationFunction = interpolationFunction;
 	}
 
 	public void createState(AllInstanceContainer instances, int iteration){
@@ -68,12 +76,16 @@ public final class StateDef extends AbstractionDef{
 			return;
 		}
 		// System.out.println("Mapped value is: " + value);
-		
+
 		// From this point on, we are certain that an abstraction can be created
-		// so we can sum up the extras of the abstracted-from elements
-		Bundle newAbstractionExtras = new Bundle();
+		// so we can sum up the extras of the abstracted-from elements and the
+		// contexts
+		Bundle newExtras = new Bundle();
 		for (Element element : elementsAf){
-			element.addInnerExtras(newAbstractionExtras);
+			element.addInnerExtras(newExtras);
+		}
+		for (Element element : elementsContext){
+			element.addInnerExtras(newExtras);
 		}
 
 		// Attempting to interpolate the newly created state with
@@ -90,12 +102,12 @@ public final class StateDef extends AbstractionDef{
 			// System.out.println("Interpolation succeeded");
 			states.removeCurrentElement(_name);
 			// Seeing as the state has already existed, we only to its inner extras
-			state.addToInnerExtras(newAbstractionExtras);
+			state.addToInnerExtras(newExtras);
 		}else{
 			// Either there is no previous state to interpolate with
 			// or the interpolation has failed, in either case we need
 			// to create a new state
-			state = new State(_name, value, timeInterval, newAbstractionExtras);
+			state = new State(_name, value, timeInterval, newExtras);
 		}
 		// Setting the newly created / interpolated state as the newest state of it's name
 		states.setNewestElement(state);

@@ -12,9 +12,8 @@ import java.util.ArrayList;
  */
 public final class TrendDef extends AbstractionDef {
 
-	public TrendDef(String name, ArrayList<AbstractedFrom> abstractedFrom,
-		ArrayList<String> necessaryContexts, MappingFunction mappingFunction,
-		InterpolationFunction interpolationFunction){
-		super(name, abstractedFrom, necessaryContexts, mappingFunction, interpolationFunction);
+	public TrendDef(String name, String abstractedFrom,
+		ArrayList<String> necessaryContexts /*TODO add mapping function */){
+		super(name, necessaryContexts);
 	}
 }

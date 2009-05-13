@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.defs.context;
 
+import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.util.TimeInterval;
@@ -53,21 +54,22 @@ public abstract class Induction{
 
 	public abstract boolean induce(AllInstanceContainer container);
 
-	protected boolean createContext(AllInstanceContainer container, long start, long end){
+	protected boolean createContext(AllInstanceContainer container, long start, long end, Bundle extras){
 		Context context = container.getContexts().getCurrentElement(_contextName);
 		if (context != null){
 			long contextEnd = context.getTimeInterval().getEndTime();
 			if (contextEnd < start){
 				container.addContext(new Context(_contextName, new TimeInterval(start,
-						end)));
+						end), extras));
 				return true;
 			}else if (contextEnd < end){
 				context.getTimeInterval().setEndTime(end);
+				context.addToInnerExtras(extras);
 				return false;
 			}
 			return false;
 		}else{
-			container.addContext(new Context(_contextName, new TimeInterval(start, end)));
+			container.addContext(new Context(_contextName, new TimeInterval(start, end), extras));
 			return true;
 		}
 	}

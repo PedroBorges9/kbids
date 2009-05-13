@@ -20,7 +20,7 @@ public class TrendInduction extends Induction{
 				TimeInterval ti = t.getTimeInterval();
 				long start = ti.getStartTime();
 				long end = (_relativeToStart ? start : ti.getEndTime()) + _gap;
-				return createContext(container, start, end);
+				return createContext(container, start, end, t.getExtras());
 			}
 		}
 		return false;
