@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.defs.context;
 
+import java.util.Arrays;
 import java.util.List;
 
 import dt.processor.kbta.container.AllInstanceContainer;
@@ -38,9 +39,22 @@ public final class ContextDef extends ElementDef{
 			}
 		}
 	}
+	
+	public void destroyContext(AllInstanceContainer aic, int iteration){
+		if (assertNotCreatedIn(iteration)){
+			if (aic.getContexts().getCurrentElement(_name)!=null){
+				for (Destruction destruction : _destructions){
+					if (destruction.Destruct(aic)){
+						setLastCreated(iteration);
+						return;
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public String toString(){
-		return "contextDef " + _name + "\n inductions: " + _inductions;
+		return "contextDef " + _name + "\n inductions: " + Arrays.toString(_inductions) +"\n destructions: "+Arrays.toString(_destructions) +"\n";
 	}
 }
