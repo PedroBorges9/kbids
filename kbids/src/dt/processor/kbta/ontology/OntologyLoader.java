@@ -15,17 +15,18 @@ import android.util.Log;
 import dt.processor.kbta.R;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
+import dt.processor.kbta.ontology.defs.PatternDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.InterpolationFunction;
-import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunction;
-import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunctionEntry;
 import dt.processor.kbta.ontology.defs.abstractions.state.PrimitiveCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
-import dt.processor.kbta.ontology.defs.abstractions.trend.TrendMappingFunction;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunction;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunctionEntry;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
+import dt.processor.kbta.ontology.defs.abstractions.trend.TrendMappingFunction;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
 import dt.processor.kbta.ontology.defs.context.Destruction;
 import dt.processor.kbta.ontology.defs.context.EventDestruction;
@@ -38,6 +39,7 @@ import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
 import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.threats.DurationCondition;
 import dt.processor.kbta.util.ISODuration;
 
 /**
@@ -55,6 +57,8 @@ public class OntologyLoader{
 	private final ArrayList<StateDef> _states;
 
 	private final ArrayList<TrendDef> _trends;
+	
+	private final ArrayList<PatternDef> _patterns;
 
 	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
 
@@ -70,6 +74,7 @@ public class OntologyLoader{
 		_contexts = new ArrayList<ContextDef>();
 		_states = new ArrayList<StateDef>();
 		_trends = new ArrayList<TrendDef>();
+		_patterns=new ArrayList<PatternDef>();
 	}
 
 	public Ontology loadOntology(Context context){
@@ -96,7 +101,7 @@ public class OntologyLoader{
 				}else if (tag.equalsIgnoreCase("Trends")){
 					 parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
-					// TODO Parse patterns
+	//				 ParsePatterns(xpp);
 				}
 			}
 
@@ -120,6 +125,131 @@ public class OntologyLoader{
 			Log.e(TAG, "Error while loading Ontology", e);
 		}
 
+		return null;
+	}
+
+	private void ParsePatterns(XmlPullParser xpp) throws XmlPullParserException,
+	IOException{
+		int eventType;
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Patterns")){
+			if (eventType == XmlPullParser.START_TAG && "LinearPattern".equals(xpp.getName())){
+
+				PatternDef pd = loadLinearPattern(xpp);
+				if (pd != null){
+					_patterns.add(pd);
+				}
+			}
+		}
+		
+	}
+
+	private PatternDef loadLinearPattern(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<PatternElements> elements=new ArrayList<PatternElements>();
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("LinearPattern")){
+			String name=xpp.getName();
+			String patternName=xpp.getAttributeValue(null, "name");
+			if (eventType == XmlPullParser.START_TAG && "Elements".equals(name)){
+				elements=loadPatternElements(xpp); 
+				if (elements.isEmpty()){
+					Log.e(TAG, "no elements to create the pattern "+ patternName);
+					//TODO CHECK IF NEED TO THROW SOMETHING
+				}
+				
+			}
+			
+			else if  (eventType == XmlPullParser.START_TAG && "PairWiseConditions".equals(name)){
+				//TODO DO SOMETHING
+			}
+		}
+		
+		return null;
+		
+		
+		
+	}
+
+	private ArrayList<PatternElements> loadPatternElements(XmlPullParser xpp) throws NumberFormatException, XmlPullParserException, IOException {
+		int eventType;
+		ArrayList<PatternElements> elements=new ArrayList<PatternElements>();
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase("Elements")){
+			
+			if (eventType == XmlPullParser.START_TAG){
+				String name=xpp.getName();
+				int ordinal=Integer.parseInt(xpp.getAttributeValue(null, "Ordinal"));
+				if ( "Primitive".equals(name)){
+					int type=Element.PRIMITIVE;
+					PatternElementNumeric p=parseElementNumeric(type, xpp, "Primitive", ordinal);
+				}else if ( "Event".equals(name)){
+					int type=Element.EVENT;
+					PatternElements p=parseElement(type, xpp, "Event", ordinal);
+				}else if ( "Trend".equals(name)){
+					int type=Element.TREND;
+					PatternElementSymbolic p=parseElementSymbolic(type, xpp, "Trend", ordinal);
+				}else if ( "State".equals(name)){
+					int type=Element.STATE;
+					PatternElementSymbolic p=parseElementSymbolic(type, xpp, "State", ordinal);
+				}else if ( "Context".equals(name)){
+					int type=Element.CONTEXT;
+					PatternElements p=parseElement(type, xpp, "Context", ordinal);
+				}
+				else{
+					Log.e(TAG, "invalid pattern element");
+					//TODO RETURN NULL?
+					return null;
+				}
+			}
+		}
+		return null;
+	}
+
+
+	private PatternElementNumeric parseElementNumeric(int type,
+			XmlPullParser xpp, String elementTypeName, int ordinal)    {
+	
+		NumericRange range=null;
+		DurationCondition duration=null;
+		int eventType;
+		try{
+		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+				|| !xpp.getName().equalsIgnoreCase(elementTypeName)){
+			if (eventType == XmlPullParser.START_TAG){
+				String name=xpp.getName();
+				if ( "NumericValueConditon".equals(name)){
+					range=parseNumericRange(xpp);
+					
+				}else if ( "DurationCondition".equals(name)){
+					duration=new DurationCondition(xpp.getAttributeValue(null, "min"),
+							xpp.getAttributeValue(null, "max"));
+				}
+				
+			}
+			
+		}
+		}
+		catch (Exception e){
+			Log.e(TAG,"Invalid numeric pattern element", e);
+			
+		}
+		if (duration==null || range==null){
+			Log.e(TAG,"Invalid numeric pattern element");
+		}
+		return new PatternElementNumeric(type, ordinal, duration, range);
+	
+	}
+
+	private PatternElementSymbolic parseElementSymbolic(int type,
+			XmlPullParser xpp, String string, int ordinal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private PatternElements parseElement(int type, XmlPullParser xpp,
+			String string, int ordinal) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
