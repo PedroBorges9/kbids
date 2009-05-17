@@ -32,7 +32,7 @@ public class EventDestruction extends Destruction {
 				if (c!=null){
 					c.getTimeInterval().setEndTime(e.getTimeInterval().getEndTime());
 					cc.removeCurrentElement(_contextName);
-					cc.getOldElements(_contextName).add(c);
+					cc.addToOld(c, _contextName);
 					return true;
 				}
 			}

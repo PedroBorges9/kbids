@@ -44,12 +44,7 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 			String name=newElement.getKey();
 			T current=_currentElements.get(name);
 			if (current!=null){
-				ArrayList<T> old=_oldElements.get(name);
-				if (old==null){
-					old=new ArrayList<T>();
-					_oldElements.put(name, old);
-				}
-				old.add(_currentElements.get(name));
+				addToOld(current, name);
 			}
 			_currentElements.put(name, newElement.getValue());
 		}
@@ -86,6 +81,14 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 		
 	}
 	
+	public void addToOld(T oldElement, String name){
+		ArrayList<T> old=_oldElements.get(name);
+		if (old==null){
+			old=new ArrayList<T>();
+			_oldElements.put(name, old);
+		}
+		old.add(oldElement);
+	}
 	
 	@Override
 	public String toString(){
