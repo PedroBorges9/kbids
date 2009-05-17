@@ -60,26 +60,27 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 				_ontology = ontologyLoader.loadOntology(KBTAProcessorService.this);
 				_elementTimeout = _ontology.getElementTimeout();
 				Log.i(TAG, "Finished loading the ontology: " + _ontology);
-				
+
 			}
 		}, "Ontology Loader Thread").start();
 
-		new Thread(new Runnable(){
-
-			@Override
-			public void run(){
-				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
-				_threatAssessor = threatAssessmentLoader
-						.loadThreatAssessments(KBTAProcessorService.this);
-				Log.i(TAG, "Finished loading the threat assessments");
-			}
-		}, "Threat Assessment Loader Thread").start();
+		// FIXME Remove comment
+		// new Thread(new Runnable(){
+		//
+		// @Override
+		// public void run(){
+		// ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
+		// _threatAssessor = threatAssessmentLoader
+		// .loadThreatAssessments(KBTAProcessorService.this);
+		// Log.i(TAG, "Finished loading the threat assessments");
+		// }
+		// }, "Threat Assessment Loader Thread").start();
 
 		// Connecting to the TWU so we can send threat assessments
 		bindService(new Intent("dt.agent.action.BIND_SERVICE")
 				.addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE);
-	
-//		compute(null);
+
+		// compute(null);
 	}
 
 	/**
@@ -102,34 +103,31 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			@Override
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException{
-//				try{
-//					System.out.println("RECIEVE MONITORED DATA");
-//					compute(features);
-//					
-//					if (_threatAssessor == null){
-//						return;
-//					}
-//					Collection<Pair<ThreatAssessment, Element>> threats = _threatAssessor
-//							.assess(_allInstances);
-//					if (!threats.isEmpty()){
-//						for (Pair<ThreatAssessment, Element> p : threats){
-//							Log.d(TAG, p.first.toString(p.second));
-//							Log.d(TAG, "Element: " + p.second.toString());
-//						}
-//					}
-//					if (_twu != null){
-//						for (Pair<ThreatAssessment, Element> p : threats){
-//							ThreatAssessment ta = p.first;
-//							Element element = p.second;
-//							_twu.receiveThreatAssessment("dt.processor.kbta", ta
-//									.getTitle(), ta.getDescription(), ta
-//									.getCertainty(element), element.getExtras());
-//						}
-//					}
-//				}catch(Throwable t){
-//					System.err.println("This should've been caught sooner!!!");
-//					t.printStackTrace();
-//				}
+				try{
+					compute(features);
+
+					if (_threatAssessor == null || _twu == null){
+						return;
+					}
+					Collection<Pair<ThreatAssessment, Element>> threats = _threatAssessor
+							.assess(_allInstances);
+					if (!threats.isEmpty()){
+						for (Pair<ThreatAssessment, Element> p : threats){
+							Log.d(TAG, p.first.toString(p.second));
+							Log.d(TAG, "Element: " + p.second.toString());
+						}
+					}
+					for (Pair<ThreatAssessment, Element> p : threats){
+						ThreatAssessment ta = p.first;
+						Element element = p.second;
+						_twu.receiveThreatAssessment("dt.processor.kbta", ta.getTitle(),
+							ta.getDescription(), ta.getCertainty(element), element
+									.getExtras());
+					}
+				}catch(Throwable t){
+					System.err.println("This should've been caught sooner!!!");
+					t.printStackTrace();
+				}
 			}
 
 			@Override
@@ -140,20 +138,23 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	void compute(List<MonitoredData> features){
-		System.out.println("COMPUTING");
-		
 		if (_ontology == null){
 			return;
 		}
 		++_iteration;
-		createPrimitivesAndEvents(features);
 		if (DEBUG)
 			System.out.println("\n--------------- Global iteration #" + _iteration
 					+ "---------------\n");
+		createPrimitivesAndEvents(features);
+		if (DEBUG)
+			System.out.println("** Events: **\n" + _allInstances.getEvents());
+
+		if (DEBUG)
+			System.out.println("** Primitives: **\n" + _allInstances.getPrimitives());
 		boolean cont = false;
 		int i = 1;
 		do{
-			destroyContexts();
+//			destroyContexts();
 			if (DEBUG)
 				System.out.println("---- Inner iteration #" + i++ + "----");
 			_allInstances.getContexts().shiftBack();
@@ -167,14 +168,14 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		_allInstances.discardElementsNotWithinRange(_elementTimeout);
 	}
 
-	private void destroyContexts() {
+	private void destroyContexts(){
 		ContextDef[] contextDefs = _ontology.getContextDefiners();
 		for (ContextDef cd : contextDefs){
-	//		cd.destroyContext(_allInstances, _iteration);
+			// cd.destroyContext(_allInstances, _iteration);
 		}
 		if (DEBUG)
 			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
-		
+
 	}
 
 	private void createContexts(){
@@ -187,8 +188,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createAbstractions(){
-		_allInstances.getStates().shiftBack();
-		createStates();
+//		_allInstances.getStates().shiftBack();
+//		createStates();
 		_allInstances.getTrends().shiftBack();
 		createTrends();
 	}
@@ -208,7 +209,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			td.createTrend(_allInstances, _iteration);
 		}
 		if (DEBUG)
-			System.out.println("** States: **\n" + _allInstances.getStates());
+			System.out.println("** Trends: **\n" + _allInstances.getTrends());
 	}
 
 	private void createPatterns(){

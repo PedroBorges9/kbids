@@ -13,14 +13,13 @@
 	</Primitives>
 
 	<Events>
-		<!-- TODO: Add WiFi_Connection event -->
+		<Event name="WiFi_Connection" />
 		<Event name="Picture_Taken" />
 		<Event name="Keyboard_Opening" />
 		<Event name="Keyboard_Closing" />
 	</Events>
 
 	<Contexts>
-		<!-- TODO: Add Connected_To_WiFi context -->	
 		<Context name="Keyboard_Open">
 			<Inductions>
 				<Induction>
@@ -70,6 +69,17 @@
 				<Induction>
 					<Primitive name="Perm_Camera" minE="1"
 						maxE="*" />
+					<Ends relativeTo="end" gap="PT5S" />
+				</Induction>
+			</Inductions>
+
+			<Destructions></Destructions>
+		</Context>
+		
+		<Context name="Connected_To_WiFi">
+			<Inductions>
+				<Induction>
+					<Event name="WiFi_Connection" />
 					<Ends relativeTo="end" gap="PT5S" />
 				</Induction>
 			</Inductions>
@@ -225,7 +235,7 @@
 	</States>
 	
 	<!-- Assumptions: 
-		1. the time unit for the treshold is milliseconds
+		1. the time unit for the treshold is seconds
 		2. the angle is in degrees and not radians 
 		3. trends are created from primitives (and a single primitive at that)
 	-->
@@ -235,7 +245,7 @@
 			<NecessaryContexts>
 				<Context name="Connected_To_WiFi" />
 			</NecessaryContexts>
-			<MappingFunction treshold="17" angle="70" maxGap="PT30S" /> 
+			<MappingFunction threshold="17" angle="360" maxGap="PT30M" /> 
 		</Trend>
 	</Trends>
 	

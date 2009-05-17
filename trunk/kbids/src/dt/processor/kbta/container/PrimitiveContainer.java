@@ -56,10 +56,12 @@ public class PrimitiveContainer implements ElementContainer{
 				oldIter.remove();
 			}
 		}
-
-
-
-
 	}
 
+	@Override
+	public String toString(){
+		return 
+		"Current: "+_currentElements.values()+"\n" +
+		"Old:"+_oldElements.values();
+	}
 }

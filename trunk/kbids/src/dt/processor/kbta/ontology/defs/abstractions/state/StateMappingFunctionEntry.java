@@ -4,12 +4,12 @@ import java.util.HashMap;
 
 import dt.processor.kbta.ontology.instances.Element;
 
-public class MappingFunctionEntry{
+public class StateMappingFunctionEntry{
 	private final String _mappedValue;
 
 	private final HashMap<AbstractedFrom, ElementCondition> _conditions;
 
-	public MappingFunctionEntry(String value,
+	public StateMappingFunctionEntry(String value,
 		HashMap<AbstractedFrom, ElementCondition> elementCondition){
 		_mappedValue = value;
 		_conditions = elementCondition;

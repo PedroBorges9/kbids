@@ -20,12 +20,12 @@ import dt.processor.kbta.util.TimeInterval;
 public final class StateDef extends AbstractionDef{
 	private final AbstractedFrom[] _abstractedFrom;
 
-	private final MappingFunction _mappingFunction;
+	private final StateMappingFunction _mappingFunction;
 
 	private final InterpolationFunction _interpolationFunction;
 
 	public StateDef(String name, ArrayList<AbstractedFrom> abstractedFrom,
-		ArrayList<String> necessaryContexts, MappingFunction mappingFunction,
+		ArrayList<String> necessaryContexts, StateMappingFunction mappingFunction,
 		InterpolationFunction interpolationFunction){
 		super(name, necessaryContexts);
 		_abstractedFrom = abstractedFrom
@@ -102,7 +102,7 @@ public final class StateDef extends AbstractionDef{
 			// the current elements
 			// System.out.println("Interpolation succeeded");
 			states.removeCurrentElement(_name);
-			// Seeing as the state has already existed, we only to its inner extras
+			// Seeing as the abstraction has already existed, we only to its inner extras
 			state.addToInnerExtras(newExtras);
 		}else{
 			// Either there is no previous state to interpolate with
