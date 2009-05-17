@@ -26,7 +26,7 @@ private final String _symbolicValue;
 			if (c!=null){
 				c.getTimeInterval().setEndTime(trend.getTimeInterval().getEndTime());
 				cc.removeCurrentElement(_contextName);
-				cc.getOldElements(_contextName).add(c);
+				cc.addToOld(c, _contextName);
 				return true;
 			}
 		}

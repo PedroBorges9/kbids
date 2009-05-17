@@ -103,10 +103,12 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			@Override
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException{
-				try{
-					compute(features);
 
-					if (_threatAssessor == null || _twu == null){
+				try{
+					System.out.println("RECIEVE MONITORED DATA");
+					compute(features);
+					
+					if (_threatAssessor == null){
 						return;
 					}
 					Collection<Pair<ThreatAssessment, Element>> threats = _threatAssessor
@@ -117,17 +119,22 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							Log.d(TAG, "Element: " + p.second.toString());
 						}
 					}
-					for (Pair<ThreatAssessment, Element> p : threats){
-						ThreatAssessment ta = p.first;
-						Element element = p.second;
-						_twu.receiveThreatAssessment("dt.processor.kbta", ta.getTitle(),
-							ta.getDescription(), ta.getCertainty(element), element
-									.getExtras());
+					if (_twu != null){
+						for (Pair<ThreatAssessment, Element> p : threats){
+							ThreatAssessment ta = p.first;
+							Element element = p.second;
+							_twu.receiveThreatAssessment("dt.processor.kbta", ta
+									.getTitle(), ta.getDescription(), ta
+									.getCertainty(element), element.getExtras());
+						}
 					}
 				}catch(Throwable t){
 					System.err.println("This should've been caught sooner!!!");
 					t.printStackTrace();
 				}
+
+			
+				
 			}
 
 			@Override
@@ -171,7 +178,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	private void destroyContexts(){
 		ContextDef[] contextDefs = _ontology.getContextDefiners();
 		for (ContextDef cd : contextDefs){
-			// cd.destroyContext(_allInstances, _iteration);
+			cd.destroyContext(_allInstances, _iteration);
+
 		}
 		if (DEBUG)
 			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
