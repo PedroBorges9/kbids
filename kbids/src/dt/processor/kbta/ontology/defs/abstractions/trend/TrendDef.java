@@ -3,6 +3,7 @@
  */
 package dt.processor.kbta.ontology.defs.abstractions.trend;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,10 +25,10 @@ import dt.processor.kbta.util.TimeInterval;
 public final class TrendDef extends AbstractionDef{
 	private final String _abstractedFrom;
 
-	private final InterpolateMappingFunction _mappingFunction;
+	private final TrendMappingFunction _mappingFunction;
 
 	public TrendDef(String name, String abstractedFrom,
-		ArrayList<String> necessaryContexts, InterpolateMappingFunction mappingFunction){
+		ArrayList<String> necessaryContexts, TrendMappingFunction mappingFunction){
 		super(name, necessaryContexts);
 		_abstractedFrom = abstractedFrom;
 		_mappingFunction = mappingFunction;
@@ -41,7 +42,7 @@ public final class TrendDef extends AbstractionDef{
 		}
 
 		PrimitiveContainer primitives = instances.getPrimitives();
-		Element primitive = primitives.getCurrentPrimitive(_abstractedFrom);
+		Primitive primitive = primitives.getCurrentPrimitive(_abstractedFrom);
 		if (primitive == null){
 			return;
 		}
@@ -65,52 +66,59 @@ public final class TrendDef extends AbstractionDef{
 		Trend currentTrend = trends.getCurrentElement(_name);
 		// Mapping the elements to a state value, if possible
 
+		// From this point on, we are certain that an abstraction can be created
+		// so we can sum up the extras of the abstracted-from elements and the
+		// contexts
 		Bundle newExtras = new Bundle();
-
-		if (currentTrend != null
-				&& _mappingFunction.mapElements(currentTrend, (Primitive)primitive)){
-			trends.removeCurrentElement(_name);
-		}else{
-			if (currentTrend == null){
-				// TODO try to interpolate between two primitives(current and old) by
-				// check
-				// treshold
-				Primitive old = primitives.getOldPrimitive(_name);
-				if (old == null){
-					return;
-				}else{
-					currentTrend = new Trend(_name, _mappingFunction.checkTreshold(old,
-						(Primitive)primitive), new TimeInterval(old.getTimeInterval()
-							.getEndTime(), primitive.getTimeInterval().getEndTime()),
-							newExtras, old, (Primitive)primitive);
-					trends.addElement(currentTrend);
-
-				}
-
-			}else{// mapping failed
-				if (primitive.getTimeInterval().getEndTime()
-						- currentTrend.getTimeInterval().getEndTime() > _mappingFunction
-						.getMaxGap()){
-					// need to remove currentTrend ???
-					trends.removeCurrentElement(_name);
-				}else{// check angles failed
-					// create new Trend with primitive and last in trend and enter to
-					// _trends
-					Primitive last = currentTrend.getLast();
-					currentTrend = new Trend(_name, _mappingFunction.checkTreshold(last,
-						(Primitive)primitive), new TimeInterval(last.getTimeInterval()
-							.getEndTime(), primitive.getTimeInterval().getEndTime()),
-							newExtras, last, (Primitive)primitive);
-					trends.addElement(currentTrend);
-
-				}
-
-			}
-
+		primitive.addInnerExtras(newExtras);
+		for (Element element : elementsContext){
+			element.addInnerExtras(newExtras);
 		}
 
-		setLastCreated(iteration);
+		createTrend(iteration, primitives, primitive, trends, currentTrend, newExtras);
+	}
 
+	private void createTrend(int iteration, PrimitiveContainer primitives,
+		Primitive primitive, ComplexContainer<Trend> trends, Trend currentTrend,
+		Bundle newExtras){
+		TimeInterval tiPrimitive = primitive.getTimeInterval();
+		if (currentTrend != null){
+			TimeInterval tiTrend = currentTrend.getTimeInterval();
+			if (_mappingFunction.isGapSmallerThanMaxGap(tiTrend, tiPrimitive)){
+				if (_mappingFunction.isInIterpolationRange(currentTrend, primitive)){
+					currentTrend.setLast(primitive);
+					tiTrend.setEndTime(tiPrimitive.getEndTime());
+					currentTrend.setValue(_mappingFunction.mapValue(currentTrend
+							.getFirst(), primitive));
+					trends.removeCurrentElement(_name);
+					// Seeing as the abstraction has already existed, we only to its inner extras
+					currentTrend.addToInnerExtras(newExtras);
+				}else{
+					Primitive last = currentTrend.getLast();
+					String value = _mappingFunction.mapValue(last, primitive);
+
+					TimeInterval tiNew = new TimeInterval(tiTrend.getEndTime(),
+							tiPrimitive.getEndTime());
+					currentTrend = new Trend(_name, value, tiNew, newExtras, last,
+							primitive);
+
+				}
+				trends.addElement(currentTrend);
+				setLastCreated(iteration);
+			}
+		}else{
+			Primitive old = primitives.getOldPrimitive(_name);
+			if (old != null){
+				String value = _mappingFunction.mapValue(old, primitive);
+				TimeInterval tiNew = new TimeInterval(old.getTimeInterval().getEndTime(),
+						tiPrimitive.getEndTime());
+
+				currentTrend = new Trend(_name, value, tiNew, newExtras, old, primitive);
+
+				trends.addElement(currentTrend);
+				setLastCreated(iteration);
+			}			
+		}
 	}
 
 	@Override

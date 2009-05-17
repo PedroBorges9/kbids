@@ -3,6 +3,9 @@
  */
 package dt.processor.kbta.ontology.defs;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.instances.Event;
@@ -26,6 +29,7 @@ public class EventDef extends ElementDef{
 			return;
 		}
 		
+		ArrayList<Event> createdEvents = new ArrayList<Event>(eventTimes.length - 1);
 		for (int i = eventTimes.length - 1; i >= 0; --i){
 			long eventTime = eventTimes[i];
 			if (eventTime <= _latestEventTime){
@@ -33,6 +37,10 @@ public class EventDef extends ElementDef{
 			}
 
 			Event event = new Event(_name, eventTime, eventTime);
+			createdEvents.add(event);
+		}
+		Collections.reverse(createdEvents); //FIXME do it normally
+		for (Event event : createdEvents){
 			allInstances.addEvent(event);
 		}
 

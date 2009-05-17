@@ -30,7 +30,7 @@ public class EventContainer implements ElementContainer{
 		
 	}
 	
-	public ArrayList<Event> getCurrentEvent(String st){
+	public ArrayList<Event> getCurrentEvents(String st){
 		return _currentElements.get(st);	 
 	}
 	
@@ -92,6 +92,11 @@ public class EventContainer implements ElementContainer{
 		
 	}
 	
-	
+	@Override
+	public String toString(){
+		return 
+		"Current: "+_currentElements.values()+"\n" +
+		"Old:"+_oldElements.values();
+	}
 
 }

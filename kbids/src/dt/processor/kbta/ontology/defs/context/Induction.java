@@ -57,6 +57,8 @@ public abstract class Induction{
 	protected boolean createContext(AllInstanceContainer container, long start, long end, Bundle extras){
 		Context context = container.getContexts().getCurrentElement(_contextName);
 		if (context != null){
+
+//			android.util.Log.d("System.out", "Existing context: " + context);
 			long contextEnd = context.getTimeInterval().getEndTime();
 			if (contextEnd < start){
 				container.addContext(new Context(_contextName, new TimeInterval(start,
@@ -64,11 +66,15 @@ public abstract class Induction{
 				return true;
 			}else if (contextEnd < end){
 				context.getTimeInterval().setEndTime(end);
+//				android.util.Log.d("System.out", "Overlapping, new interval: " + context.getTimeInterval());
 				context.addToInnerExtras(extras);
 				return false;
 			}
 			return false;
 		}else{
+			//FIXME Before creating a new context we need to look
+			// in the new contexts in case we created a context in this iteration
+			// already and need to prolong it 
 			container.addContext(new Context(_contextName, new TimeInterval(start, end), extras));
 			return true;
 		}

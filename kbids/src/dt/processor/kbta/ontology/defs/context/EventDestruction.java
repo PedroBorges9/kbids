@@ -26,7 +26,7 @@ public class EventDestruction extends Destruction {
 			if (c==null){
 				return false;
 			}
-			ArrayList<Event> events = container.getEvents().getCurrentEvent(_elementName);
+			ArrayList<Event> events = container.getEvents().getCurrentEvents(_elementName);
 			if (events != null){
 				Event e=events.get(0);
 				if (c!=null){

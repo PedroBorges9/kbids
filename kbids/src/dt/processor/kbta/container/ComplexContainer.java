@@ -89,7 +89,6 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	
 	@Override
 	public String toString(){
-
 		return 
 		"New: "+_newElements.values()+"\n" +
 		"Current: "+_currentElements.values()+"\n" +
