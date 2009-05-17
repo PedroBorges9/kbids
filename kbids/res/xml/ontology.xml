@@ -245,7 +245,7 @@
 			<NecessaryContexts>
 				<Context name="Connected_To_WiFi" />
 			</NecessaryContexts>
-			<MappingFunction threshold="17" angle="360" maxGap="PT30M" /> 
+			<MappingFunction threshold="16" angle="0" maxGap="PT30M" /> 
 		</Trend>
 	</Trends>
 	
