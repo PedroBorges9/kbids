@@ -12,7 +12,7 @@ public final class TrendMappingFunction{
 	private final long _maxGap;
 
 	public TrendMappingFunction(double threshold, double angle, long maxGap){
-		_threshold = threshold * 1000;
+		_threshold = threshold;
 		_angle = angle;
 		_maxGap = maxGap;
 	}
@@ -42,8 +42,8 @@ public final class TrendMappingFunction{
 		double vFirst = first.getValue();
 		double vNew = primitive.getValue();
 
-		long dtLF = tLast - tFirst;
-		long dtNL = tNew - tLast;
+		long dtLF = (tLast - tFirst)/1000;//to seconds
+		long dtNL = (tNew - tLast)/1000;//to seconds
 		double dvLF = vLast - vFirst;
 		double dvNL = vNew - vLast;
 
@@ -65,9 +65,9 @@ public final class TrendMappingFunction{
 	 * else then the value is "Same"
 	 */
 	public String mapValue(Primitive p1, Primitive p2){
-		double changeRate = (p2.getValue() - p1.getValue())
+		double changeRate = ((p2.getValue() - p1.getValue())
 				/ (p2.getTimeInterval().getEndTime() - p1.getTimeInterval()
-						.getEndTime());
+						.getEndTime()))*1000;
 
 //		System.out.println("dtValue= "+(p2.getValue() - p1.getValue()));
 //		System.out.println("dtTime= "+(p2.getTimeInterval().getEndTime() - p1.getTimeInterval()

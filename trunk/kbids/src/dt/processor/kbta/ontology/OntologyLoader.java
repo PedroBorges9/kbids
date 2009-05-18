@@ -21,11 +21,10 @@ import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.InterpolationFunction;
 import dt.processor.kbta.ontology.defs.abstractions.state.PrimitiveCondition;
-import dt.processor.kbta.ontology.defs.abstractions.state.StateCondition;
+import dt.processor.kbta.ontology.defs.abstractions.state.AbstractionCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunction;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunctionEntry;
-import dt.processor.kbta.ontology.defs.abstractions.state.TrendCondition;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendMappingFunction;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
@@ -59,7 +58,7 @@ public class OntologyLoader{
 	private final ArrayList<StateDef> _states;
 
 	private final ArrayList<TrendDef> _trends;
-	
+
 	private final ArrayList<PatternDef> _patterns;
 
 	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
@@ -76,7 +75,7 @@ public class OntologyLoader{
 		_contexts = new ArrayList<ContextDef>();
 		_states = new ArrayList<StateDef>();
 		_trends = new ArrayList<TrendDef>();
-		_patterns=new ArrayList<PatternDef>();
+		_patterns = new ArrayList<PatternDef>();
 	}
 
 	public Ontology loadOntology(Context context){
@@ -95,15 +94,15 @@ public class OntologyLoader{
 				}else if (tag.equalsIgnoreCase("Primitives")){
 					parsePrimitives(xpp);
 				}else if (tag.equalsIgnoreCase("Events")){
-					 parseEvents(xpp);
+					parseEvents(xpp);
 				}else if (tag.equalsIgnoreCase("Contexts")){
 					parseContexts(xpp);
 				}else if (tag.equalsIgnoreCase("States")){
 					// parseStates(xpp);
 				}else if (tag.equalsIgnoreCase("Trends")){
-					 parseTrends(xpp);
+					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
-	//				 ParsePatterns(xpp);
+					// ParsePatterns(xpp);
 				}
 			}
 
@@ -131,11 +130,12 @@ public class OntologyLoader{
 	}
 
 	private void ParsePatterns(XmlPullParser xpp) throws XmlPullParserException,
-	IOException{
+			IOException{
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Patterns")){
-			if (eventType == XmlPullParser.START_TAG && "LinearPattern".equals(xpp.getName())){
+			if (eventType == XmlPullParser.START_TAG
+					&& "LinearPattern".equals(xpp.getName())){
 
 				PatternDef pd = loadLinearPattern(xpp);
 				if (pd != null){
@@ -143,64 +143,67 @@ public class OntologyLoader{
 				}
 			}
 		}
-		
+
 	}
 
-	private PatternDef loadLinearPattern(XmlPullParser xpp) throws XmlPullParserException, IOException {
+	private PatternDef loadLinearPattern(XmlPullParser xpp)
+			throws XmlPullParserException, IOException{
 		int eventType;
-		ArrayList<PatternElements> elements=new ArrayList<PatternElements>();
+		ArrayList<PatternElements> elements = new ArrayList<PatternElements>();
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("LinearPattern")){
-			String name=xpp.getName();
-			String patternName=xpp.getAttributeValue(null, "name");
+			String name = xpp.getName();
+			String patternName = xpp.getAttributeValue(null, "name");
 			if (eventType == XmlPullParser.START_TAG && "Elements".equals(name)){
-				elements=loadPatternElements(xpp); 
+				elements = loadPatternElements(xpp);
 				if (elements.isEmpty()){
-					Log.e(TAG, "no elements to create the pattern "+ patternName);
-					//TODO CHECK IF NEED TO THROW SOMETHING
+					Log.e(TAG, "no elements to create the pattern " + patternName);
+					// TODO CHECK IF NEED TO THROW SOMETHING
 				}
-				
+
 			}
-			
-			else if  (eventType == XmlPullParser.START_TAG && "PairWiseConditions".equals(name)){
-				//TODO DO SOMETHING
+
+			else if (eventType == XmlPullParser.START_TAG
+					&& "PairWiseConditions".equals(name)){
+				// TODO DO SOMETHING
 			}
 		}
-		
+
 		return null;
-		
-		
-		
+
 	}
 
-	private ArrayList<PatternElements> loadPatternElements(XmlPullParser xpp) throws NumberFormatException, XmlPullParserException, IOException {
+	private ArrayList<PatternElements> loadPatternElements(XmlPullParser xpp)
+			throws NumberFormatException, XmlPullParserException, IOException{
 		int eventType;
-		ArrayList<PatternElements> elements=new ArrayList<PatternElements>();
+		ArrayList<PatternElements> elements = new ArrayList<PatternElements>();
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Elements")){
-			
+
 			if (eventType == XmlPullParser.START_TAG){
-				String name=xpp.getName();
-				int ordinal=Integer.parseInt(xpp.getAttributeValue(null, "Ordinal"));
-				if ( "Primitive".equals(name)){
-					int type=Element.PRIMITIVE;
-					PatternElementNumeric p=parseElementNumeric(type, xpp, "Primitive", ordinal);
-				}else if ( "Event".equals(name)){
-					int type=Element.EVENT;
-					PatternElements p=parseElement(type, xpp, "Event", ordinal);
-				}else if ( "Trend".equals(name)){
-					int type=Element.TREND;
-					PatternElementSymbolic p=parseElementSymbolic(type, xpp, "Trend", ordinal);
-				}else if ( "State".equals(name)){
-					int type=Element.STATE;
-					PatternElementSymbolic p=parseElementSymbolic(type, xpp, "State", ordinal);
-				}else if ( "Context".equals(name)){
-					int type=Element.CONTEXT;
-					PatternElements p=parseElement(type, xpp, "Context", ordinal);
-				}
-				else{
+				String name = xpp.getName();
+				int ordinal = Integer.parseInt(xpp.getAttributeValue(null, "Ordinal"));
+				if ("Primitive".equals(name)){
+					int type = Element.PRIMITIVE;
+					PatternElementNumeric p = parseElementNumeric(type, xpp, "Primitive",
+						ordinal);
+				}else if ("Event".equals(name)){
+					int type = Element.EVENT;
+					PatternElements p = parseElement(type, xpp, "Event", ordinal);
+				}else if ("Trend".equals(name)){
+					int type = Element.TREND;
+					PatternElementSymbolic p = parseElementSymbolic(type, xpp, "Trend",
+						ordinal);
+				}else if ("State".equals(name)){
+					int type = Element.STATE;
+					PatternElementSymbolic p = parseElementSymbolic(type, xpp, "State",
+						ordinal);
+				}else if ("Context".equals(name)){
+					int type = Element.CONTEXT;
+					PatternElements p = parseElement(type, xpp, "Context", ordinal);
+				}else{
 					Log.e(TAG, "invalid pattern element");
-					//TODO RETURN NULL?
+					// TODO RETURN NULL?
 					return null;
 				}
 			}
@@ -208,56 +211,54 @@ public class OntologyLoader{
 		return null;
 	}
 
+	private PatternElementNumeric parseElementNumeric(int type, XmlPullParser xpp,
+		String elementTypeName, int ordinal){
 
-	private PatternElementNumeric parseElementNumeric(int type,
-			XmlPullParser xpp, String elementTypeName, int ordinal)    {
-	
-		NumericRange range=null;
-		DurationCondition duration=null;
+		NumericRange range = null;
+		DurationCondition duration = null;
 		int eventType;
 		try{
-		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
-				|| !xpp.getName().equalsIgnoreCase(elementTypeName)){
-			if (eventType == XmlPullParser.START_TAG){
-				String name=xpp.getName();
-				if ( "NumericValueConditon".equals(name)){
-					range=parseNumericRange(xpp);
-					
-				}else if ( "DurationCondition".equals(name)){
-					duration=new DurationCondition(xpp.getAttributeValue(null, "min"),
-							xpp.getAttributeValue(null, "max"));
+			while ((eventType = xpp.next()) != XmlPullParser.END_TAG
+					|| !xpp.getName().equalsIgnoreCase(elementTypeName)){
+				if (eventType == XmlPullParser.START_TAG){
+					String name = xpp.getName();
+					if ("NumericValueConditon".equals(name)){
+						range = parseNumericRange(xpp);
+
+					}else if ("DurationCondition".equals(name)){
+						duration = new DurationCondition(xpp.getAttributeValue(null,
+							"min"), xpp.getAttributeValue(null, "max"));
+					}
+
 				}
-				
+
 			}
-			
+		}catch(Exception e){
+			Log.e(TAG, "Invalid numeric pattern element", e);
+
 		}
-		}
-		catch (Exception e){
-			Log.e(TAG,"Invalid numeric pattern element", e);
-			
-		}
-		if (duration==null || range==null){
-			Log.e(TAG,"Invalid numeric pattern element");
+		if (duration == null || range == null){
+			Log.e(TAG, "Invalid numeric pattern element");
 		}
 		return new PatternElementNumeric(type, ordinal, duration, range);
-	
+
 	}
 
-	private PatternElementSymbolic parseElementSymbolic(int type,
-			XmlPullParser xpp, String string, int ordinal) {
+	private PatternElementSymbolic parseElementSymbolic(int type, XmlPullParser xpp,
+		String string, int ordinal){
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private PatternElements parseElement(int type, XmlPullParser xpp,
-			String string, int ordinal) {
+	private PatternElements parseElement(int type, XmlPullParser xpp, String string,
+		int ordinal){
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private void parseTrends(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
-			int eventType;
+		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Trends")){
 			if (eventType == XmlPullParser.START_TAG && "Trend".equals(xpp.getName())){
@@ -798,8 +799,9 @@ public class OntologyLoader{
 					ElementCondition elementCondition = new PrimitiveCondition(name,
 							numericRange);
 					elementConditions.put(isExistAf, elementCondition);
-				}else if ("State".equalsIgnoreCase(tag)){
-					isExistAf = existsInAbstracedFrom(Element.STATE, name, abstractedFrom);
+				}else if ("State".equalsIgnoreCase(tag) || "Trend".equalsIgnoreCase(tag)){
+					int type = "State".equalsIgnoreCase(tag) ? Element.STATE : Element.TREND;
+					isExistAf = existsInAbstracedFrom(type, name, abstractedFrom);
 					if (isExistAf == null){
 						return null;
 					}
@@ -808,21 +810,7 @@ public class OntologyLoader{
 					if (isEmpty(elementValue)){
 						return null;
 					}
-					ElementCondition elementCondition = new StateCondition(name,
-							elementValue);
-					elementConditions.put(isExistAf, elementCondition);
-				}else if ("Trend".equalsIgnoreCase(tag)){
-					// TODO implement trend entry
-					isExistAf = existsInAbstracedFrom(Element.TREND, name, abstractedFrom);
-					if (isExistAf == null){
-						return null;
-					}
-
-					String elementValue = xpp.getAttributeValue(null, "value");
-					if (isEmpty(elementValue)){
-						return null;
-					}
-					ElementCondition elementCondition = new TrendCondition(name,
+					ElementCondition elementCondition = new AbstractionCondition(name,
 							elementValue);
 					elementConditions.put(isExistAf, elementCondition);
 				}
