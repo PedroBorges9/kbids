@@ -132,7 +132,7 @@ public final class StateDef extends AbstractionDef{
 					element = instances.getStates().getCurrentElement(af.getName());
 					break;
 				case Element.TREND:
-					element = null; // TODO Implement trend lookup
+					element = instances.getTrends().getCurrentElement(af.getName());
 					break;
 			}
 			if (element == null){

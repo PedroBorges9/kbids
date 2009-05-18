@@ -25,6 +25,7 @@ import dt.processor.kbta.ontology.defs.abstractions.state.StateCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunction;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunctionEntry;
+import dt.processor.kbta.ontology.defs.abstractions.state.TrendCondition;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendMappingFunction;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
@@ -39,6 +40,7 @@ import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
 import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.threats.DurationCondition;
 import dt.processor.kbta.util.ISODuration;
 
@@ -811,6 +813,18 @@ public class OntologyLoader{
 					elementConditions.put(isExistAf, elementCondition);
 				}else if ("Trend".equalsIgnoreCase(tag)){
 					// TODO implement trend entry
+					isExistAf = existsInAbstracedFrom(Element.TREND, name, abstractedFrom);
+					if (isExistAf == null){
+						return null;
+					}
+
+					String elementValue = xpp.getAttributeValue(null, "value");
+					if (isEmpty(elementValue)){
+						return null;
+					}
+					ElementCondition elementCondition = new TrendCondition(name,
+							elementValue);
+					elementConditions.put(isExistAf, elementCondition);
 				}
 			}
 		}
