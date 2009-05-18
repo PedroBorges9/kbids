@@ -1,12 +1,13 @@
 package dt.processor.kbta.ontology.defs.abstractions.state;
 
+import dt.processor.kbta.ontology.instances.Abstraction;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.State;
 
-public final class StateCondition extends ElementCondition{
+public final class AbstractionCondition extends ElementCondition{
 	private final String _value;
 
-	public StateCondition(String name, String value){
+	public AbstractionCondition(String name, String value){
 		super(name);
 		_value = value;
 
@@ -17,8 +18,8 @@ public final class StateCondition extends ElementCondition{
 		if (element == null){
 			return false;
 		}
-		State state = (State)element;
-		return _value.equalsIgnoreCase(state.getValue());
+		Abstraction abstraction = (Abstraction)element;
+		return _value.equalsIgnoreCase(abstraction.getValue());
 	}
 
 	@Override
