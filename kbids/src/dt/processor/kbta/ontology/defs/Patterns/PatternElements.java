@@ -4,11 +4,13 @@ import dt.processor.kbta.threats.DurationCondition;
 
 public class PatternElements {
 	private int _type;
+	private String _name;
 	private int _ordinal;
 	private DurationCondition _duration;
-	public PatternElements(int type, int ordinal, DurationCondition duration) {
-		this._type = type;
-		this._ordinal = ordinal;
-		this._duration = duration;
+	public PatternElements(int type,String name, int ordinal, DurationCondition duration) {
+		_type = type;
+		_ordinal = ordinal;
+		_duration = duration;
+		_name = name;
 	}
 }

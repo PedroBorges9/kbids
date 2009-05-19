@@ -6,9 +6,9 @@ import dt.processor.kbta.threats.DurationCondition;
 public class PatternElementNumeric extends PatternElements {
 	private NumericRange _value;
 
-	public PatternElementNumeric(int type, int ordinal,
+	public PatternElementNumeric(int type,String name, int ordinal,
 			DurationCondition duration, NumericRange value) {
-		super(type, ordinal, duration);
+		super(type,name, ordinal, duration);
 		_value = value;
 	}
 	
