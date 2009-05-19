@@ -4,7 +4,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
-
+import static dt.processor.kbta.util.XmlParser.*;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -121,17 +121,7 @@ public class ThreatAssessmentLoader{
 			}
 
 			if ("DurationCondition".equalsIgnoreCase(xpp.getName())){
-				String min = null;
-				String max = null;
-				try{
-					durationCondition = new DurationCondition(min = xpp
-							.getAttributeValue(null, "min"), max = xpp.getAttributeValue(
-						null, "max"));
-				}catch(Exception e){
-					Log.e(TAG, "Improper duration in duration condition, min = " + min
-							+ ", max = " + max, e);
-					return null;
-				}
+				durationCondition = parseDurationCondition(xpp);
 			}
 		}
 
@@ -153,25 +143,5 @@ public class ThreatAssessmentLoader{
 
 	}
 
-	private SymbolicValueCondition parseSymbolicValueCondition(XmlPullParser xpp)
-			throws XmlPullParserException, IOException{
-		int eventType;
-		SymbolicValueCondition symbolicValueCondition = null;
-		HashSet<String> symbolicValueConditions = new HashSet<String>();
-
-		while ((eventType = xpp.next()) != END_TAG
-				|| !xpp.getName().equalsIgnoreCase("SymbolicValueCondition")){
-			if (eventType == START_TAG && "Value".equalsIgnoreCase(xpp.getName())){
-				String value = xpp.getAttributeValue(null, "name");
-				if (value != null){
-					symbolicValueConditions.add(value);
-				}
-			}
-		}
-		if (!symbolicValueConditions.isEmpty()){
-			symbolicValueCondition = new SymbolicValueCondition(symbolicValueConditions);
-		}
-
-		return symbolicValueCondition;
-	}
+	
 }

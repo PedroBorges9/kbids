@@ -13,10 +13,10 @@ import dt.processor.kbta.ontology.defs.ElementDef;
  *
  */
 public class LinearPatternDef extends ElementDef {
-	private HashMap<Integer, PatternElements> _elements;
+	private HashMap<Integer, PatternElement> _elements;
 	private PairWiseCondition[] _pairConditions;
 	public LinearPatternDef(String name, ArrayList<PairWiseCondition> pairConditions, 
-			HashMap<Integer, PatternElements> elements ) {
+			HashMap<Integer, PatternElement> elements ) {
 		super(name);
 		_elements=elements;
 		_pairConditions=pairConditions.toArray(new PairWiseCondition[pairConditions.size()]);
