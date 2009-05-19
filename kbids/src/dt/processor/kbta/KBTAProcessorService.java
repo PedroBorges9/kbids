@@ -33,8 +33,7 @@ import dt.processor.kbta.util.Pair;
 public final class KBTAProcessorService extends Service implements ServiceConnection{
 	public static final String TAG = "KBTA";
 
-	public static final boolean DEBUG = true;
-
+	public static final boolean DEBUG = false;
 	private TWU _twu;
 
 	private Ontology _ontology;
@@ -105,7 +104,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 					throws RemoteException{
 
 				try{
-					System.out.println("RECIEVE MONITORED DATA");
+		//			System.out.println("RECIEVE MONITORED DATA");
 					compute(features);
 					
 					if (_threatAssessor == null){
