@@ -12,4 +12,9 @@ public class PatternElementNumeric extends PatternElement {
 		_numricRange = numricRange;
 	}
 	
+	@Override
+	public String toString(){
+		return super.toString()+"  "+_numricRange;
+	}
+	
 }

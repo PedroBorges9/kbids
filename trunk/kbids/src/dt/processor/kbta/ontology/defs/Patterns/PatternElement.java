@@ -13,4 +13,9 @@ public class PatternElement {
 		_duration = duration;
 		_name = name;
 	}
+	
+	@Override
+	public String toString(){
+		return "type= "+_type+" name= "+_name+" ordinal= "+_ordinal+_duration;
+	}
 }

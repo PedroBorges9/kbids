@@ -16,4 +16,10 @@ public class BeforeTemporalCondition extends TemporalCondition{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public String toString(){
+		return "Before"+_duration;
+	}
+	
 }

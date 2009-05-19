@@ -9,4 +9,11 @@ public class NoValueCondition extends ValueCondition {
 		return true;
 	}
 
+	@Override
+	public String toString(){
+		return "*";
+	}
+	
+	
+
 }

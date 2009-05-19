@@ -9,5 +9,10 @@ public class BiggerValueCondition extends ValueCondition {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return "Bigger";
+	}
 
 }
