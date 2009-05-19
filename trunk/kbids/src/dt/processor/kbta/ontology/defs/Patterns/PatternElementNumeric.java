@@ -1,4 +1,4 @@
-package dt.processor.kbta.ontology;
+package dt.processor.kbta.ontology.defs.Patterns;
 
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.threats.DurationCondition;

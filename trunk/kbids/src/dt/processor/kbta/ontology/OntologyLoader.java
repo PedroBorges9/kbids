@@ -15,8 +15,11 @@ import android.util.Log;
 import dt.processor.kbta.R;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
-import dt.processor.kbta.ontology.defs.PatternDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElementNumeric;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElementSymbolic;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.InterpolationFunction;
@@ -59,7 +62,7 @@ public class OntologyLoader{
 
 	private final ArrayList<TrendDef> _trends;
 
-	private final ArrayList<PatternDef> _patterns;
+	private final ArrayList<LinearPatternDef> _patterns;
 
 	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
 
@@ -75,7 +78,7 @@ public class OntologyLoader{
 		_contexts = new ArrayList<ContextDef>();
 		_states = new ArrayList<StateDef>();
 		_trends = new ArrayList<TrendDef>();
-		_patterns = new ArrayList<PatternDef>();
+		_patterns = new ArrayList<LinearPatternDef>();
 	}
 
 	public Ontology loadOntology(Context context){
@@ -137,7 +140,7 @@ public class OntologyLoader{
 			if (eventType == XmlPullParser.START_TAG
 					&& "LinearPattern".equals(xpp.getName())){
 
-				PatternDef pd = loadLinearPattern(xpp);
+				LinearPatternDef pd = loadLinearPattern(xpp);
 				if (pd != null){
 					_patterns.add(pd);
 				}
@@ -146,7 +149,7 @@ public class OntologyLoader{
 
 	}
 
-	private PatternDef loadLinearPattern(XmlPullParser xpp)
+	private LinearPatternDef loadLinearPattern(XmlPullParser xpp)
 			throws XmlPullParserException, IOException{
 		int eventType;
 		ArrayList<PatternElements> elements = new ArrayList<PatternElements>();
