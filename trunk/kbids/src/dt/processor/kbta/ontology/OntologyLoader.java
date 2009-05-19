@@ -216,7 +216,7 @@ public class OntologyLoader{
 
 	private PatternElementNumeric parseElementNumeric(int type, XmlPullParser xpp,
 		String elementTypeName, int ordinal){
-
+		String name=null;
 		NumericRange range = null;
 		DurationCondition duration = null;
 		int eventType;
@@ -224,7 +224,7 @@ public class OntologyLoader{
 			while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 					|| !xpp.getName().equalsIgnoreCase(elementTypeName)){
 				if (eventType == XmlPullParser.START_TAG){
-					String name = xpp.getName();
+					name = xpp.getName();
 					if ("NumericValueConditon".equals(name)){
 						range = parseNumericRange(xpp);
 
@@ -243,7 +243,7 @@ public class OntologyLoader{
 		if (duration == null || range == null){
 			Log.e(TAG, "Invalid numeric pattern element");
 		}
-		return new PatternElementNumeric(type, ordinal, duration, range);
+		return new PatternElementNumeric(type,name, ordinal, duration, range);
 
 	}
 
