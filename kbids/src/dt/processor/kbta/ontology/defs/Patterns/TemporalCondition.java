@@ -6,4 +6,7 @@ public abstract class TemporalCondition {
 	
 	public abstract boolean Obeys(Element a, Element b);
 
+
+	public abstract String toString();
+
 }

@@ -16,5 +16,10 @@ public class PairWiseCondition {
 		_temporal = temporal;
 	}
 	
+	@Override
+	public String toString(){	
+		return " first= "+_first+" second= "+_second+" value= "+_value+" temporal= "+_temporal;
+	}
+	
 	
 }

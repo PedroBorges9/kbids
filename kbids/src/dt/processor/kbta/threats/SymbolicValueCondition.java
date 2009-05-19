@@ -1,5 +1,6 @@
 package dt.processor.kbta.threats;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public final class SymbolicValueCondition{
@@ -15,7 +16,7 @@ public final class SymbolicValueCondition{
 
 	@Override
 	public String toString(){
-		return "Value=" + _symbolicValueConditions;
+		return "symbolicValueConditions= " + Arrays.toString(_symbolicValueConditions.toArray());
 	}
 
 }

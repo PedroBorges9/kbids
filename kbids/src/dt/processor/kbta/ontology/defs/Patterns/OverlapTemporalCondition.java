@@ -20,4 +20,9 @@ public class OverlapTemporalCondition extends TemporalCondition {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return "Overlap"+_durationLength+_durationStartingDistance;
+	}
 }

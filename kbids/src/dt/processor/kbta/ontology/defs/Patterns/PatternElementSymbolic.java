@@ -13,4 +13,9 @@ public class PatternElementSymbolic extends PatternElement {
 		super(type,name, ordinal, duration);
 		_symbolicValueCondition = symbolicValueCondition;
 	}
+	
+	@Override
+	public String toString(){
+		return super.toString()+"  "+_symbolicValueCondition;
+	}
 }
