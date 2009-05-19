@@ -256,17 +256,25 @@
 					<NumericValueConditon minE="31" maxE="100" />
 					<DurationCondition min="P2D" max="P8D" />
 				</Primitive>
-				<State name="Drug Admin" ordinal="2">		
+				<State name="Drug Admin" ordinal="2"> <!-- can be Trend -->
 					<SymbolicValueCondition>
 						<Value name="Normal" />
 					</SymbolicValueCondition>
 					<DurationCondition min="P2D" max="P8D" />
 				</State>
+				<Event name="WiFi_Connection" ordinal="3"> <!-- can be context -->
+					<DurationCondition min="P2D" max="P8D" />
+				</Event>
 			</Elements>
 			<PairWiseConditions>
 				<PairWiseCondition first="1" second="2" value="Smaller" 
 					temporal="Before" minGap="PT10S" maxGap="PT30S" /> <!-- dont care in gaps will be * -->
+				<PairWiseCondition first="1" second="3"  value="Smaller"
+					temporal="Overlap" minLength="PT10S" maxLength="PT30S" minStartingDistance="PT10S" maxStartingDistance="PT30S"/>
+				<PairWiseCondition first="2" second="3" value="Smaller" 
+					temporal="Before" minGap="PT10S" maxGap="PT30S" />
 			</PairWiseConditions>
 		</LinearPattern>
 	</Patterns>
 </Ontology>
+
