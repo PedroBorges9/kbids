@@ -10,11 +10,11 @@ public class BeforeTemporalCondition extends TemporalCondition{
 		super();
 		_duration = duration;
 	}
-
+	
 	@Override
 	public boolean Obeys(Element a, Element b){
-		// TODO Auto-generated method stub
-		return false;
+		return (_duration.check(
+				b.getTimeInterval().getStartTime()-a.getTimeInterval().getEndTime()));
 	}
 
 	@Override

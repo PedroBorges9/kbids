@@ -3,6 +3,7 @@ package dt.processor.kbta.ontology.defs.Patterns;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.ontology.instances.Primitive;
 import dt.processor.kbta.threats.DurationCondition;
 
 public class PatternElementNumeric extends PatternElement {
@@ -18,10 +19,10 @@ public class PatternElementNumeric extends PatternElement {
 	public String toString(){
 		return super.toString()+"  "+_numricRange;
 	}
-
 	@Override
-	public Element getValid(AllInstanceContainer aic) {
+	protected boolean obeys(Element e) {
 		// TODO Auto-generated method stub
-		return super.getValid(aic);
+		return (super.obeys(e) && _numricRange.isInRange(((Primitive) e).getValue()));
 	}
+
 }
