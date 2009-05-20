@@ -46,6 +46,10 @@ public final class ThreatAssessment{
 	
 	public void setInitiallyMonitoredThreat(Ontology ontology){
 		ElementDef elementDef=_generatedFrom.getElementDef(ontology);
+		//TODO if need check elementDef==null
+		if(elementDef==null){
+			return;
+		}
 		elementDef.setInitiallyIsMonitored(ontology,_monitored);
 	}
 

@@ -22,6 +22,10 @@ public abstract class ElementDef{
 	public abstract void setInitiallyIsMonitored(Ontology ontology,boolean monitored);
 	
 	public abstract void setIsMonitored(Ontology ontology,boolean monitored);
+	
+	public boolean isMonitored(){
+		return _isMonitored;
+	}
 
 	public ElementDef(String name){
 		_name = name;

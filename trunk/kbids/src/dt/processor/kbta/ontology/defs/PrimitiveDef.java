@@ -22,27 +22,29 @@ public final class PrimitiveDef extends ElementDef{
 		_range = range;
 	}
 
-	public void createPrimitive(Date end, double value, Bundle extras, AllInstanceContainer allInstances){
+	public void createPrimitive(Date end, double value, Bundle extras,
+		AllInstanceContainer allInstances){
 		if (_range.isInRange(value)){
-			Primitive primitive = new Primitive(_name, value, end.getTime(), end.getTime(), extras);
+			Primitive primitive = new Primitive(_name, value, end.getTime(), end
+					.getTime(), extras);
 			allInstances.addPrimitive(primitive);
 		}
 	}
 
-	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = monitored;
-		_counter += (_isMonitored ? 1 : 0);
+	public void setInitiallyIsMonitored(Ontology ontology, boolean monitored){
+		_isMonitored = (_isMonitored ? true : monitored);
+		_counter += (monitored ? 1 : 0);
 	}
-	
-	public void setIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = monitored;
-		_counter += (_isMonitored ? 1 : (_counter > 0 ? -1 : 0));
+
+	public void setIsMonitored(Ontology ontology, boolean monitored){
+		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
+		_isMonitored = (_counter>0 ? true : false);
 	}
-	
+
 	@Override
 	public String toString(){
-		return "<Primitive name= " + _name + " " + _range +" isMonitored="+_isMonitored+" counter="+_counter+ " />";
+		return "<Primitive name= " + _name + " " + _range + " isMonitored="
+				+ _isMonitored + " counter=" + _counter + " />";
 	}
-	
-	
+
 }

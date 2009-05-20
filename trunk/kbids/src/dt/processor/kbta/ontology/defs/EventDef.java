@@ -49,13 +49,13 @@ public class EventDef extends ElementDef{
 	}
 	
 	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = monitored;
-		_counter += (_isMonitored ? 1 : 0);
+		_isMonitored = (_isMonitored ? true : monitored);
+		_counter += (monitored ? 1 : 0);
 	}
 	
 	public void setIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = monitored;
-		_counter += (_isMonitored ? 1 : (_counter > 0 ? -1 : 0));
+		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
+		_isMonitored = (_counter>0 ? true : false);
 	}
 
 

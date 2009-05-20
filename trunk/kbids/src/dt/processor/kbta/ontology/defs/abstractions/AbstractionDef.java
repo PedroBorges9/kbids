@@ -44,6 +44,8 @@ public abstract class AbstractionDef extends ElementDef{
 	
 	
 	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
+		_isMonitored = (_isMonitored ? true : monitored);
+		_counter += (monitored ? 1 : 0);
 		ElementDef elementDef;
 		for(String contextName :_necessaryContexts){
 			elementDef=ontology.getContextDef(contextName);
@@ -53,6 +55,8 @@ public abstract class AbstractionDef extends ElementDef{
 	}
 	
 	public void setIsMonitored(Ontology ontology,boolean monitored){
+		_isMonitored = (_isMonitored ? true : monitored);
+		_counter += (monitored ? 1 : 0);
 		ElementDef elementDef;
 		for(String contextName :_necessaryContexts){
 			elementDef=ontology.getContextDef(contextName);

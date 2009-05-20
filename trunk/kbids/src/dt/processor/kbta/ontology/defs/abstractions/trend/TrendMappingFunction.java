@@ -75,7 +75,7 @@ public final class TrendMappingFunction{
 		
 
 		
-		System.out.println("changeRate= "+changeRate+" threshold= "+_threshold);
+	//	System.out.println("changeRate= "+changeRate+" threshold= "+_threshold);
 		if (changeRate > _threshold){
 			return "Increasing";
 		}else if (changeRate < -_threshold){
