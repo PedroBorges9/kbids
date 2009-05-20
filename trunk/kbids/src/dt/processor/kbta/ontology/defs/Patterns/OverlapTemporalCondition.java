@@ -2,6 +2,7 @@ package dt.processor.kbta.ontology.defs.Patterns;
 
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.DurationCondition;
+import dt.processor.kbta.util.TimeInterval;
 
 public class OverlapTemporalCondition extends TemporalCondition {
 	
@@ -17,8 +18,12 @@ public class OverlapTemporalCondition extends TemporalCondition {
 
 	@Override
 	public boolean Obeys(Element a, Element b) {
-		// TODO Auto-generated method stub
-		return false;
+		TimeInterval ta=a.getTimeInterval();
+		TimeInterval tb=b.getTimeInterval();
+		TimeInterval o=ta.getOverlap(tb);
+		long sd=Math.abs(ta.getStartTime()-tb.getStartTime());
+		return (_durationLength.check(o.getDuration()) 
+				&& _durationStartingDistance.check(sd));
 	}
 	
 	@Override

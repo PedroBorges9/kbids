@@ -37,8 +37,7 @@ public class PairWiseCondition {
 	}
 
 	public boolean obeys(Element element, Element element2) {
-		// TODO Auto-generated method stub
-		return false;
+		return (_value.obeys(element, element2) && _temporal.Obeys(element, element2));
 	}
 	
 	

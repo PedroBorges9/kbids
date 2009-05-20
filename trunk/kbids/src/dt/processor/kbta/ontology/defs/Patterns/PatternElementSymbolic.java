@@ -3,6 +3,7 @@ package dt.processor.kbta.ontology.defs.Patterns;
 import java.util.HashSet;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.instances.Abstraction;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.DurationCondition;
 import dt.processor.kbta.threats.SymbolicValueCondition;
@@ -20,10 +21,11 @@ public class PatternElementSymbolic extends PatternElement {
 	public String toString(){
 		return super.toString()+"  "+_symbolicValueCondition;
 	}
-	
 	@Override
-	public Element getValid(AllInstanceContainer aic) {
+	protected boolean obeys(Element e) {
+		((Abstraction) e).getValue();
+		
 		// TODO Auto-generated method stub
-		return super.getValid(aic);
+		return (super.obeys(e) && _symbolicValueCondition.equals(((Abstraction) e).getValue()));
 	}
 }
