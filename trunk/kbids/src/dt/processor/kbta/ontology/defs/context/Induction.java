@@ -5,6 +5,8 @@ package dt.processor.kbta.ontology.defs.context;
 
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.util.TimeInterval;
 
@@ -87,4 +89,7 @@ public abstract class Induction{
 				+ _relativeToStart;
 
 	}
+	
+	
+	public abstract ElementDef getElementDef(Ontology ontology);
 }

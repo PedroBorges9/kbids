@@ -1,6 +1,9 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.instances.Element;
 
 public final class GeneratedFromPattern extends GeneratedFrom{
@@ -19,6 +22,12 @@ public final class GeneratedFromPattern extends GeneratedFrom{
 	@Override
 	public String toString(){
 		return "Pattern: " + super.toString();
+	}
+
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		// TODO
+		return null;
 	}
 
 }

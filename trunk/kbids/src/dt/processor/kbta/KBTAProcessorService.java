@@ -51,6 +51,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		super.onCreate();
 		_allInstances = new AllInstanceContainer();
 		_iteration = 0;
+		
+		final Object sync = new Object();
 		new Thread(new Runnable(){
 
 			@Override
@@ -59,21 +61,38 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 				_ontology = ontologyLoader.loadOntology(KBTAProcessorService.this);
 				_elementTimeout = _ontology.getElementTimeout();
 				Log.i(TAG, "Finished loading the ontology: " + _ontology);
-
+				
+				System.out.println(_ontology);
+			//	sync.notify();
 			}
 		}, "Ontology Loader Thread").start();
 
 		// FIXME Remove comment
-		// new Thread(new Runnable(){
-		//
-		// @Override
-		// public void run(){
-		// ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
-		// _threatAssessor = threatAssessmentLoader
-		// .loadThreatAssessments(KBTAProcessorService.this);
-		// Log.i(TAG, "Finished loading the threat assessments");
-		// }
-		// }, "Threat Assessment Loader Thread").start();
+//		 new Thread(new Runnable(){
+//
+//			@Override
+//			public void run(){
+//				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
+//				_threatAssessor = threatAssessmentLoader
+//						.loadThreatAssessments(KBTAProcessorService.this);
+//				Log.i(TAG, "Finished loading the threat assessments");
+//				
+//				synchronized (sync){
+//					
+//					try{
+//						sync.wait();
+//						_threatAssessor.setInitiallyMonitoredThreats(_ontology);
+//						System.out.println(_ontology);
+//					}catch(InterruptedException e){
+//						Log.e(TAG,"InterruptedException",e);
+//						
+//					}
+//					
+//					
+//				}
+//				
+//			}
+//		}, "Threat Assessment Loader Thread").start();
 
 		// Connecting to the TWU so we can send threat assessments
 		bindService(new Intent("dt.agent.action.BIND_SERVICE")
@@ -188,6 +207,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	private void createContexts(){
 		ContextDef[] contextDefs = _ontology.getContextDefiners();
 		for (ContextDef cd : contextDefs){
+			//TODO if isMonitored
 			cd.createContext(_allInstances, _iteration);
 		}
 		if (DEBUG)
@@ -237,7 +257,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 			// Matching feature to a primitive
 			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
-			if (pd != null){
+			if (pd != null /*TODO and isMonitored */){
 				pd.createPrimitive(end, value, extras, _allInstances);
 			}
 

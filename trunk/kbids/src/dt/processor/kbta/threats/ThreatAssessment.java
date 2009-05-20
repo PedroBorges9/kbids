@@ -1,5 +1,7 @@
 package dt.processor.kbta.threats;
 
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
 
 public final class ThreatAssessment{
@@ -11,11 +13,14 @@ public final class ThreatAssessment{
 
 	private final GeneratedFrom _generatedFrom;
 
+	private boolean _monitored;
+
 	public ThreatAssessment(String title, String description, int baseCertainty,
-		GeneratedFrom generatedFrom){
+		boolean monitored, GeneratedFrom generatedFrom){
 		_title = title;
 		_description = description;
 		_baseCertainty = baseCertainty;
+		_monitored = monitored;
 		_generatedFrom = generatedFrom;
 	}
 
@@ -38,12 +43,18 @@ public final class ThreatAssessment{
 	public GeneratedFrom getGeneratedFrom(){
 		return _generatedFrom;
 	}
+	
+	public void setInitiallyMonitoredThreat(Ontology ontology){
+		ElementDef elementDef=_generatedFrom.getElementDef(ontology);
+		elementDef.setInitiallyIsMonitored(ontology,_monitored);
+	}
 
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder("\nAssessment\n");
 		sb.append(_title).append(" [BaseCert").append(_baseCertainty).append("]");
 		sb.append("\nDescription: ").append(_description);
+		sb.append("\nmonitored= ").append(_monitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);
 		return sb.toString();
 	}
@@ -52,7 +63,10 @@ public final class ThreatAssessment{
 		StringBuilder sb = new StringBuilder("\nAssessment\n");
 		sb.append(_title).append(" [").append(getCertainty(e)).append("]");
 		sb.append("\nDescription: ").append(_description);
+		sb.append("\nmonitored= ").append(_monitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);
 		return sb.toString();
 	}
+
+	
 }

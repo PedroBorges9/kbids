@@ -6,6 +6,7 @@ package dt.processor.kbta.ontology.defs.Patterns;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 
 /**
@@ -35,6 +36,20 @@ public class LinearPatternDef extends ElementDef {
 			st+=pwc+"\n";	
 		}
 		return st;
+	}
+
+
+	@Override
+	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void setIsMonitored(Ontology ontology,boolean monitored){
+		// TODO Auto-generated method stub
+		
 	}
 
 }
