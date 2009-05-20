@@ -6,6 +6,7 @@ package dt.processor.kbta.ontology.defs.abstractions;
 import java.util.ArrayList;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
@@ -39,6 +40,26 @@ public abstract class AbstractionDef extends ElementDef{
 			}
 		}
 		return elements;
+	}
+	
+	
+	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
+		ElementDef elementDef;
+		for(String contextName :_necessaryContexts){
+			elementDef=ontology.getContextDef(contextName);
+			elementDef.setInitiallyIsMonitored(ontology,monitored);
+		}
+		
+	}
+	
+	public void setIsMonitored(Ontology ontology,boolean monitored){
+		ElementDef elementDef;
+		for(String contextName :_necessaryContexts){
+			elementDef=ontology.getContextDef(contextName);
+			elementDef.setIsMonitored(ontology,monitored);
+		}
+		
+		
 	}
 
 }

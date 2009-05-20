@@ -107,17 +107,16 @@ public class OntologyLoader{
 				if (tag.equalsIgnoreCase("Ontology")){
 					parseOntologyTag(xpp);
 				}else if (tag.equalsIgnoreCase("Primitives")){
-					// parsePrimitives(xpp);
+					parsePrimitives(xpp);
 				}else if (tag.equalsIgnoreCase("Events")){
-					// parseEvents(xpp);
+					parseEvents(xpp);
 				}else if (tag.equalsIgnoreCase("Contexts")){
-					// parseContexts(xpp);
+					parseContexts(xpp);
 				}else if (tag.equalsIgnoreCase("States")){
-					// parseStates(xpp);
+					parseStates(xpp);
 				}else if (tag.equalsIgnoreCase("Trends")){
-					// parseTrends(xpp);
+					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
-
 					ParsePatterns(xpp);
 				}
 			}
@@ -147,7 +146,7 @@ public class OntologyLoader{
 
 	private void ParsePatterns(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
-		System.out.println("*********ParsePatterns*********");
+	//	System.out.println("*********ParsePatterns*********");
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Patterns")){
@@ -160,7 +159,7 @@ public class OntologyLoader{
 				}
 			}
 		}
-		System.out.println(Arrays.toString(_patterns.toArray()));
+	//	System.out.println(Arrays.toString(_patterns.toArray()));
 
 	}
 
@@ -239,8 +238,9 @@ public class OntologyLoader{
 		try{
 			first = Integer.parseInt(xpp.getAttributeValue(null, "first"));
 			second = Integer.parseInt(xpp.getAttributeValue(null, "second"));
-			if(elements.get(first)==null || elements.get(second)==null){
-				Log.e(TAG,"first/second not exist in patterns elements first="+first+" second="+second);
+			if (elements.get(first) == null || elements.get(second) == null){
+				Log.e(TAG, "first/second not exist in patterns elements first=" + first
+						+ " second=" + second);
 				return null;
 			}
 		}catch(NumberFormatException e){

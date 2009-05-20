@@ -8,6 +8,7 @@ import java.util.Date;
 import android.os.Bundle;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.instances.Primitive;
 
 /**
@@ -28,9 +29,20 @@ public final class PrimitiveDef extends ElementDef{
 		}
 	}
 
+	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
+		_isMonitored = monitored;
+		_counter += (_isMonitored ? 1 : 0);
+	}
+	
+	public void setIsMonitored(Ontology ontology,boolean monitored){
+		_isMonitored = monitored;
+		_counter += (_isMonitored ? 1 : (_counter > 0 ? -1 : 0));
+	}
+	
 	@Override
 	public String toString(){
-		return "<Primitive name= " + _name + " " + _range + " />";
+		return "<Primitive name= " + _name + " " + _range +" isMonitored="+_isMonitored+" counter="+_counter+ " />";
 	}
-
+	
+	
 }

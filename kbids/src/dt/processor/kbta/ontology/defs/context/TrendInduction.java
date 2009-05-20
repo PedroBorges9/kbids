@@ -1,6 +1,8 @@
 package dt.processor.kbta.ontology.defs.context;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.util.TimeInterval;
 
@@ -24,6 +26,11 @@ public class TrendInduction extends Induction{
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		return ontology.getTrendDef(_elementName);
 	}
 
 }

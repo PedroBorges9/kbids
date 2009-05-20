@@ -10,6 +10,8 @@ import android.os.Bundle;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractionDef;
 import dt.processor.kbta.ontology.instances.*;
 import dt.processor.kbta.util.TimeInterval;
@@ -146,13 +148,38 @@ public final class StateDef extends AbstractionDef{
 
 	@Override
 	public String toString(){
-		String st = "name=" + _name + "\n";
+		String st = "<State name=" + _name + "\n";
 		st += "AbstractedFrom\n" + Arrays.toString(_abstractedFrom) + "\n";
 		st += "NecessaryContexts\n" + Arrays.toString(_necessaryContexts) + "\n";
 		st += _mappingFunction;
 		st += _interpolationFunction;
+		st+=" isMonitored="+_isMonitored+" counter="+_counter+"/>";
 
 		return st;
+	}
+
+	
+	@Override
+	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
+		ElementDef elementDef;
+		for (AbstractedFrom af : _abstractedFrom){
+			elementDef=af.getElementDef(ontology);
+			elementDef.setInitiallyIsMonitored(ontology,monitored);
+		}
+		super.setInitiallyIsMonitored(ontology, monitored);//for necessary contexts
+	
+	
+	}
+	
+	@Override
+	public void setIsMonitored(Ontology ontology,boolean monitored){
+		ElementDef elementDef;
+		for (AbstractedFrom af : _abstractedFrom){
+			elementDef=af.getElementDef(ontology);
+			elementDef.setIsMonitored(ontology,monitored);
+		}
+		super.setIsMonitored(ontology, monitored);//for necessary contexts
+	
 	}
 
 }

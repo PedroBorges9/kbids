@@ -1,6 +1,8 @@
 package dt.processor.kbta.ontology.defs.context;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.instances.Primitive;
 
@@ -25,6 +27,11 @@ public class PrimitiveInduction extends Induction{
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		return ontology.getPrimitiveDef(_elementName);
 	}
 
 }

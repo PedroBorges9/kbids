@@ -1,6 +1,8 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
 
 public abstract class GeneratedFrom {
@@ -17,6 +19,7 @@ public abstract class GeneratedFrom {
 	}
 	
 	public abstract Element locateMatchingElement(AllInstanceContainer allInstances);
+	public abstract ElementDef getElementDef(Ontology ontology);
 
 	public final String getName() {
 		return _elementName;

@@ -1,5 +1,7 @@
 package dt.processor.kbta.ontology.defs.abstractions.state;
 
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
 
 public class AbstractedFrom{
@@ -43,6 +45,22 @@ public class AbstractedFrom{
 	@Override
 	public int hashCode(){
 		return _hashCode;
+	}
+	
+	public ElementDef getElementDef(Ontology ontology){
+		ElementDef elementDef=null;
+		switch (_type){
+			case Element.PRIMITIVE:
+				elementDef= ontology.getPrimitiveDef(_name);
+				break;
+			case Element.STATE:
+				elementDef = ontology.getStateDef(_name);
+				break;
+			case Element.TREND:
+				elementDef = ontology.getTrendDef(_name);
+				break;
+		}
+		return elementDef;
 	}
 
 }

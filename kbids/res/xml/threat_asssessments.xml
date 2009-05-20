@@ -1,6 +1,6 @@
 <Assessments>
 	<Assessment title="CPU Abuse" description="The CPU is in a high level for too long (over 2 minutes)" 
-		baseCertainty="70">
+		baseCertainty="70" monitored="false">
 		<State name="CPU_Usage_Level">
 			<SymbolicValueCondition>
 				<Value name="Normal" />
@@ -11,7 +11,7 @@
 	</Assessment>
 	
 	<Assessment title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)"  
-		baseCertainty="70">
+		baseCertainty="70" monitored="false">
 		<State name="Garbage_Collections_Level">
 			<SymbolicValueCondition>
 				<Value name="Low" />
@@ -22,7 +22,7 @@
 	</Assessment>
 	
 	<Assessment title="Abnormal System Load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level"  
-		baseCertainty="30">
+		baseCertainty="30" monitored="false">
 		<State name="System_Load_level">
 			<SymbolicValueCondition>
 				<Value name="High" />
@@ -32,7 +32,7 @@
 	</Assessment>		
 		
 	<Assessment title="Camera Abuse" description="Pictures are being taken too often!"  
-		baseCertainty="80">
+		baseCertainty="80"  monitored="true">
 		<State name="Camera_Usage_level">
 			<SymbolicValueCondition>
 				<Value name="High" />

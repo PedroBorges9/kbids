@@ -77,6 +77,12 @@ public class ThreatAssessmentLoader{
 					Log.e(TAG, "Faulty threat asssessment base certainty");
 					continue;
 				}
+				
+				String sMonitored= xpp.getAttributeValue(null, "monitored");
+				boolean monitored=false;
+				if(sMonitored==null || Boolean.parseBoolean(sMonitored)){
+					monitored=true;
+				}
 
 				while ((eventType = xpp.next()) != END_TAG
 						|| !xpp.getName().equalsIgnoreCase("Assessment")){
@@ -85,7 +91,7 @@ public class ThreatAssessmentLoader{
 
 				if (generatedFrom != null){
 					ThreatAssessment threatAssessment = new ThreatAssessment(title,
-							description, baseCertainty, generatedFrom);
+							description, baseCertainty,monitored, generatedFrom);
 					_ta.addThreatAssessment(threatAssessment);
 				}
 			}

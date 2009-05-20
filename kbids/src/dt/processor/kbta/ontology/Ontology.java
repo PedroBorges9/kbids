@@ -1,8 +1,10 @@
 package dt.processor.kbta.ontology;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
@@ -62,5 +64,51 @@ public final class Ontology{
 	
 	public String getOntologyName(){
 		return _ontologyName;
+	}
+	
+	public StateDef getStateDef(String name){
+		for(StateDef sd :_states){
+			if (sd.getName().equalsIgnoreCase(name)){
+				return sd;
+			}
+		}
+		return null;
+	}
+	
+	public TrendDef getTrendDef(String name){
+		for(TrendDef td :_trends){
+			if (td.getName().equalsIgnoreCase(name)){
+				return td;
+			}
+		}
+		return null;
+	}
+	
+	public ContextDef getContextDef(String name){
+		for(ContextDef cd :_contexts){
+			if (cd.getName().equalsIgnoreCase(name)){
+				return cd;
+			}
+		}
+		return null;
+	}
+	
+	//TODO getPatternDef
+	
+	
+	@Override
+	public String toString(){
+		String st="Ontology name="+_ontologyName;
+		for(PrimitiveDef pd : _primitives.values()){
+			st+=pd+"\n\n";
+		}
+		for(EventDef ed : _events.values()){
+			st+=ed+"\n\n";
+		}
+		st+=Arrays.toString(_contexts)+"\n\n";
+		st+=Arrays.toString(_states)+"\n\n";
+		st+=Arrays.toString(_trends)+"\n\n";
+		
+		return st;
 	}
 }
