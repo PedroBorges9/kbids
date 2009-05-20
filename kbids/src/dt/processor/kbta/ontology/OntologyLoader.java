@@ -215,9 +215,10 @@ public class OntologyLoader{
 			if (eventType == XmlPullParser.START_TAG
 					&& tag.equalsIgnoreCase("PairWiseCondition")){
 				pairWiseCondition = parsePairWiseCondition(xpp, elements);
-				if (pairWiseCondition != null){
-					pairWiseConditions.add(pairWiseCondition);
+				if (pairWiseCondition == null){
+					return null;
 				}
+				pairWiseConditions.add(pairWiseCondition);
 			}
 		}
 
