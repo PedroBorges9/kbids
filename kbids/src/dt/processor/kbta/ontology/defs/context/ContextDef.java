@@ -56,6 +56,8 @@ public final class ContextDef extends ElementDef{
 	}
 
 	public void setInitiallyIsMonitored(Ontology ontology, boolean monitored){
+		_isMonitored = (_isMonitored ? true : monitored);
+		_counter += (monitored ? 1 : 0);
 		ElementDef elementDef;
 		for (Induction induction : _inductions){
 			elementDef = induction.getElementDef(ontology);
@@ -65,6 +67,8 @@ public final class ContextDef extends ElementDef{
 	}
 
 	public void setIsMonitored(Ontology ontology, boolean monitored){
+		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
+		_isMonitored = (_counter>0 ? true : false);
 		ElementDef elementDef;
 		for (Induction induction : _inductions){
 			elementDef = induction.getElementDef(ontology);
