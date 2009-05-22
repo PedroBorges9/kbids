@@ -20,6 +20,7 @@ import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.OntologyLoader;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
@@ -36,7 +37,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	// public static final String TAG1 = "TEST";
 	// public static final String TAG2 = "AFTER";
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	private TWU _twu;
 
@@ -226,8 +227,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createAbstractions(){
-		// _allInstances.getStates().shiftBack();
-		// createStates();
+		 _allInstances.getStates().shiftBack();
+		 createStates();
 		_allInstances.getTrends().shiftBack();
 		createTrends();
 	}
@@ -251,7 +252,14 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createPatterns(){
-		// TODO create patterns
+		LinearPatternDef[] lpd=_ontology.getLinearPatternDefs();
+		for (LinearPatternDef lp: lpd){
+			lp.createPattern(_allInstances);
+			
+			
+		}
+		if (DEBUG)
+			System.out.println("** Patterns: **\n" + _allInstances.getPatterns());
 	}
 
 	private void createPrimitivesAndEvents(List<MonitoredData> features){

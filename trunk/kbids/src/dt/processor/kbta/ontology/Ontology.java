@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import android.util.Log;
+
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
+import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
@@ -22,18 +25,26 @@ public final class Ontology{
 
 	private final TrendDef[] _trends;
 	
+	private final LinearPatternDef[] _linearPatterns;
+	
 	private final long _elementTimeout;
 
 	private final String _ontologyName;
+	
+	
 
 	Ontology(HashMap<String, PrimitiveDef> primitives,
 		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
-		ArrayList<StateDef> states,ArrayList<TrendDef> trends, long elementTimeout, String ontologyName){
+		ArrayList<StateDef> states,ArrayList<TrendDef> trends, 
+		ArrayList<LinearPatternDef> linearPatterns,	long elementTimeout, String ontologyName){
 		_primitives = primitives;
 		_events = events;
 		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
 		_states = states.toArray(new StateDef[states.size()]);
 		_trends = trends.toArray(new TrendDef[trends.size()]);
+		
+		_linearPatterns = linearPatterns.toArray(new LinearPatternDef[linearPatterns.size()]);
+		Log.d("ONTOLOGY", Arrays.toString(_linearPatterns));
 		_elementTimeout = elementTimeout;
 		_ontologyName = ontologyName;
 	}
@@ -65,6 +76,12 @@ public final class Ontology{
 	public String getOntologyName(){
 		return _ontologyName;
 	}
+
+
+	public LinearPatternDef[] getLinearPatternDefs() {
+		return _linearPatterns;
+	}
+
 	
 	public StateDef getStateDef(String name){
 		for(StateDef sd :_states){
@@ -111,4 +128,5 @@ public final class Ontology{
 		
 		return st;
 	}
+
 }

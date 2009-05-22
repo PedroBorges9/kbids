@@ -94,7 +94,7 @@
 				<Primitive name="Garbage_Collections" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<Context name="High_CPU_Usage" />
+				<Context name="Amount_of_Processes_High" />
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Low">
@@ -252,24 +252,39 @@
 	<Patterns>
 		<LinearPattern name="DDoS Attack">
 			<Elements>
-	<!--			<Primitive name="CPU_Usage" ordinal="1">
+				<Primitive name="Heart Rate" ordinal="1">
 					<NumericValueConditon minE="31" maxE="100" />
-					<DurationCondition min="PT0S" max="P8D" />
-				</Primitive> -->
-				<State name="Garbage_Collections_Level" ordinal="1"> <!-- can be Trend -->
+					<DurationCondition min="P2D" max="P8D" />
+				</Primitive>
+				<State name="Drug Admin" ordinal="2"> <!-- can be Trend -->
 					<SymbolicValueCondition>
-						<Value name="High" />
+						<Value name="Normal" />
 					</SymbolicValueCondition>
-					<DurationCondition min="PT1S" max="P8D" />
+					<DurationCondition min="P2D" max="P8D" />
 				</State>
-				<Context name="High_CPU_Usage" ordinal="2"> <!-- can be context -->
-					<DurationCondition min="PT3S" max="P8D" />
+				<Event name="WiFi_Connection" ordinal="3"> <!-- can be context -->
+					<DurationCondition min="P2D" max="P8D" />
+				</Event>
+				<Context name="WiFi_Connection" ordinal="4"> <!-- can be context -->
+					<DurationCondition min="P2D" max="P8D" />
 				</Context>
+				<Trend name="Drug Admin" ordinal="5"> <!-- can be Trend -->
+					<SymbolicValueCondition>
+						<Value name="Increase" />
+					</SymbolicValueCondition>
+					<DurationCondition min="P4D" max="P8D" />
+				</Trend>
 				
 			</Elements>
 			<PairWiseConditions>
-				<PairWiseCondition first="1" second="2" value="Smaller" 
-					temporal="Overlap" minLength="PT0S" maxLength="PT2M" minStartingDistance="PT0S" maxStartingDistance="PT30S"/> 
+				<PairWiseCondition first="1" second="2" value="*" 
+					temporal="Before" minGap="PT10S" maxGap="PT30S" /> <!-- dont care in gaps will be * -->
+				<PairWiseCondition first="1" second="3"  value="Same"
+					temporal="Overlap" minLength="PT10S" maxLength="PT30S" minStartingDistance="PT10S" maxStartingDistance="PT30S"/>
+				<PairWiseCondition first="2" second="3" value="Smaller" 
+					temporal="Before" minGap="PT10S" maxGap="PT30S" />
+				<PairWiseCondition first="2" second="4" value="Bigger" 
+					temporal="Before" minGap="PT10S" maxGap="PT30S" />
 			</PairWiseConditions>
 		</LinearPattern>
 	</Patterns>

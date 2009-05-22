@@ -7,7 +7,7 @@ public class BiggerValueCondition extends ValueCondition {
 	@Override
 	public boolean obeys(Element a, Element b) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 	@Override

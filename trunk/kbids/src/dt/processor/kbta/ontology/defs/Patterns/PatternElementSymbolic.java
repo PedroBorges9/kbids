@@ -23,9 +23,10 @@ public class PatternElementSymbolic extends PatternElement {
 	}
 	@Override
 	protected boolean obeys(Element e) {
-		((Abstraction) e).getValue();
+	
+	
 		
 		// TODO Auto-generated method stub
-		return (super.obeys(e) && _symbolicValueCondition.equals(((Abstraction) e).getValue()));
+		return (super.obeys(e) && _symbolicValueCondition.check(((Abstraction) e).getValue()));
 	}
 }
