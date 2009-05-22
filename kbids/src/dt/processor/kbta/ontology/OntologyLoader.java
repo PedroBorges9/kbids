@@ -107,13 +107,21 @@ public class OntologyLoader{
 				if (tag.equalsIgnoreCase("Ontology")){
 					parseOntologyTag(xpp);
 				}else if (tag.equalsIgnoreCase("Primitives")){
+
 					parsePrimitives(xpp);
+
 				}else if (tag.equalsIgnoreCase("Events")){
+
 					parseEvents(xpp);
+
 				}else if (tag.equalsIgnoreCase("Contexts")){
+
 					parseContexts(xpp);
+
 				}else if (tag.equalsIgnoreCase("States")){
+
 					parseStates(xpp);
+
 				}else if (tag.equalsIgnoreCase("Trends")){
 					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
@@ -135,7 +143,7 @@ public class OntologyLoader{
 				_ontologyName = DEFAULT_NAME;
 			}
 
-			return new Ontology(_primitives, _events, _contexts, _states, _trends,
+			return new Ontology(_primitives, _events, _contexts, _states, _trends, _patterns,
 					_elementTimeout, _ontologyName);
 		}catch(Exception e){
 			Log.e(TAG, "Error while loading Ontology", e);

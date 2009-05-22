@@ -7,7 +7,7 @@ public class SameValueCondition extends ValueCondition {
 	@Override
 	public boolean obeys(Element a, Element b) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	@Override
 	public String toString(){

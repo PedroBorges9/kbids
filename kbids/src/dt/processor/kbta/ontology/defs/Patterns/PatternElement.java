@@ -64,7 +64,7 @@ public class PatternElement {
 			e=cc.getCurrentElement(_name);
 				if (e==null){
 					ArrayList<Element> cArray=cc.getOldElements(_name);
-					if (cArray.isEmpty()){
+					if (cArray ==null || cArray.isEmpty()){
 						return null;
 					}
 					e=cArray.get(cArray.size()-1);

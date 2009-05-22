@@ -6,6 +6,8 @@ package dt.processor.kbta.ontology.defs.Patterns;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.util.Log;
+
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
@@ -31,8 +33,10 @@ public class LinearPatternDef extends ElementDef {
 	public void createPattern(AllInstanceContainer aic){
 		HashMap<Integer, Element> elements=new HashMap<Integer, Element>();
 		for (PatternElement pe: _elements){
+			Log.d("PatternCreation", "getting valid element" + pe.getOrdinal());
 			Element e=pe.getValid(aic);
 			if (e==null){
+				Log.d("PatternCreation", "no valid element" + pe.getOrdinal());
 				return;
 			}
 			elements.put(pe.getOrdinal(), e);
