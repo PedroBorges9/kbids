@@ -32,6 +32,8 @@ public class LinearPatternDef extends ElementDef {
 	
 	public void createPattern(AllInstanceContainer aic){
 		HashMap<Integer, Element> elements=new HashMap<Integer, Element>();
+		long start=Long.MAX_VALUE;
+		long end=0;
 		for (PatternElement pe: _elements){
 			Log.d("PatternCreation", "getting valid element" + pe.getOrdinal());
 			Element e=pe.getValid(aic);
@@ -40,13 +42,20 @@ public class LinearPatternDef extends ElementDef {
 				return;
 			}
 			elements.put(pe.getOrdinal(), e);
+			TimeInterval eti=e.getTimeInterval();
+			if (eti.getStartTime()<start){
+				start=eti.getStartTime();
+			}
+			if (eti.getEndTime()>end){
+				end=eti.getEndTime();
+			}
 		}
 		for (PairWiseCondition pwc: _pairConditions){
 			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){
 				return;
 			}
 		}
-		aic.addPattern(new Pattern(_name, new TimeInterval(1,1)));//FIXME TIMEINTERVAL????
+		aic.addPattern(new Pattern(_name, new TimeInterval(start,end)));
 	}
 	
 	

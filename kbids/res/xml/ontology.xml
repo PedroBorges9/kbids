@@ -269,7 +269,7 @@
 			</Elements>
 			<PairWiseConditions>
 				<PairWiseCondition first="1" second="2" value="Smaller" 
-					temporal="Overlap" minLength="PT0S" maxLength="PT2M" minStartingDistance="PT0S" maxStartingDistance="PT30S"/> 
+					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 
 			</PairWiseConditions>
 		</LinearPattern>
 	</Patterns>
