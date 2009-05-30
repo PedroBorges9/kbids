@@ -1,12 +1,12 @@
 package dt.processor.kbta.ontology;
 
 import static android.text.TextUtils.isEmpty;
+import static dt.processor.kbta.util.XmlParser.parseDurationCondition;
+import static dt.processor.kbta.util.XmlParser.parseSymbolicValueCondition;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import static dt.processor.kbta.util.XmlParser.*;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -24,18 +24,21 @@ import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
 import dt.processor.kbta.ontology.defs.Patterns.NoValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.OverlapTemporalCondition;
 import dt.processor.kbta.ontology.defs.Patterns.PairWiseCondition;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElementNumeric;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElementSymbolic;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElement;
 import dt.processor.kbta.ontology.defs.Patterns.SameValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.SmallerValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.TemporalCondition;
 import dt.processor.kbta.ontology.defs.Patterns.ValueCondition;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementContext;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementEvent;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementPrimitive;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementState;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementTrend;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
+import dt.processor.kbta.ontology.defs.abstractions.state.AbstractionCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.InterpolationFunction;
 import dt.processor.kbta.ontology.defs.abstractions.state.PrimitiveCondition;
-import dt.processor.kbta.ontology.defs.abstractions.state.AbstractionCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunction;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateMappingFunctionEntry;
@@ -53,7 +56,6 @@ import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.threats.DurationCondition;
 import dt.processor.kbta.threats.SymbolicValueCondition;
 import dt.processor.kbta.util.ISODuration;
@@ -241,22 +243,28 @@ public class OntologyLoader{
 			IOException{
 		int first;
 		int second;
-		ValueCondition valueCondition = null;
+		boolean comparable=false;
+		Integer valueCondition = null;
 		TemporalCondition temporalCondition = null;
 		try{
 			first = Integer.parseInt(xpp.getAttributeValue(null, "first"));
 			second = Integer.parseInt(xpp.getAttributeValue(null, "second"));
-			if (elements.get(first) == null || elements.get(second) == null){
+			PatternElement firstElement = elements.get(first);
+			PatternElement secondElement = elements.get(second);
+			if (firstElement == null || secondElement == null){
 				Log.e(TAG, "first/second not exist in patterns elements first=" + first
 						+ " second=" + second);
 				return null;
 			}
+			int comparedType=firstElement.getType();
+			comparable=(comparedType==secondElement.getType()) &&
+			(comparedType==Element.PRIMITIVE || comparedType==Element.STATE);
 		}catch(NumberFormatException e){
 			Log.e(TAG, "first/second must to be number");
 			return null;
 		}
-
-		valueCondition = parseValuePairWiseCondition(xpp);
+		
+		valueCondition = parseValuePairWiseCondition(xpp, comparable);
 		temporalCondition = parseTemporalPairWiseCondition(xpp);
 
 		if (valueCondition == null || temporalCondition == null){
@@ -325,21 +333,21 @@ public class OntologyLoader{
 		return temporalCondition;
 	}
 
-	private ValueCondition parseValuePairWiseCondition(XmlPullParser xpp){
-		ValueCondition valueCondition = null;
+	private Integer parseValuePairWiseCondition(XmlPullParser xpp, boolean comparable){
+		Integer valueCondition = null;
 		String value = xpp.getAttributeValue(null, "value");
 		if (TextUtils.isEmpty(value)){
 			Log.e(TAG, "Missing value for pairWiseCondition");
 			return null;
 		}
 		if (value.equalsIgnoreCase("*")){
-			valueCondition = new NoValueCondition();
-		}else if (value.equalsIgnoreCase("Same")){
-			valueCondition = new SameValueCondition();
-		}else if (value.equalsIgnoreCase("Smaller")){
-			valueCondition = new SmallerValueCondition();
-		}else if (value.equalsIgnoreCase("Bigger")){
-			valueCondition = new BiggerValueCondition();
+			valueCondition = 0;
+		}else if (value.equalsIgnoreCase("Same") && comparable){
+			valueCondition = 2;
+		}else if (value.equalsIgnoreCase("Smaller") && comparable){
+			valueCondition = 1;
+		}else if (value.equalsIgnoreCase("Bigger") && comparable){
+			valueCondition = 3;
 		}else{
 			Log.e(TAG, "Corrupt value of pairWiseCondition");
 			return null;
@@ -374,7 +382,7 @@ public class OntologyLoader{
 					}
 
 					if ("Primitive".equalsIgnoreCase(stringTypeElement)){
-						patternElement = parseElementNumeric(Element.PRIMITIVE, xpp,
+						patternElement = parseElementPrimitive(xpp,
 							nameElement, "Primitive", ordinal);
 					}else if ("Event".equalsIgnoreCase(stringTypeElement)){
 						patternElement = parseElement(Element.EVENT, xpp, nameElement,
@@ -405,7 +413,7 @@ public class OntologyLoader{
 		return elements;
 	}
 
-	private PatternElementNumeric parseElementNumeric(int type, XmlPullParser xpp,
+	private PatternElementPrimitive parseElementPrimitive(XmlPullParser xpp,
 		String nameElement, String elementTypeName, int ordinal)
 			throws XmlPullParserException, IOException{
 
@@ -433,12 +441,12 @@ public class OntologyLoader{
 			Log.e(TAG, "Invalid numeric pattern element");
 			return null;
 		}
-		return new PatternElementNumeric(type, nameElement, ordinal, durationCondition,
+		return new PatternElementPrimitive(Element.PRIMITIVE, nameElement, ordinal, durationCondition,
 				numericRange);
 
 	}
 
-	private PatternElementSymbolic parseElementSymbolic(int type, XmlPullParser xpp,
+	private PatternElement parseElementSymbolic(int type, XmlPullParser xpp,
 		String nameElement, String elementTypeName, int ordinal)
 			throws XmlPullParserException, IOException{
 
@@ -466,8 +474,18 @@ public class OntologyLoader{
 			Log.e(TAG, "Invalid numeric pattern element");
 			return null;
 		}
-		return new PatternElementSymbolic(type, nameElement, ordinal, durationCondition,
-				symbolicValueCondition);
+		if (type==Element.STATE){
+			return new PatternElementState(type, nameElement, ordinal, durationCondition,
+					symbolicValueCondition);
+		}
+		else if (type==Element.TREND){
+			return new PatternElementTrend(type, nameElement, ordinal, durationCondition,
+					symbolicValueCondition);
+		}
+		else{
+			return null;
+		}
+		
 	}
 
 	private PatternElement parseElement(int type, XmlPullParser xpp, String nameElement,
@@ -493,8 +511,18 @@ public class OntologyLoader{
 			Log.e(TAG, "Invalid numeric pattern element");
 			return null;
 		}
-		return new PatternElement(type, nameElement, ordinal, durationCondition);
+		if (type==Element.CONTEXT){
+			return new PatternElementContext(type, nameElement, ordinal, durationCondition);
 
+		}
+		else if (type==Element.EVENT){
+			return new PatternElementEvent(type, nameElement, ordinal, durationCondition);
+
+		}
+		else{
+			return null;
+		}
+		
 	}
 
 	private void parseTrends(XmlPullParser xpp) throws XmlPullParserException,

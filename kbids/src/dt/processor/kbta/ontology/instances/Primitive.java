@@ -25,4 +25,23 @@ public final class Primitive extends Element{
 		return super.toString() + " value= " + _value;
 	}
 
+	@Override
+	public int compareTo(Element another) {
+		if (another.getClass().equals(Primitive.class)){
+				double result=_value-((Primitive) another).getValue();
+				if (result==0){
+					return 0;
+					
+				}
+				else if (result>0){
+					return 1;
+				}
+				else if (result<0){
+					return -1;
+				}
+				
+		}
+		return 0;
+	}
+
 }

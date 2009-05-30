@@ -11,6 +11,7 @@ import android.util.Log;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Pattern;
 import dt.processor.kbta.util.TimeInterval;
@@ -31,24 +32,24 @@ public class LinearPatternDef extends ElementDef {
 	} 
 	
 	public void createPattern(AllInstanceContainer aic){
-		HashMap<Integer, Element> elements=new HashMap<Integer, Element>();
+		HashMap<Integer, ArrayList <Element>> elements=new HashMap<Integer, ArrayList <Element>>();
 		long start=Long.MAX_VALUE;
 		long end=0;
 		for (PatternElement pe: _elements){
 			Log.d("PatternCreation", "getting valid element" + pe.getOrdinal());
-			Element e=pe.getValid(aic);
+			ArrayList<Element> e=pe.getValid(aic);
 			if (e==null){
 				Log.d("PatternCreation", "no valid element" + pe.getOrdinal());
 				return;
 			}
 			elements.put(pe.getOrdinal(), e);
-			TimeInterval eti=e.getTimeInterval();
-			if (eti.getStartTime()<start){
-				start=eti.getStartTime();
-			}
-			if (eti.getEndTime()>end){
-				end=eti.getEndTime();
-			}
+//			TimeInterval eti=e.getTimeInterval();
+//			if (eti.getStartTime()<start){
+//				start=eti.getStartTime();
+//			}
+//			if (eti.getEndTime()>end){
+//				end=eti.getEndTime();
+//			}
 		}
 		for (PairWiseCondition pwc: _pairConditions){
 			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){

@@ -39,4 +39,10 @@ public final class Trend extends Abstraction{
 		return _first;
 	}
 
+
+	@Override
+	public int compareTo(Element another) {
+		return 0;
+	}
+
 }
