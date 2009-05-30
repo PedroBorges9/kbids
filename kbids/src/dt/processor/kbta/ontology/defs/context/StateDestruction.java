@@ -19,7 +19,7 @@ public class StateDestruction extends Destruction {
 	
 
 	@Override
-	public boolean Destruct(AllInstanceContainer container) {
+	public boolean destroy(AllInstanceContainer container) {
 		State state = container.getStates().getNewestElement(_elementName);
 		if (state != null && _symbolicValue.equals(state.getValue())){
 			ComplexContainer<Context> cc=container.getContexts();

@@ -9,6 +9,7 @@ import java.util.Collections;
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.instances.Event;
 
 /**
@@ -48,20 +49,15 @@ public class EventDef extends ElementDef{
 		_latestEventTime = eventTimes[eventTimes.length - 1];
 	}
 	
-	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = (_isMonitored ? true : monitored);
-		_counter += (monitored ? 1 : 0);
+	@Override
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		visitor.visit(this);
+		// No one to traverse :)		
 	}
 	
-	public void setIsMonitored(Ontology ontology,boolean monitored){
-		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
-		_isMonitored = (_counter>0 ? true : false);
-	}
-
-
 	@Override
 	public String toString(){
-		return "<Event name=" + _name+" isMonitored="+_isMonitored+" counter="+_counter+"/>";
+		return "<Event name=" + _name+" isMonitored="+_isMonitored+" counter="+_monitoredCounter+"/>";
 	}
 
 }

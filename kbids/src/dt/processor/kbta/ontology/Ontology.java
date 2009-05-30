@@ -30,15 +30,16 @@ public final class Ontology{
 	private final long _elementTimeout;
 
 	private final String _ontologyName;
-	
-	
 
+	private final String _version;
+		
 	Ontology(HashMap<String, PrimitiveDef> primitives,
 		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
 		ArrayList<StateDef> states,ArrayList<TrendDef> trends, 
-		ArrayList<LinearPatternDef> linearPatterns,	long elementTimeout, String ontologyName){
+		ArrayList<LinearPatternDef> linearPatterns,	long elementTimeout, String ontologyName, String version){
 		_primitives = primitives;
 		_events = events;
+		_version = version;
 		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
 		_states = states.toArray(new StateDef[states.size()]);
 		_trends = trends.toArray(new TrendDef[trends.size()]);
@@ -73,8 +74,12 @@ public final class Ontology{
 		return _elementTimeout;
 	}
 	
-	public String getOntologyName(){
+	public String getName(){
 		return _ontologyName;
+	}
+		
+	public String getVersion(){
+		return _version;
 	}
 
 
@@ -127,6 +132,30 @@ public final class Ontology{
 		st+=Arrays.toString(_trends)+"\n\n";
 		
 		return st;
+	}
+	
+	/**
+	 * Resetting the monitored state of all of the elements in the ontology
+	 */
+	public void setAllElementsInitiallyUnmonitored(){
+		for (ElementDef ed : _primitives.values()){
+			ed.setInitiallyUnmonitored();
+		}
+		for (ElementDef ed : _events.values()){
+			ed.setInitiallyUnmonitored();
+		}
+		for (ElementDef ed : _contexts){
+			ed.setInitiallyUnmonitored();
+		}
+		for (ElementDef ed : _states){
+			ed.setInitiallyUnmonitored();
+		}
+		for (ElementDef ed : _trends){
+			ed.setInitiallyUnmonitored();
+		}
+		for (ElementDef ed : _linearPatterns){
+			ed.setInitiallyUnmonitored();
+		}
 	}
 
 }

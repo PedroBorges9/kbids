@@ -18,7 +18,7 @@ private final String _symbolicValue;
 	
 
 	@Override
-	public boolean Destruct(AllInstanceContainer container) {
+	public boolean destroy(AllInstanceContainer container) {
 		Trend trend = container.getTrends().getNewestElement(_elementName);
 		if (trend != null && _symbolicValue.equals(trend.getValue())){
 			ComplexContainer<Context> cc=container.getContexts();

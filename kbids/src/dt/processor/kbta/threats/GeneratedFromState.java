@@ -17,19 +17,16 @@ public class GeneratedFromState extends GeneratedFromAbstraction{
 
 	}
 
-
 	@Override
 	public String toString(){
 		return "State: " + super.toString();
 	}
-
 
 	@Override
 	protected Abstraction getCurrentAbstraction(AllInstanceContainer allInstances, String name){
 		ComplexContainer<State> states = allInstances.getStates();
 		return states.getCurrentElement(_elementName);
 	}
-
 
 	@Override
 	public ElementDef getElementDef(Ontology ontology){

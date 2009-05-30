@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.instances.Primitive;
 
 /**
@@ -30,21 +31,17 @@ public final class PrimitiveDef extends ElementDef{
 			allInstances.addPrimitive(primitive);
 		}
 	}
-
-	public void setInitiallyIsMonitored(Ontology ontology, boolean monitored){
-		_isMonitored = (_isMonitored ? true : monitored);
-		_counter += (monitored ? 1 : 0);
+	
+	@Override
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		visitor.visit(this);
+		// No one to traverse :)		
 	}
-
-	public void setIsMonitored(Ontology ontology, boolean monitored){
-		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
-		_isMonitored = (_counter>0 ? true : false);
-	}
-
+	
 	@Override
 	public String toString(){
 		return "<Primitive name= " + _name + " " + _range + " isMonitored="
-				+ _isMonitored + " counter=" + _counter + " />";
+				+ _isMonitored + " counter=" + _monitoredCounter + " />";
 	}
 
 }

@@ -25,7 +25,7 @@ public abstract class Destruction {
 	}
 
 
-	public abstract boolean Destruct(AllInstanceContainer container);
+	public abstract boolean destroy(AllInstanceContainer container);
 
 	@Override
 	public String toString(){

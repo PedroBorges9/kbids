@@ -4,17 +4,23 @@ import static android.text.TextUtils.isEmpty;
 import static dt.processor.kbta.util.XmlParser.parseDurationCondition;
 import static dt.processor.kbta.util.XmlParser.parseSymbolicValueCondition;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static dt.processor.kbta.util.XmlParser.*;
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import dt.processor.kbta.R;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
@@ -56,15 +62,24 @@ import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
 import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.settings.Model;
 import dt.processor.kbta.threats.DurationCondition;
 import dt.processor.kbta.threats.SymbolicValueCondition;
+import dt.processor.kbta.util.FileChangeTracker;
 import dt.processor.kbta.util.ISODuration;
+import dt.processor.kbta.util.FileChangeTracker.ChangeInfo;
 
 /**
  * @author
  */
 public class OntologyLoader{
 	public static final String TAG = "OntologyLoader";
+
+	private static final String DEFAULT_NAME = "Android";
+
+	private static final String DEFAULT_VERSION = "0";
+	
+	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
 
 	private final HashMap<String, PrimitiveDef> _primitives;
 
@@ -78,13 +93,11 @@ public class OntologyLoader{
 
 	private final ArrayList<LinearPatternDef> _patterns;
 
-	private static final long DEFAULT_ELEMENT_TIMEOUT = 10000;
-
 	private Long _elementTimeout;
 
-	private static final String DEFAULT_NAME = "Android";
-
 	private String _ontologyName;
+	
+	private String _version;
 
 	public OntologyLoader(){
 		_primitives = new HashMap<String, PrimitiveDef>();
@@ -97,33 +110,45 @@ public class OntologyLoader{
 
 	public Ontology loadOntology(Context context){
 		try{
-			XmlPullParser xpp = context.getResources().getXml(R.xml.ontology);
+			// Checking whether the default ontology has changed
+			FileChangeTracker fct = FileChangeTracker.getFileChangeTracker(context);
+			ChangeInfo ci = fct.hasBeenModified(context, Model.ONTOLOGY, Model.ONTOLOGY);
 
-			for (int eventType = xpp.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xpp
+			File ontologyFile = Model.getOntologyModelFile(context);
+			// Overriding the model file with the default one
+			// in case it hasn't been copied to the private storage yet
+			// or the default model (inside the apk) has been modified and
+			// it is not the first time the model is being loaded
+			if (!ontologyFile.exists() || (!ci.firstTimeTracked && !ci.hasntBeenModified)){
+				Log.i(TAG, "Loading default ontology model");
+				if (!Model.copyDefaultModelFile(context, ontologyFile)){
+					Log.e(TAG, "Unable to load the default Threats");
+					return null;
+				}
+			}
+			fct.updateFileStatus(ci);
+
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+			XmlPullParser xpp = factory.newPullParser();
+			xpp.setInput(new FileReader(ontologyFile));
+
+			for (int eventType = xpp.getEventType(); eventType != END_DOCUMENT; eventType = xpp
 					.next()){
 				String tag;
-				if (eventType != XmlPullParser.START_TAG || isEmpty(tag = xpp.getName())){
+				if (eventType != START_TAG || isEmpty(tag = xpp.getName())){
 					continue;
 				}
 
 				if (tag.equalsIgnoreCase("Ontology")){
 					parseOntologyTag(xpp);
 				}else if (tag.equalsIgnoreCase("Primitives")){
-
 					parsePrimitives(xpp);
-
 				}else if (tag.equalsIgnoreCase("Events")){
-
 					parseEvents(xpp);
-
 				}else if (tag.equalsIgnoreCase("Contexts")){
-
 					parseContexts(xpp);
-
 				}else if (tag.equalsIgnoreCase("States")){
-
 					parseStates(xpp);
-
 				}else if (tag.equalsIgnoreCase("Trends")){
 					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
@@ -144,9 +169,16 @@ public class OntologyLoader{
 							+ DEFAULT_NAME);
 				_ontologyName = DEFAULT_NAME;
 			}
+			
+			if (isEmpty(_version)){
+				Log.w(TAG,
+					"Missing/corrupt \"version\" attribute in Ontology element, using default: "
+							+ DEFAULT_VERSION);
+				_version = DEFAULT_VERSION;
+			}
 
-			return new Ontology(_primitives, _events, _contexts, _states, _trends, _patterns,
-					_elementTimeout, _ontologyName);
+			return new Ontology(_primitives, _events, _contexts, _states, _trends,
+					_patterns, _elementTimeout, _ontologyName, _version);
 		}catch(Exception e){
 			Log.e(TAG, "Error while loading Ontology", e);
 		}
@@ -156,7 +188,7 @@ public class OntologyLoader{
 
 	private void ParsePatterns(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
-	//	System.out.println("*********ParsePatterns*********");
+		// System.out.println("*********ParsePatterns*********");
 		int eventType;
 		while ((eventType = xpp.next()) != XmlPullParser.END_TAG
 				|| !xpp.getName().equalsIgnoreCase("Patterns")){
@@ -169,7 +201,7 @@ public class OntologyLoader{
 				}
 			}
 		}
-	//	System.out.println(Arrays.toString(_patterns.toArray()));
+		// System.out.println(Arrays.toString(_patterns.toArray()));
 
 	}
 
@@ -602,6 +634,7 @@ public class OntologyLoader{
 
 	private void parseOntologyTag(XmlPullParser xpp){
 		_ontologyName = xpp.getAttributeValue(null, "name");
+		_version = xpp.getAttributeValue(null, "version");
 
 		try{
 			long elementTimeout = new ISODuration(xpp.getAttributeValue(null,

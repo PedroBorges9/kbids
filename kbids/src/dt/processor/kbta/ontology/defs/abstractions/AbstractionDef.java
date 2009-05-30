@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
 
@@ -15,8 +16,6 @@ import dt.processor.kbta.ontology.instances.Element;
  * @author
  */
 public abstract class AbstractionDef extends ElementDef{
-
-
 	protected final String[] _necessaryContexts;
 
 	public AbstractionDef(String name, ArrayList<String> necessaryContexts){
@@ -24,8 +23,7 @@ public abstract class AbstractionDef extends ElementDef{
 		_necessaryContexts = necessaryContexts.toArray(new String[necessaryContexts
 				.size()]);
 	}
-	
-	
+		
 	protected Element[] checkNecessaryContexts(AllInstanceContainer instances){
 		Element[] elements = new Element[_necessaryContexts.length];
 		int i = 0;
@@ -42,28 +40,12 @@ public abstract class AbstractionDef extends ElementDef{
 		return elements;
 	}
 	
-	
-	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = (_isMonitored ? true : monitored);
-		_counter += (monitored ? 1 : 0);
-		ElementDef elementDef;
+	@Override
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		visitor.visit(this);
 		for(String contextName :_necessaryContexts){
-			elementDef=ontology.getContextDef(contextName);
-			elementDef.setInitiallyIsMonitored(ontology,monitored);
+			ElementDef elementDef= ontology.getContextDef(contextName);
+			elementDef.accept(ontology, visitor);
 		}
-		
 	}
-	
-	public void setIsMonitored(Ontology ontology,boolean monitored){
-		_isMonitored = (_isMonitored ? true : monitored);
-		_counter += (monitored ? 1 : 0);
-		ElementDef elementDef;
-		for(String contextName :_necessaryContexts){
-			elementDef=ontology.getContextDef(contextName);
-			elementDef.setIsMonitored(ontology,monitored);
-		}
-		
-		
-	}
-
 }

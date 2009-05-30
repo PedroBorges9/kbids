@@ -21,7 +21,7 @@ public class PrimitiveDestruction extends Destruction {
 	
 
 	@Override
-	public boolean Destruct(AllInstanceContainer container) {
+	public boolean destroy(AllInstanceContainer container) {
 		Primitive primitive = container.getPrimitives().getCurrentPrimitive(_elementName);
 		if (primitive != null && _numericValues.isInRange(primitive.getValue())){
 			ComplexContainer<Context> cc=container.getContexts();

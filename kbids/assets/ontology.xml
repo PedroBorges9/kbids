@@ -1,4 +1,4 @@
-<Ontology name="Android" elementTimeout="PT10M">
+<Ontology name="Default" version="0" elementTimeout="PT10M">
 	<Primitives>
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
@@ -274,4 +274,3 @@
 		</LinearPattern>
 	</Patterns>
 </Ontology>
-

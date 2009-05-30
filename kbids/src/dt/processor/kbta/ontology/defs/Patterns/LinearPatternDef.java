@@ -74,18 +74,9 @@ public class LinearPatternDef extends ElementDef {
 		return st;
 	}
 
-
 	@Override
-	public void setInitiallyIsMonitored(Ontology ontology,boolean monitored){
-		// TODO Auto-generated method stub
-		
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		visitor.visit(this);
+		//TODO Traverse related elements (i.e. everyone in the pattern element array)
 	}
-
-
-	@Override
-	public void setIsMonitored(Ontology ontology,boolean monitored){
-		// TODO Auto-generated method stub
-		
-	}
-
 }

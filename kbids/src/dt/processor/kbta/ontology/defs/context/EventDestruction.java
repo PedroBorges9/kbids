@@ -20,7 +20,7 @@ public class EventDestruction extends Destruction {
 		
 
 		@Override
-		public boolean Destruct(AllInstanceContainer container) {
+		public boolean destroy(AllInstanceContainer container) {
 			ComplexContainer<Context> cc=container.getContexts();
 			Context c=cc.getCurrentElement(_contextName);
 			if (c==null){
