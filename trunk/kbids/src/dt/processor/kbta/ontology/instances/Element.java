@@ -10,7 +10,7 @@ import dt.processor.kbta.util.TimeInterval;
 /**
  * @author
  */
-public abstract class Element{
+public abstract class Element implements Comparable<Element>{
 	public static final int PRIMITIVE = 0, EVENT = 1, CONTEXT = 2, STATE = 3, TREND = 4,
 			PATTERN = 5;
 

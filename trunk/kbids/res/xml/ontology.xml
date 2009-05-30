@@ -268,7 +268,7 @@
 				
 			</Elements>
 			<PairWiseConditions>
-				<PairWiseCondition first="1" second="2" value="Smaller" 
+				<PairWiseCondition first="1" second="2" value="*" 
 					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 
 			</PairWiseConditions>
 		</LinearPattern>

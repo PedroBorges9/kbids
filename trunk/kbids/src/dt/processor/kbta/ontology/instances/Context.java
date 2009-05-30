@@ -12,5 +12,10 @@ import dt.processor.kbta.util.TimeInterval;
 public final class Context extends Element{
 	public Context(String name, TimeInterval timeInterval, Bundle extras){
 		super(CONTEXT, name, timeInterval, extras);
+	}
+
+	@Override
+	public int compareTo(Element another) {
+		return 0;
 	}	
 }

@@ -13,4 +13,9 @@ public final class Event extends Element{
 	public Event(String name, long start, long end){
 		super(EVENT, name, start, end, null);
 	}
+
+	@Override
+	public int compareTo(Element another) {
+		return 0;
+	}
 }
