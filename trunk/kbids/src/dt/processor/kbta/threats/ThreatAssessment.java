@@ -1,5 +1,7 @@
 package dt.processor.kbta.threats;
 
+import android.content.SharedPreferences;
+import dt.processor.kbta.Env;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
@@ -13,15 +15,15 @@ public final class ThreatAssessment{
 
 	private final GeneratedFrom _generatedFrom;
 
-	private boolean _monitored;
+	private boolean _isMonitored;
 
 	public ThreatAssessment(String title, String description, int baseCertainty,
-		boolean monitored, GeneratedFrom generatedFrom){
+		boolean isMonitored, GeneratedFrom generatedFrom){
 		_title = title;
 		_description = description;
 		_baseCertainty = baseCertainty;
-		_monitored = monitored;
 		_generatedFrom = generatedFrom;
+		_isMonitored = isMonitored;
 	}
 
 	public String getTitle(){
@@ -43,14 +45,33 @@ public final class ThreatAssessment{
 	public GeneratedFrom getGeneratedFrom(){
 		return _generatedFrom;
 	}
-	
-	public void setInitiallyMonitoredThreat(Ontology ontology){
-		ElementDef elementDef=_generatedFrom.getElementDef(ontology);
-		//TODO if need check elementDef==null
-		if(elementDef==null){
-			return;
+
+	public boolean setInitiallyMonitoredThreat(Ontology ontology, SharedPreferences.Editor spe){
+		ElementDef elementDef = _generatedFrom.getElementDef(ontology);
+		if (elementDef == null){
+			// Indicating that the element on which the threat assessment relies
+			// doesn't exist in the ontology therefore this assessment should
+			// be removed
+			return false;
 		}
-		elementDef.setInitiallyIsMonitored(ontology,_monitored);
+		_isMonitored = Env.getSharedPreferences().getBoolean(_title, _isMonitored);
+		if (_isMonitored){
+			spe.putBoolean(_title, true);
+			// There is only a point in traversing the elements if they are
+			// monitored, otherwise they will remain unmonitored by default
+			elementDef.setInitiallyMonitored(ontology);
+		}
+		return true;
+	}
+	
+	public void setMonitoredThreat(Ontology ontology, boolean isMonitored){
+		_isMonitored = isMonitored;
+		ElementDef elementDef = _generatedFrom.getElementDef(ontology);
+		elementDef.setMonitored(ontology, isMonitored);
+	}
+	
+	public boolean isMonitored(){
+		return _isMonitored;
 	}
 
 	@Override
@@ -58,7 +79,7 @@ public final class ThreatAssessment{
 		StringBuilder sb = new StringBuilder("\nAssessment\n");
 		sb.append(_title).append(" [BaseCert").append(_baseCertainty).append("]");
 		sb.append("\nDescription: ").append(_description);
-		sb.append("\nmonitored= ").append(_monitored);
+		sb.append("\nmonitored= ").append(_isMonitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);
 		return sb.toString();
 	}
@@ -67,10 +88,9 @@ public final class ThreatAssessment{
 		StringBuilder sb = new StringBuilder("\nAssessment\n");
 		sb.append(_title).append(" [").append(getCertainty(e)).append("]");
 		sb.append("\nDescription: ").append(_description);
-		sb.append("\nmonitored= ").append(_monitored);
+		sb.append("\nmonitored= ").append(_isMonitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);
 		return sb.toString();
 	}
 
-	
 }

@@ -5,57 +5,104 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 import static dt.processor.kbta.util.XmlParser.*;
-import java.io.IOException;
-import java.util.HashSet;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.TreeMap;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import dt.processor.kbta.R;
+import dt.processor.kbta.Env;
+import dt.processor.kbta.settings.Model;
+import dt.processor.kbta.util.FileChangeTracker;
+import dt.processor.kbta.util.FileChangeTracker.ChangeInfo;
 
 public class ThreatAssessmentLoader{
 	private static final String TAG = "ThreatAssessmentLoader";
 
-	private ThreatAssessor _ta;
+	private static final String DEFAULT_NAME = "Android";
+
+	private static final String DEFAULT_VERSION = "0";
+
+	private String _threatsName;
+	
+	private String _version;
+
+	private final TreeMap<String, ThreatAssessment> _assessments;
+
+	public ThreatAssessmentLoader(){
+		_assessments = new TreeMap<String, ThreatAssessment>();
+	}
 
 	public ThreatAssessor loadThreatAssessments(Context context){
-		_ta = new ThreatAssessor();
-
-		int eventType;
 		try{
-			XmlPullParser xpp = context.getResources().getXml(R.xml.threat_asssessments);
+			// Checking whether the default threat assessment model has changed
+			FileChangeTracker fct = FileChangeTracker.getFileChangeTracker(context);
+			ChangeInfo ci = fct.hasBeenModified(context, Model.THREAT_ASSESSMENTS,
+				Model.THREAT_ASSESSMENTS);
 
-			eventType = xpp.getEventType();
+			File threatsFile = Model.getThreatsModelFile(context);
+			// Overriding the model file with the default one
+			// in case it hasn't been copied to the private storage yet
+			// or the default model (inside the apk) has been modified and
+			// it is not the first time the model is being loaded
+			boolean changed = !ci.firstTimeTracked && !ci.hasntBeenModified;
+			if (!threatsFile.exists() || (changed)){
+				if (changed){
+					Env.getSharedPreferences().edit().clear().commit();
+				}
+				Log.i(TAG, "Loading default threat assessment model");
+				if (!Model.copyDefaultModelFile(context, threatsFile)){
+					Log.e(TAG, "Unable to load the default Threats");
+					return null;
+				}
+			}
+			fct.updateFileStatus(ci);
 
-			while (eventType != END_DOCUMENT){
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+			XmlPullParser xpp = factory.newPullParser();
+			xpp.setInput(new FileReader(threatsFile));
 
+			for (int eventType = xpp.getEventType(); eventType != END_DOCUMENT; eventType = xpp
+					.next()){
 				if (eventType == START_TAG){
 					String name = xpp.getName();
 					if (TextUtils.isEmpty(name))
 						continue;
 					else if (name.equalsIgnoreCase("Assessments")){
+						_threatsName = xpp.getAttributeValue(null, "name");
+						_version = xpp.getAttributeValue(null, "version");
 						parseAssessments(xpp);
 					}
 				}
-
-				eventType = xpp.next();
 			}
 
-			return _ta;
+			if (isEmpty(_threatsName)){
+				Log.w(TAG,
+					"Missing/corrupt \"name\" attribute in Assessments element, using default: "
+							+ DEFAULT_NAME);
+				_threatsName = DEFAULT_NAME;
+			}
+			
+			if (isEmpty(_version)){
+				Log.w(TAG,
+					"Missing/corrupt \"version\" attribute in Ontology element, using default: "
+							+ DEFAULT_VERSION);
+				_version = DEFAULT_VERSION;
+			}
+
+			return new ThreatAssessor(_assessments, _threatsName, _version);
 		}catch(Exception e){
 			Log.e(TAG, "Error while loading Threat assessments", e);
+			return null;
 		}
-
-		return null;
 	}
 
-	private void parseAssessments(XmlPullParser xpp) throws XmlPullParserException,
-			IOException{
-
-		// System.out.println("******parseAssessments******");
+	private void parseAssessments(XmlPullParser xpp) throws Exception{
 		int eventType;
 		GeneratedFrom generatedFrom = null;
 
@@ -77,41 +124,40 @@ public class ThreatAssessmentLoader{
 					Log.e(TAG, "Faulty threat asssessment base certainty");
 					continue;
 				}
-				
-				String sMonitored= xpp.getAttributeValue(null, "monitored");
-				boolean monitored=false;
-				if(sMonitored==null || Boolean.parseBoolean(sMonitored)){
-					monitored=true;
+
+				String sMonitored = xpp.getAttributeValue(null, "monitored");
+				boolean monitored = false;
+				if (sMonitored == null || Boolean.parseBoolean(sMonitored)){
+					monitored = true;
 				}
 
 				while ((eventType = xpp.next()) != END_TAG
 						|| !xpp.getName().equalsIgnoreCase("Assessment")){
+					if (eventType != START_TAG){
+						continue;
+					}
 					generatedFrom = parseGeneratedFrom(xpp);
 				}
 
 				if (generatedFrom != null){
 					ThreatAssessment threatAssessment = new ThreatAssessment(title,
-							description, baseCertainty,monitored, generatedFrom);
-					_ta.addThreatAssessment(threatAssessment);
+							description, baseCertainty, monitored, generatedFrom);
+					_assessments.put(title, threatAssessment);
 				}
 			}
 		}
-		// System.out.println(_ta);
 	}
 
-	private GeneratedFrom parseGeneratedFrom(XmlPullParser xpp)
-			throws XmlPullParserException, IOException{
+	private GeneratedFrom parseGeneratedFrom(XmlPullParser xpp) throws Exception{
 		SymbolicValueCondition symbolicValueCondition = null;
 		DurationCondition durationCondition = null;
 		int eventType;
 
-		for (eventType = xpp.getEventType(); eventType != START_TAG; eventType = xpp
-				.next());
-
 		String type = xpp.getName();
 		String elementName = xpp.getAttributeValue(null, "name");
-		if (TextUtils.isEmpty(type) || TextUtils.isEmpty(elementName)){
-			Log.e(TAG, "Missing threat assessment element type/name");
+		if (isEmpty(type) || isEmpty(elementName)){
+			Log.e(TAG, "Missing threat assessment element type (" + type + ")/name("
+					+ elementName + ")");
 			return null;
 		}
 
@@ -146,8 +192,5 @@ public class ThreatAssessmentLoader{
 					durationCondition);
 		}
 		return null;
-
 	}
-
-	
 }

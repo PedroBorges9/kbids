@@ -9,6 +9,7 @@ import java.util.List;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 
 /**
@@ -46,7 +47,7 @@ public final class ContextDef extends ElementDef{
 		if (assertNotCreatedIn(iteration)){
 			if (aic.getContexts().getCurrentElement(_name) != null){
 				for (Destruction destruction : _destructions){
-					if (destruction.Destruct(aic)){
+					if (destruction.destroy(aic)){
 						setLastCreated(iteration);
 						return;
 					}
@@ -54,25 +55,13 @@ public final class ContextDef extends ElementDef{
 			}
 		}
 	}
-
-	public void setInitiallyIsMonitored(Ontology ontology, boolean monitored){
-		_isMonitored = (_isMonitored ? true : monitored);
-		_counter += (monitored ? 1 : 0);
-		ElementDef elementDef;
+	
+	@Override
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		visitor.visit(this);
 		for (Induction induction : _inductions){
-			elementDef = induction.getElementDef(ontology);
-			elementDef.setInitiallyIsMonitored(ontology, monitored);
-		}
-
-	}
-
-	public void setIsMonitored(Ontology ontology, boolean monitored){
-		_counter += (monitored ? 1 : (_counter > 0 ? -1 : 0));
-		_isMonitored = (_counter>0 ? true : false);
-		ElementDef elementDef;
-		for (Induction induction : _inductions){
-			elementDef = induction.getElementDef(ontology);
-			elementDef.setIsMonitored(ontology, monitored);
+			ElementDef elementDef = induction.getElementDef(ontology);
+			elementDef.accept(ontology, visitor);
 		}
 	}
 
@@ -81,6 +70,6 @@ public final class ContextDef extends ElementDef{
 		return "<Context name=" + _name + "\n inductions: "
 				+ Arrays.toString(_inductions) + "\n destructions: "
 				+ Arrays.toString(_destructions) + " isMonitored=" + _isMonitored
-				+ " counter=" + _counter + "/>\n";
+				+ " counter=" + _monitoredCounter + "/>\n";
 	}
 }

@@ -32,10 +32,7 @@ import dt.processor.kbta.threats.ThreatAssessor;
 import dt.processor.kbta.util.Pair;
 
 public final class KBTAProcessorService extends Service implements ServiceConnection{
-	public static final String TAG = "KBTA";
-
-	// public static final String TAG1 = "TEST";
-	// public static final String TAG2 = "AFTER";
+	private static boolean _isRunning;
 
 	public static final boolean DEBUG = true;
 
@@ -49,70 +46,32 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 	private int _iteration;
 
-	private long _elementTimeout;
-
 	@Override
 	public void onCreate(){
 		super.onCreate();
+
+		setIsRunning(true);
+
 		_allInstances = new AllInstanceContainer();
 		_iteration = 0;
-
-		final Object sync = new Object();
-		new Thread(new Runnable(){
-
-			@Override
-			public void run(){
-				OntologyLoader ontologyLoader = new OntologyLoader();
-				Ontology ontology = ontologyLoader
-						.loadOntology(KBTAProcessorService.this);
-				synchronized (sync){
-					_ontology = ontology;
-					sync.notify();
-				}
-
-				_elementTimeout = _ontology.getElementTimeout();
-				Log.i(TAG, "Finished loading the ontology: " + _ontology);
-
-				System.out.println(_ontology);
-
-			}
-		}, "Ontology Loader Thread").start();
-
-		// FIXME Remove comment
-		new Thread(new Runnable(){
-
-			@Override
-			public void run(){
-				ThreatAssessmentLoader threatAssessmentLoader = new ThreatAssessmentLoader();
-				_threatAssessor = threatAssessmentLoader
-						.loadThreatAssessments(KBTAProcessorService.this);
-				// Log.d(TAG1,_threatAssessor.toString());
-				Log.i(TAG, "Finished loading the threat assessments");
-
-				synchronized (sync){
-
-					try{
-						if (_ontology == null){
-							sync.wait();
-						}
-
-						_threatAssessor.setInitiallyMonitoredThreats(_ontology);
-						// Log.d(TAG2,_ontology.toString());
-					}catch(InterruptedException e){
-						Log.e(TAG, "InterruptedException", e);
-
-					}
-
-				}
-
-			}
-		}, "Threat Assessment Loader Thread").start();
 
 		// Connecting to the TWU so we can send threat assessments
 		System.out.println(bindService(new Intent("dt.agent.action.BIND_SERVICE")
 				.addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE));
 
-		// compute(null);
+		Env.initialize(this, new Env.LoadingCallback(){
+
+			@Override
+			public void onFailure(){
+			}
+
+			@Override
+			public void onSuccess(){
+				_threatAssessor = Env.getThreatAssessor();
+				_ontology = Env.getOntology();
+			}
+
+		}, false);
 	}
 
 	/**
@@ -122,10 +81,19 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	public void onDestroy(){
 		super.onDestroy();
 
+		setIsRunning(false);
 		if (_twu != null){ // Unbinding from the TWU if connected
 			unbindService(this);
 			_twu = null;
 		}
+	}
+
+	private static synchronized void setIsRunning(boolean isRunning){
+		_isRunning = isRunning;
+	}
+
+	public static synchronized boolean isRunning(){
+		return _isRunning;
 	}
 
 	@Override
@@ -135,9 +103,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			@Override
 			public void receiveMonitoredData(List<MonitoredData> features)
 					throws RemoteException{
-
 				try{
-					// System.out.println("RECIEVE MONITORED DATA");
 					compute(features);
 
 					if (_threatAssessor == null){
@@ -147,8 +113,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
 						for (Pair<ThreatAssessment, Element> p : threats){
-							Log.d(TAG, p.first.toString(p.second));
-							Log.d(TAG, "Element: " + p.second.toString());
+							Log.d(Env.TAG, p.first.toString(p.second));
+							Log.d(Env.TAG, "Element: " + p.second.toString());
 						}
 					}
 					if (_twu != null){
@@ -202,7 +168,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 		createPatterns();
 		_allInstances.shiftBackAll();
-		_allInstances.discardElementsNotWithinRange(_elementTimeout);
+		// TODO See if ontology needs to be saved here or only in the env
+		_allInstances.discardElementsNotWithinRange(_ontology.getElementTimeout());
 	}
 
 	private void destroyContexts(){
@@ -227,8 +194,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createAbstractions(){
-		 _allInstances.getStates().shiftBack();
-		 createStates();
+		_allInstances.getStates().shiftBack();
+		createStates();
 		_allInstances.getTrends().shiftBack();
 		createTrends();
 	}
@@ -252,11 +219,10 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	}
 
 	private void createPatterns(){
-		LinearPatternDef[] lpd=_ontology.getLinearPatternDefs();
-		for (LinearPatternDef lp: lpd){
+		LinearPatternDef[] lpd = _ontology.getLinearPatternDefs();
+		for (LinearPatternDef lp : lpd){
 			lp.createPattern(_allInstances);
-			
-			
+
 		}
 		if (DEBUG)
 			System.out.println("** Patterns: **\n" + _allInstances.getPatterns());
@@ -291,7 +257,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service){
 		if (service == null){
-			Log.w(TAG, "The TWU returned a null binder");
+			Log.w(Env.TAG, "The TWU returned a null binder");
 		}else{
 			// Casting the service object to "TWU"
 			_twu = TWU.Stub.asInterface(service);

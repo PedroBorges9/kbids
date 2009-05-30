@@ -14,6 +14,7 @@ import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.container.PrimitiveContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
+import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractionDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.instances.Element;
@@ -166,26 +167,18 @@ public final class TrendDef extends AbstractionDef{
 	}
 
 	@Override
+	public void accept(Ontology ontology, ElementVisitor visitor){
+		super.accept(ontology, visitor); // For necessary contexts and self
+
+		ElementDef elementDef = ontology.getPrimitiveDef(_abstractedFrom);
+		elementDef.accept(ontology, visitor);
+	}
+
+	@Override
 	public String toString(){
 		return "<Trend AbstractedFrom(primitive)= " + _abstractedFrom + "\n"
 				+ "necessaryContexts " + Arrays.toString(_necessaryContexts) + "\n"
 				+ "mappingFunction " + _mappingFunction + " isMonitored=" + _isMonitored
-				+ " counter=" + _counter + "/>";
+				+ " counter=" + _monitoredCounter + "/>";
 	}
-
-	@Override
-	public void setInitiallyIsMonitored(Ontology ontology, boolean monitored){
-		ElementDef elementDef = ontology.getPrimitiveDef(_abstractedFrom);
-		elementDef.setInitiallyIsMonitored(ontology, monitored);
-		super.setInitiallyIsMonitored(ontology, monitored);// for necessary contexts
-	}
-
-	@Override
-	public void setIsMonitored(Ontology ontology, boolean monitored){
-		ElementDef elementDef = ontology.getPrimitiveDef(_abstractedFrom);
-		elementDef.setIsMonitored(ontology, monitored);
-		super.setIsMonitored(ontology, monitored);// for necessary contexts
-
-	}
-
 }
