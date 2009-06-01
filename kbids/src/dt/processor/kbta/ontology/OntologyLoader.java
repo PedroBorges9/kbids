@@ -22,17 +22,6 @@ import android.util.Log;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.Patterns.BeforeTemporalCondition;
-import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
-import dt.processor.kbta.ontology.defs.Patterns.OverlapTemporalCondition;
-import dt.processor.kbta.ontology.defs.Patterns.PairWiseCondition;
-import dt.processor.kbta.ontology.defs.Patterns.TemporalCondition;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementContext;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementEvent;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementPrimitive;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementState;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementTrend;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractionCondition;
 import dt.processor.kbta.ontology.defs.abstractions.state.ElementCondition;
@@ -54,6 +43,13 @@ import dt.processor.kbta.ontology.defs.context.StateDestruction;
 import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
+import dt.processor.kbta.ontology.defs.Patterns.*;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementContext;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementEvent;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementPrimitive;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementState;
+import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementTrend;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.settings.Model;
 import dt.processor.kbta.threats.DurationCondition;
@@ -366,13 +362,13 @@ public class OntologyLoader{
 			return null;
 		}
 		if (value.equalsIgnoreCase("*")){
-			valueCondition = 0;
+			valueCondition = PairWiseCondition.DONTCARE;
 		}else if (value.equalsIgnoreCase("Same") && comparable){
-			valueCondition = 2;
+			valueCondition = PairWiseCondition.SAME;
 		}else if (value.equalsIgnoreCase("Smaller") && comparable){
-			valueCondition = 1;
+			valueCondition = PairWiseCondition.SMALLER;
 		}else if (value.equalsIgnoreCase("Bigger") && comparable){
-			valueCondition = 3;
+			valueCondition = PairWiseCondition.BIGGER;
 		}else{
 			Log.e(TAG, "Corrupt value of pairWiseCondition");
 			return null;

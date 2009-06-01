@@ -5,6 +5,8 @@ package dt.processor.kbta.ontology.defs.Patterns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import android.util.Log;
 
@@ -24,46 +26,140 @@ public class LinearPatternDef extends ElementDef {
 	private PatternElement[] _elements;
 //	HashMap<Integer, PatternElement> _elements;
 	private PairWiseCondition[] _pairConditions;
+	private LinkedList<PartialPattern> _partials;
 	public LinearPatternDef(String name, ArrayList<PairWiseCondition> pairConditions, 
-			HashMap<Integer, PatternElement> elements ) {
+		HashMap<Integer, PatternElement> elements ) {
 		super(name);
-		_elements=elements.values().toArray(new PatternElement[elements.size()]);
+		_elements= new PatternElement[elements.size()];
+		for (PatternElement e: elements.values()){
+			_elements[e.getOrdinal()]=e;
+		}
 		_pairConditions=pairConditions.toArray(new PairWiseCondition[pairConditions.size()]);
+		_partials=new LinkedList<PartialPattern>();
 	} 
-	
+
+	@SuppressWarnings("unchecked")
 	public void createPattern(AllInstanceContainer aic){
-		HashMap<Integer, ArrayList <Element>> elements=new HashMap<Integer, ArrayList <Element>>();
-		long start=Long.MAX_VALUE;
-		long end=0;
+		ArrayList <Element>[] elements=new ArrayList[_elements.length];
+
 		for (PatternElement pe: _elements){
-			Log.d("PatternCreation", "getting valid element" + pe.getOrdinal());
+			Log.d("PatternCreation", "getting valid element " + pe.getOrdinal() + " for pattern "+ _name);
 			ArrayList<Element> e=pe.getValid(aic);
 			if (e==null){
-				Log.d("PatternCreation", "no valid element" + pe.getOrdinal());
+				Log.d("PatternCreation", "no valid element " + pe.getOrdinal() + " for pattern "+ _name);
 				return;
 			}
-			elements.put(pe.getOrdinal(), e);
-//			TimeInterval eti=e.getTimeInterval();
-//			if (eti.getStartTime()<start){
-//				start=eti.getStartTime();
-//			}
-//			if (eti.getEndTime()>end){
-//				end=eti.getEndTime();
-//			}
+
+			elements[pe.getOrdinal()]= e;
+
+
+		}
+		for (Element e: elements[0]){
+			PartialPattern pp=new PartialPattern(elements.length, e);
+			_partials.add(pp);
 		}
 		for (PairWiseCondition pwc: _pairConditions){
-			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){
+			int first=pwc.getFirst();
+			int second=pwc.getSecond();
+
+			PartialPattern ppTemp=_partials.get(0);
+			if (ppTemp.getElement(first)==null){
+				if (ppTemp.getElement(second)==null){
+					bothElementsMissing(pwc,elements[first], elements[second]);
+				}
+				else{
+					firstElementMissing(pwc,elements[first]);
+				}
+			}
+			else if (ppTemp.getElement(second)==null){
+				secondElementMissing(pwc,elements[second]);
+			}
+			else{
+				noElementsMissing(pwc);
+			}
+			if (_partials.isEmpty()){
+				Log.d("PatternCreation", "no element which allow a sequence of pairWiseConditions for linear pattern "+_name);
 				return;
 			}
+
+
+//			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){
+//			return;
+//			}
 		}
-		aic.addPattern(new Pattern(_name, new TimeInterval(start,end)));
+
+		PartialPattern last=_partials.get(_partials.size()-1);
+		Pattern ans=last.toPattern(elements, _name);	
+		aic.addPattern(ans);
 	}
-	
-	
+
+
+
+
+	private void noElementsMissing(PairWiseCondition pwc){
+		ListIterator<PartialPattern> lIter=_partials.listIterator();
+		while (lIter.hasNext()){
+			PartialPattern pp=lIter.next();
+			if (!pwc.obeys(pp.getElement(pwc.getFirst()), 
+				pp.getElement(pwc.getSecond()))){
+				lIter.remove();
+			}
+		}
+
+	}
+
+	private void secondElementMissing(PairWiseCondition pwc, ArrayList<Element> secondElements){
+		ListIterator<PartialPattern> lIter=_partials.listIterator();
+		while (lIter.hasNext()){
+			PartialPattern pp=lIter.next();
+			lIter.remove();
+			for (Element e: secondElements){
+				if (pwc.obeys(pp.getElement(pwc.getFirst()), e)){
+					lIter.add(pp.addElement(pwc.getSecond(), e));
+				}
+			}
+			
+		}
+
+	}
+
+	private void firstElementMissing(PairWiseCondition pwc, ArrayList<Element> firstElements){
+		ListIterator<PartialPattern> lIter=_partials.listIterator();
+		while (lIter.hasNext()){
+			PartialPattern pp=lIter.next();
+			lIter.remove();
+			for (Element e: firstElements){
+				if (pwc.obeys(e, pp.getElement(pwc.getSecond()))){
+					lIter.add(pp.addElement(pwc.getFirst(), e));
+				}
+			}
+			
+		}
+
+	}
+
+	private void bothElementsMissing(PairWiseCondition pwc, ArrayList<Element> firstElements,
+		ArrayList<Element> secondElements){
+		ListIterator<PartialPattern> lIter=_partials.listIterator();
+		while (lIter.hasNext()){
+			PartialPattern pp=lIter.next();
+			lIter.remove();
+			for (Element e1: firstElements){
+				for (Element e2: secondElements){
+					if (pwc.obeys(e1, e2)){
+						lIter.add(pp.addTwoElements(pwc.getFirst(), e1, pwc.getSecond(), e2));
+					}
+				}
+			}
+
+			
+		}
+	}
+
 	@Override
 	public String toString(){
 		String st="LinearPattern\n"+"Elements\n";
-		
+
 		for(PatternElement pe : _elements){
 			st+=pe+"\n";	
 		}
@@ -77,6 +173,9 @@ public class LinearPatternDef extends ElementDef {
 	@Override
 	public void accept(Ontology ontology, ElementVisitor visitor){
 		visitor.visit(this);
+		for (PatternElement pe : _elements){
+			pe.getElementDef(ontology).accept(ontology, visitor);
+		}
 		//TODO Traverse related elements (i.e. everyone in the pattern element array)
 	}
 }

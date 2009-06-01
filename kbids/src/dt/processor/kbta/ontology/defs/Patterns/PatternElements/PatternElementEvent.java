@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.EventContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.threats.DurationCondition;
@@ -17,8 +19,6 @@ public class PatternElementEvent extends PatternElement {
 
 	@Override
 	public ArrayList<Element> getValid(AllInstanceContainer aic) {
-		// TODO Auto-generated method stub
-
 		ArrayList<Element> ans=new ArrayList<Element>();
 		EventContainer ec=aic.getEvents();
 		ArrayList<Event> eArray;
@@ -29,9 +29,7 @@ public class PatternElementEvent extends PatternElement {
 					if (obeys(e)){
 						ans.add(e);
 					}
-					else {
-						eArray.remove(e);
-					}
+					
 					
 				}
 			}
@@ -47,6 +45,11 @@ public class PatternElementEvent extends PatternElement {
 			return null;
 		}
 		return ans;
+	}
+
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		return ontology.getEventDef(_name);
 	}
 
 }

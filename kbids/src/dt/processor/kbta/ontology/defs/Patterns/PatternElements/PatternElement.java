@@ -7,6 +7,8 @@ import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.container.ElementContainer;
 import dt.processor.kbta.container.EventContainer;
 import dt.processor.kbta.container.PrimitiveContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Event;
@@ -41,4 +43,6 @@ public abstract class PatternElement {
 	public int getType() {
 		return _type;
 	}
+
+	public abstract ElementDef getElementDef(Ontology ontology);
 }

@@ -6,6 +6,8 @@ import android.util.Log;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Abstraction;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
@@ -44,9 +46,7 @@ public class PatternElementState extends PatternElement {
 				if (obeys(e1)){
 					ans.add(e1);
 				}
-				else{
-					eArray.remove(e1);
-				}
+				
 			}
 		}
 		e=ec.getCurrentElement(_name);
@@ -61,6 +61,11 @@ public class PatternElementState extends PatternElement {
 			return null;
 		}
 		return ans;
+	}
+
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		return ontology.getStateDef(_name);
 	}
 
 
