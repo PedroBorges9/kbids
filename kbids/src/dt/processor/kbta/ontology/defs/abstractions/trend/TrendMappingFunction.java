@@ -49,9 +49,12 @@ public final class TrendMappingFunction{
 
 		double cosAlpha = (dtLF * dtNL + dvLF * dvNL)
 				/ Math.sqrt((dtLF * dtLF + dvLF * dvLF) * (dtNL * dtNL + dvNL * dvNL));
-		double alpha = Math.acos(cosAlpha);
-
+		double alpha = Math.toDegrees(Math.acos(cosAlpha));
+	
+//		System.out.println("("+dtLF+","+dvLF+")*"+"("+dtNL+","+dvNL+")");
+//		System.out.println(cosAlpha);
 //		System.out.println("alpha= "+alpha);
+//		System.out.println("angle= "+_angle);
 //		System.out.println("alpha < angle  "+(alpha <= _angle));
 		
 		return alpha <= _angle;
