@@ -21,7 +21,7 @@ public class PatternElementState extends PatternElement {
 		super(type,name, ordinal, duration);
 		_symbolicValueCondition = symbolicValueCondition;
 	}
-	
+
 	@Override
 	public String toString(){
 		return super.toString()+"  "+_symbolicValueCondition;
@@ -36,27 +36,32 @@ public class PatternElementState extends PatternElement {
 	public ArrayList<Element> getValid(AllInstanceContainer aic) {
 		ArrayList<Element> ans=new ArrayList<Element>();
 		ComplexContainer<State> ec=aic.getStates();
-		State e=ec.getNewestElement(_name);
-			if (e!=null && obeys(e)){
-				ans.add(e);
+		State e;
+	
+		ArrayList<State> eArray=ec.getOldElements(_name);
+		if (eArray!=null){
+			for (State e1: eArray){
+				if (obeys(e1)){
+					ans.add(e1);
+				}
+				else{
+					eArray.remove(e1);
+				}
 			}
+		}
 		e=ec.getCurrentElement(_name);
 		if (e!=null && obeys(e)){
 			ans.add(e);
 		}
-		ArrayList<State> eArray=ec.getOldElements(_name);
-		if (eArray!=null){
-		for (State e1: eArray){
-			if (obeys(e1)){
-				ans.add(e1);
-			}
-		}
+		e=ec.getNewestElement(_name);
+		if (e!=null && obeys(e)){
+			ans.add(e);
 		}
 		if (ans.isEmpty()){
 			return null;
 		}
 		return ans;
 	}
-	
+
 
 }

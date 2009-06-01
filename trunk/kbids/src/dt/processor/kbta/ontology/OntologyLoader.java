@@ -3,16 +3,14 @@ package dt.processor.kbta.ontology;
 import static android.text.TextUtils.isEmpty;
 import static dt.processor.kbta.util.XmlParser.parseDurationCondition;
 import static dt.processor.kbta.util.XmlParser.parseSymbolicValueCondition;
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static dt.processor.kbta.util.XmlParser.*;
-import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
-import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,15 +23,10 @@ import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.Patterns.BeforeTemporalCondition;
-import dt.processor.kbta.ontology.defs.Patterns.BiggerValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
-import dt.processor.kbta.ontology.defs.Patterns.NoValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.OverlapTemporalCondition;
 import dt.processor.kbta.ontology.defs.Patterns.PairWiseCondition;
-import dt.processor.kbta.ontology.defs.Patterns.SameValueCondition;
-import dt.processor.kbta.ontology.defs.Patterns.SmallerValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.TemporalCondition;
-import dt.processor.kbta.ontology.defs.Patterns.ValueCondition;
 import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
 import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementContext;
 import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementEvent;
