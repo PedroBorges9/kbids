@@ -6,7 +6,6 @@ package dt.processor.kbta.ontology.instances;
 import java.util.HashMap;
 
 import android.os.Bundle;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
 import dt.processor.kbta.util.TimeInterval;
 
 

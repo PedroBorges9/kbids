@@ -248,7 +248,11 @@
 			<MappingFunction threshold="16" angle="0" maxGap="PT30M" /> 
 		</Trend>
 	</Trends>
+	<!-- 
+		assumptions:
+		1. the ordinal must be sequential starting with 0
 	
+	 -->
 	<Patterns>
 		<LinearPattern name="DDoS Attack">
 			<Elements>
@@ -256,19 +260,19 @@
 					<NumericValueConditon minE="31" maxE="100" />
 					<DurationCondition min="PT0S" max="P8D" />
 				</Primitive> -->
-				<State name="Garbage_Collections_Level" ordinal="1"> <!-- can be Trend -->
+				<State name="Garbage_Collections_Level" ordinal="0"> <!-- can be Trend -->
 					<SymbolicValueCondition>
 						<Value name="High" />
 					</SymbolicValueCondition>
 					<DurationCondition min="PT1S" max="P8D" />
 				</State>
-				<Context name="High_CPU_Usage" ordinal="2"> <!-- can be context -->
+				<Context name="High_CPU_Usage" ordinal="1"> <!-- can be context -->
 					<DurationCondition min="PT3S" max="P8D" />
 				</Context>
 				
 			</Elements>
 			<PairWiseConditions>
-				<PairWiseCondition first="1" second="2" value="*" 
+				<PairWiseCondition first="0" second="1" value="*" 
 					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 
 			</PairWiseConditions>
 		</LinearPattern>

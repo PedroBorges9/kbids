@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.PrimitiveContainer;
+import dt.processor.kbta.ontology.Ontology;
+import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Primitive;
@@ -47,5 +49,11 @@ public class PatternElementPrimitive extends PatternElement {
 	@Override
 	protected boolean obeys(Element e) {
 		return (super.obeys(e) && _numricRange.isInRange(((Primitive) e).getValue()));
+	}
+
+	@Override
+	public ElementDef getElementDef(Ontology ontology){
+		
+		return ontology.getPrimitiveDef(_name);
 	}
 }
