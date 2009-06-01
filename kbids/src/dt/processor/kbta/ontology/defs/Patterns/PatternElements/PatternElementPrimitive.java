@@ -22,11 +22,12 @@ public class PatternElementPrimitive extends PatternElement {
 	public ArrayList<Element> getValid(AllInstanceContainer aic) {
 		ArrayList<Element> ans=new ArrayList<Element>();
 		PrimitiveContainer pc=aic.getPrimitives();
-		Element e=pc.getCurrentPrimitive(_name);
+		Element e;
+		e=pc.getOldPrimitive(_name);
 		if (e!=null && obeys(e)){
 			ans.add(e);
 		}
-		e=pc.getOldPrimitive(_name);
+		e=pc.getCurrentPrimitive(_name);
 		if (e!=null && obeys(e)){
 			ans.add(e);
 		}

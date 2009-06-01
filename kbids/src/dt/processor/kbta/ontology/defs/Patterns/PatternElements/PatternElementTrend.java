@@ -19,7 +19,7 @@ public class PatternElementTrend extends PatternElement {
 		super(type,name, ordinal, duration);
 		_symbolicValueCondition = symbolicValueCondition;
 	}
-	
+
 	@Override
 	public String toString(){
 		return super.toString()+"  "+_symbolicValueCondition;
@@ -33,29 +33,34 @@ public class PatternElementTrend extends PatternElement {
 	public ArrayList<Element> getValid(AllInstanceContainer aic) {
 		ArrayList<Element> ans=new ArrayList<Element>();
 		ComplexContainer<Trend> ec=aic.getTrends();
-		Trend e=ec.getNewestElement(_name);
-		
-			if (e!=null && obeys(e)){
-				ans.add(e);
+		Trend e;
+		ArrayList<Trend> eArray=ec.getOldElements(_name);
+		if (eArray!=null){
+			for (Trend e1: eArray){
+				if (obeys(e1)){
+					ans.add(e1);
+				}
+				else {
+					eArray.remove(e1);
+				}
 			}
-		
+		}
+
 		e=ec.getCurrentElement(_name);
 		if (e!=null && obeys(e)){
 			ans.add(e);
 		}
-		ArrayList<Trend> eArray=ec.getOldElements(_name);
-		if (eArray!=null){
-		for (Trend e1: eArray){
-			if (obeys(e1)){
-				ans.add(e1);
-			}
+		
+		e=ec.getNewestElement(_name);
+		if (e!=null && obeys(e)){
+			ans.add(e);
 		}
-		}
+		
 		if (ans.isEmpty()){
 			return null;
 		}
 		return ans;
 	}
-	
+
 
 }
