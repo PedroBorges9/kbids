@@ -90,7 +90,7 @@ public class LinearPatternDef extends ElementDef {
 				continue;
 			}
 			PairWiseCondition p=pwc[i][j];
-			if (pwc==null){
+			if (p==null){
 				continue;
 			}
 			used[j]=true;

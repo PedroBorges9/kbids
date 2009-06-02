@@ -94,7 +94,7 @@
 				<Primitive name="Garbage_Collections" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<Context name="High_CPU_Usage" />
+				<Context name="Amount_of_Processes_High" />
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Low">
@@ -273,23 +273,14 @@
 					<NumericValueConditon minE="31" maxE="100" />
 					<DurationCondition min="PT0S" max="P8D" />
 				</Primitive>
-				<Primitive name="CPU_Usage" ordinal="3">
-					<NumericValueConditon minE="31" maxE="100" />
-					<DurationCondition min="PT0S" max="P8D" />
-				</Primitive>
+				
 				
 			</Elements>
 			<PairWiseConditions>
-				<PairWiseCondition first="2" second="3" value="*" 
+			<!--	<PairWiseCondition first="2" second="0" value="*" 
+					temporal="Overlap" minLength="PT00S" maxLength="PT30S" minStartingDistance="PT1S" maxStartingDistance="PT30S"/> -->
+				<PairWiseCondition first="1" second="0" value="*" 
 					temporal="Before" minGap="PT1S" maxGap="PT30S" />  
-				<PairWiseCondition first="0" second="1" value="*" 
-					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 
-				<PairWiseCondition first="0" second="3" value="*" 
-					temporal="Before" minGap="PT1S" maxGap="PT30S" />
-				<PairWiseCondition first="1" second="2" value="*" 
-					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 
-				<PairWiseCondition first="2" second="0" value="*" 
-					temporal="Before" minGap="PT1S" maxGap="PT30S" /> 					
 			</PairWiseConditions>
 		</LinearPattern>
 	</Patterns>
