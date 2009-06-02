@@ -24,19 +24,60 @@ import dt.processor.kbta.util.TimeInterval;
  */
 public class LinearPatternDef extends ElementDef {
 	private PatternElement[] _elements;
-//	HashMap<Integer, PatternElement> _elements;
+	//	HashMap<Integer, PatternElement> _elements;
 	private PairWiseCondition[] _pairConditions;
 	private LinkedList<PartialPattern> _partials;
 	public LinearPatternDef(String name, ArrayList<PairWiseCondition> pairConditions, 
-		HashMap<Integer, PatternElement> elements ) {
+			HashMap<Integer, PatternElement> elements ) {
 		super(name);
 		_elements= new PatternElement[elements.size()];
 		for (PatternElement e: elements.values()){
 			_elements[e.getOrdinal()]=e;
 		}
-		_pairConditions=pairConditions.toArray(new PairWiseCondition[pairConditions.size()]);
+		rearrangePairs(pairConditions.toArray(new PairWiseCondition[pairConditions.size()]));
+
 		_partials=new LinkedList<PartialPattern>();
 	} 
+
+	private void rearrangePairs(PairWiseCondition[] pairWiseConditions) {
+		boolean[] used=new boolean[_elements.length];
+		boolean changed=false;
+		_pairConditions=new PairWiseCondition[pairWiseConditions.length];
+		used[0]=true;
+		int pointer=1;
+		int length=_pairConditions.length;
+		while (pointer<length){
+			for (int i=0; i<length; i++){
+				PairWiseCondition pwc=pairWiseConditions[i];
+				if (pwc==null){
+					continue;
+				}
+				int first=pwc.getFirst();
+				int second=pwc.getSecond();
+				if (used[first] || used[second]){
+					_pairConditions[pointer]=pwc;
+					used[first]=used[second]=true;
+					pointer++;
+					changed=true;
+					pairWiseConditions[i]=null;
+				}
+			}
+			if (!changed){
+				for (int i=0; i<length; i++){
+					PairWiseCondition pwc=pairWiseConditions[i];
+					if (pwc!=null){
+						used[pwc.getFirst()]=used[pwc.getSecond()]=true;
+						_pairConditions[pointer]=pwc;
+						pointer++;
+						changed=true;
+						pairWiseConditions[i]=null;
+						break;
+					}
+				}
+			}
+			changed=false;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public void createPattern(AllInstanceContainer aic){
@@ -83,9 +124,9 @@ public class LinearPatternDef extends ElementDef {
 			}
 
 
-//			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){
-//			return;
-//			}
+			//			if (!pwc.obeys(elements.get(pwc.getFirst()),elements.get(pwc.getSecond()))){
+			//			return;
+			//			}
 		}
 
 		PartialPattern last=_partials.get(_partials.size()-1);
@@ -101,7 +142,7 @@ public class LinearPatternDef extends ElementDef {
 		while (lIter.hasNext()){
 			PartialPattern pp=lIter.next();
 			if (!pwc.obeys(pp.getElement(pwc.getFirst()), 
-				pp.getElement(pwc.getSecond()))){
+					pp.getElement(pwc.getSecond()))){
 				lIter.remove();
 			}
 		}
@@ -118,7 +159,7 @@ public class LinearPatternDef extends ElementDef {
 					lIter.add(pp.addElement(pwc.getSecond(), e));
 				}
 			}
-			
+
 		}
 
 	}
@@ -133,13 +174,13 @@ public class LinearPatternDef extends ElementDef {
 					lIter.add(pp.addElement(pwc.getFirst(), e));
 				}
 			}
-			
+
 		}
 
 	}
 
 	private void bothElementsMissing(PairWiseCondition pwc, ArrayList<Element> firstElements,
-		ArrayList<Element> secondElements){
+			ArrayList<Element> secondElements){
 		ListIterator<PartialPattern> lIter=_partials.listIterator();
 		while (lIter.hasNext()){
 			PartialPattern pp=lIter.next();
@@ -152,7 +193,7 @@ public class LinearPatternDef extends ElementDef {
 				}
 			}
 
-			
+
 		}
 	}
 
