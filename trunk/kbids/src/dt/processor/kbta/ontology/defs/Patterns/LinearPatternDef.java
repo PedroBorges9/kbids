@@ -4,6 +4,7 @@
 package dt.processor.kbta.ontology.defs.Patterns;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -27,6 +28,7 @@ public class LinearPatternDef extends ElementDef {
 	//	HashMap<Integer, PatternElement> _elements;
 	private PairWiseCondition[] _pairConditions;
 	private LinkedList<PartialPattern> _partials;
+	private int _pairConditionsLastPointer;
 	public LinearPatternDef(String name, ArrayList<PairWiseCondition> pairConditions, 
 			HashMap<Integer, PatternElement> elements ) {
 		super(name);
@@ -35,47 +37,66 @@ public class LinearPatternDef extends ElementDef {
 			_elements[e.getOrdinal()]=e;
 		}
 		rearrangePairs(pairConditions.toArray(new PairWiseCondition[pairConditions.size()]));
-
 		_partials=new LinkedList<PartialPattern>();
 	} 
 
 	private void rearrangePairs(PairWiseCondition[] pairWiseConditions) {
-		boolean[] used=new boolean[_elements.length];
-		boolean changed=false;
-		_pairConditions=new PairWiseCondition[pairWiseConditions.length];
+		Log.d("PatternCreation", "rearranging");
+		for (PairWiseCondition p: pairWiseConditions){
+			Log.d("PatternCreation", p.toString());
+		}
+		int length = _elements.length;
+		boolean[] used=new boolean[length];
 		used[0]=true;
-		int pointer=1;
-		int length=_pairConditions.length;
-		while (pointer<length){
-			for (int i=0; i<length; i++){
-				PairWiseCondition pwc=pairWiseConditions[i];
-				if (pwc==null){
-					continue;
-				}
-				int first=pwc.getFirst();
-				int second=pwc.getSecond();
-				if (used[first] || used[second]){
-					_pairConditions[pointer]=pwc;
-					used[first]=used[second]=true;
-					pointer++;
-					changed=true;
-					pairWiseConditions[i]=null;
+		_pairConditions=new PairWiseCondition[pairWiseConditions.length];
+		PairWiseCondition[][] pwc=createSets(pairWiseConditions, length);
+		_pairConditionsLastPointer=0;
+		rearrangeConditionsRecursive(length, used, 0, 0, pwc);
+		Log.d("PatternCreation", "arranged to");
+		for (PairWiseCondition p: _pairConditions){
+			Log.d("PatternCreation", p.toString());
+		}
+		
+	}
+
+	private PairWiseCondition[][] createSets(
+			PairWiseCondition[] pairWiseConditions, int length) {
+		PairWiseCondition[][] sets=new PairWiseCondition[length][length];
+		for (PairWiseCondition p:pairWiseConditions){
+			sets[p.getFirst()][p.getSecond()]=p;
+			sets[p.getSecond()][p.getFirst()]=p;
+		}
+		return sets;
+	}
+
+	private void rearrangeConditionsRecursive(int length, boolean[] used,
+			int i, int from, PairWiseCondition[][] pwc) {
+		Log.d("PatternCreation", "i: " + i + " from "+from);
+		for (int j=0; j<length; j++){
+			if (j==from){
+				continue;
+			}
+			if (used[j]){
+				PairWiseCondition pairWiseCondition = pwc[i][j];
+				if (pairWiseCondition!=null){
+					Log.d("PatternCreation", "_pairConditionsLastPointer "+_pairConditionsLastPointer);
+					_pairConditions[_pairConditionsLastPointer]=pairWiseCondition;
+					_pairConditionsLastPointer++;
 				}
 			}
-			if (!changed){
-				for (int i=0; i<length; i++){
-					PairWiseCondition pwc=pairWiseConditions[i];
-					if (pwc!=null){
-						used[pwc.getFirst()]=used[pwc.getSecond()]=true;
-						_pairConditions[pointer]=pwc;
-						pointer++;
-						changed=true;
-						pairWiseConditions[i]=null;
-						break;
-					}
-				}
+		}
+		for (int j=0; j<length; j++){
+			if (j==from || used[j]){
+				continue;
 			}
-			changed=false;
+			PairWiseCondition p=pwc[i][j];
+			if (pwc==null){
+				continue;
+			}
+			used[j]=true;
+			_pairConditions[_pairConditionsLastPointer]=pwc[i][j];
+			_pairConditionsLastPointer++;
+			rearrangeConditionsRecursive(length, used, j, i, pwc);
 		}
 	}
 
