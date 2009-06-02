@@ -25,7 +25,6 @@ import dt.processor.kbta.util.TimeInterval;
  */
 public class LinearPatternDef extends ElementDef {
 	private PatternElement[] _elements;
-	//	HashMap<Integer, PatternElement> _elements;
 	private PairWiseCondition[] _pairConditions;
 	private LinkedList<PartialPattern> _partials;
 	private int _pairConditionsLastPointer;
@@ -36,22 +35,26 @@ public class LinearPatternDef extends ElementDef {
 		for (PatternElement e: elements.values()){
 			_elements[e.getOrdinal()]=e;
 		}
-		rearrangePairs(pairConditions.toArray(new PairWiseCondition[pairConditions.size()]));
-		_partials=new LinkedList<PartialPattern>();
+		rearrangePairs(pairConditions);
 	} 
 
-	private void rearrangePairs(PairWiseCondition[] pairWiseConditions) {
+	private void rearrangePairs(ArrayList<PairWiseCondition> pairWiseConditions) {
 		Log.d("PatternCreation", "rearranging");
 		for (PairWiseCondition p: pairWiseConditions){
 			Log.d("PatternCreation", p.toString());
 		}
 		int length = _elements.length;
 		boolean[] used=new boolean[length];
-		used[0]=true;
-		_pairConditions=new PairWiseCondition[pairWiseConditions.length];
+		
+		_pairConditions=new PairWiseCondition[pairWiseConditions.size()];
 		PairWiseCondition[][] pwc=createSets(pairWiseConditions, length);
 		_pairConditionsLastPointer=0;
-		rearrangeConditionsRecursive(length, used, 0, 0, pwc);
+		for (int i=0; i<length; i++){
+			if (!used[i]){
+				used[i]=true;
+				rearrangeConditionsRecursive(length, used, i, i, pwc);
+			}
+		}
 		Log.d("PatternCreation", "arranged to");
 		for (PairWiseCondition p: _pairConditions){
 			Log.d("PatternCreation", p.toString());
@@ -60,9 +63,9 @@ public class LinearPatternDef extends ElementDef {
 	}
 
 	private PairWiseCondition[][] createSets(
-			PairWiseCondition[] pairWiseConditions, int length) {
+		ArrayList<PairWiseCondition> pairWiseConditions , int length) {
 		PairWiseCondition[][] sets=new PairWiseCondition[length][length];
-		for (PairWiseCondition p:pairWiseConditions){
+		for (PairWiseCondition p: pairWiseConditions){
 			sets[p.getFirst()][p.getSecond()]=p;
 			sets[p.getSecond()][p.getFirst()]=p;
 		}
@@ -70,14 +73,14 @@ public class LinearPatternDef extends ElementDef {
 	}
 
 	private void rearrangeConditionsRecursive(int length, boolean[] used,
-			int i, int from, PairWiseCondition[][] pwc) {
-		Log.d("PatternCreation", "i: " + i + " from "+from);
+			int current, int from, PairWiseCondition[][] pwc) {
+		Log.d("PatternCreation", "i: " + current + " from "+from);
 		for (int j=0; j<length; j++){
 			if (j==from){
 				continue;
 			}
 			if (used[j]){
-				PairWiseCondition pairWiseCondition = pwc[i][j];
+				PairWiseCondition pairWiseCondition = pwc[current][j];
 				if (pairWiseCondition!=null){
 					Log.d("PatternCreation", "_pairConditionsLastPointer "+_pairConditionsLastPointer);
 					_pairConditions[_pairConditionsLastPointer]=pairWiseCondition;
@@ -89,14 +92,14 @@ public class LinearPatternDef extends ElementDef {
 			if (j==from || used[j]){
 				continue;
 			}
-			PairWiseCondition p=pwc[i][j];
+			PairWiseCondition p=pwc[current][j];
 			if (p==null){
 				continue;
 			}
 			used[j]=true;
-			_pairConditions[_pairConditionsLastPointer]=pwc[i][j];
+			_pairConditions[_pairConditionsLastPointer]=pwc[current][j];
 			_pairConditionsLastPointer++;
-			rearrangeConditionsRecursive(length, used, j, i, pwc);
+			rearrangeConditionsRecursive(length, used, j, current, pwc);
 		}
 	}
 
@@ -116,6 +119,7 @@ public class LinearPatternDef extends ElementDef {
 
 
 		}
+		_partials=new LinkedList<PartialPattern>();
 		for (Element e: elements[0]){
 			PartialPattern pp=new PartialPattern(elements.length, e);
 			_partials.add(pp);
