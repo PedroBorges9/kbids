@@ -58,8 +58,7 @@ public class LinearPatternDef extends ElementDef {
 		Log.d("PatternCreation", "arranged to");
 		for (PairWiseCondition p: _pairConditions){
 			Log.d("PatternCreation", p.toString());
-		}
-		
+		}		
 	}
 
 	private PairWiseCondition[][] createSets(

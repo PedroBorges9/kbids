@@ -1,32 +1,13 @@
 <Assessments name="Default" version="0">	
-	<Assessment title="Abnormal System Load" description="There is high Page Activation level, Garbage Collections and Context Switches, while there is a high CPU Usage level"  
-		baseCertainty="30" monitored="true">
-		<State name="System_Load_level">
+<!-- 
+	<Assessment title="Test" description="test"  
+		baseCertainty="100" monitored="true">
+		<Trend name="Sent_Packets_Trend">
 			<SymbolicValueCondition>
-				<Value name="High" />
+				<Value name="Increasing" />
 			</SymbolicValueCondition>
-			<DurationCondition min="PT2S" max="P8D" />
-		</State>
-	</Assessment>
-
-	<Assessment title="Camera Abuse" description="Pictures are being taken too often!"  
-		baseCertainty="80"  monitored="true">
-		<State name="Camera_Usage_level">
-			<SymbolicValueCondition>
-				<Value name="High" />
-			</SymbolicValueCondition>
-			<DurationCondition min="PT4S" max="PT4M" />
-		</State>
-	</Assessment>
-	
-	<Assessment title="While True" description="Some process is running in a while true loop for too long (over 2 minutes)"  
-		baseCertainty="70" monitored="true">
-		<State name="Garbage_Collections_Level">
-			<SymbolicValueCondition>
-				<Value name="Low" />
-				<Value name="High" />
-			</SymbolicValueCondition>
-			<DurationCondition min="P2D" max="P8D" />
-		</State>
+			<DurationCondition min="*" max="P8D" />
+		</Trend>
 	</Assessment>	
+	 -->
 </Assessments>
