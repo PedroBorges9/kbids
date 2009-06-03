@@ -993,12 +993,12 @@ public class OntologyLoader{
 				if (!isEmpty(name)){
 					necessaryContexts.add(name);
 				}
-
 			}
 		}
-		if (necessaryContexts.isEmpty()){
-			return null;
-		}
+		// We will allow no contexts for convenience purposes
+//		if (necessaryContexts.isEmpty()){
+//			return null;
+//		}
 		return necessaryContexts;
 
 	}

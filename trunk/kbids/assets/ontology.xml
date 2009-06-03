@@ -1,253 +1,251 @@
 <Ontology name="Default" version="0" elementTimeout="PT10M">
 	<Primitives>
+		<!-- 
+		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 
+		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
-		<Primitive name="Running_Processes" minE="0" maxE="*" />
-		<Primitive name="Minor_Page_Faults" minE="0" maxE="*" />
 		<Primitive name="Context_Switches" minE="0" maxE="*" />
 		<Primitive name="Camera" minE="0" maxE="*" />
+		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
+		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />	
 		<Primitive name="Perm_Camera" minE="0" maxE="*" />
-		<Primitive name="WiFi_TX_Bytes" minE="0" maxE="*" />
-		
-		
+		-->
+	
+		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
 	</Primitives>
+	
 
 	<Events>
-		<Event name="WiFi_Connection" />
-		<Event name="Picture_Taken" />
-		<Event name="Keyboard_Opening" />
-		<Event name="Keyboard_Closing" />
+		<Event name="Package_Addition" /> <!-- Application installation -->
+		<Event name="Activity_Start" /> <!-- Running application -->
+		<Event name="USB_Connection" />
+		<Event name="USB_Disconnection" />
+		<Event name="SDCard_Access" />
 	</Events>
 
+	<!-- 
+		Assumptions:
+		1. Contexts start at the same time as the inducing element
+	 -->
 	<Contexts>
-		<Context name="Keyboard_Open">
+	
+		
+<!-- 
+		<Context name="Access_to_SDCard">
 			<Inductions>
 				<Induction>
-					<Event name="Keyboard_Opening" />
-
-					<Ends relativeTo="end" gap="PT1M" />
-
-				</Induction>
-				<Induction>
-					<Trend name="CPU_Usage_Change" value="Rising" />
-
-					<Ends relativeTo="end" gap="PT1M" />
+					<Event name="SDCard_Access" />
+					<Ends relativeTo="end" gap="PT15S" />
 				</Induction>
 			</Inductions>
 
-			<Destructions></Destructions>
+			<Destructions />
 		</Context>
-
-		<Context name="High_CPU_Usage">
+		
+		<Context name="Post_Application_Run">
 			<Inductions>
 				<Induction>
-					<Primitive name="CPU_Usage" min="80" maxE="100" />
+					<Event name="Activity_Start" />
+					<Ends relativeTo="end" gap="PT5M" />
+				</Induction>
+			</Inductions>
 
-					<Ends relativeTo="end" gap="PT20S" />
+			<Destructions />
+		</Context>
+		
+		
+		<Context name="Connected_to_USB">
+			<Inductions>
+				<Induction>
+					<Event name="USB_Connection" />
+					<Ends relativeTo="start" gap="*" />
 				</Induction>
 			</Inductions>
 
 			<Destructions>
-				<Primitive name="CPU_Usage" min="20" maxE="60" />
+				<Event name="USB_Disconnection" />
 			</Destructions>
 		</Context>
-
-		<Context name="Amount_of_Processes_High">
+		
+		<Context name="Non_System_Apps_With_Camera_Perm_Exist">
 			<Inductions>
 				<Induction>
-					<Primitive name="Running_Processes" min="30"
-						maxE="*" />
+					<Primitive name="Perm_Camera" minE="1" maxE="*" />
 					<Ends relativeTo="end" gap="PT5S" />
 				</Induction>
 			</Inductions>
 
-			<Destructions></Destructions>
+			<Destructions>
+				<Primitive name="Perm_Camera" minE="0" maxE="0" />
+			</Destructions>
 		</Context>
 		
-		<Context name="Many_Apps_With_Camera_Permission">
+		 -->
+		<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added">
 			<Inductions>
 				<Induction>
-					<Primitive name="Perm_Camera" minE="1"
-						maxE="*" />
-					<Ends relativeTo="end" gap="PT5S" />
+					<Trend name="Perm_S-SMS_R-Contacts_Trend" value="Increasing" />
+					<Ends relativeTo="end" gap="PT5M" />
 				</Induction>
 			</Inductions>
 
-			<Destructions></Destructions>
-		</Context>
-		
-		<Context name="Connected_To_WiFi">
-			<Inductions>
-				<Induction>
-					<Event name="WiFi_Connection" />
-					<Ends relativeTo="end" gap="PT5S" />
-				</Induction>
-			</Inductions>
-
-			<Destructions></Destructions>
+			<Destructions />
 		</Context>
 	</Contexts>
 
 	<States>
-		<State name="Garbage_Collections_Level">
-			<AbstractedFrom>
-				<Primitive name="Garbage_Collections" />
-			</AbstractedFrom>
-			<NecessaryContexts>
-				<Context name="Amount_of_Processes_High" />
-			</NecessaryContexts>
-			<MappingFunction>
-				<Value name="Low">
-					<Primitive name="Garbage_Collections" minE="0"
-						maxE="30" />
-				</Value>
-				<Value name="Normal">
-					<Primitive name="Garbage_Collections" minE="31"
-						maxE="100" />
-				</Value>
-				<Value name="High">
-					<Primitive name="Garbage_Collections" minE="101"
-						maxE="*" />
-				</Value>
-			</MappingFunction>
-			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P30S" />
-				<Value name="High" maxGap="P10S" />
-			</InterpolationFunction>
-		</State>
-
-		<State name="Minor_Page_Faults_Level">
-			<AbstractedFrom>
-				<Primitive name="Minor_Page_Faults" />
-			</AbstractedFrom>
-			<NecessaryContexts>
-				<Context name="Amount_of_Processes_High" />
-			</NecessaryContexts>
-			<MappingFunction>
-				<Value name="Low">
-					<Primitive name="Minor_Page_Faults" minE="0"
-						maxE="100" />
-				</Value>
-				<Value name="Normal">
-					<Primitive name="Minor_Page_Faults" minE="101"
-						maxE="300" />
-				</Value>
-				<Value name="High">
-					<Primitive name="Minor_Page_Faults" minE="301"
-						maxE="*" />
-				</Value>
-			</MappingFunction>
-			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P30S" />
-				<Value name="High" maxGap="P10S" />
-			</InterpolationFunction>
-		</State>
-
-		<State name="Context_Switches_Level">
+	<!-- 
+		<State name="Context_Switches">
 			<AbstractedFrom>
 				<Primitive name="Context_Switches" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<Context name="Amount_of_Processes_High" />
+				<Context name="Post_Application_Run" />
 			</NecessaryContexts>
 			<MappingFunction>
-				<Value name="Low">
-					<Primitive name="Context_Switches" minE="0"	maxE="200" />
-				</Value>
 				<Value name="Normal">
-					<Primitive name="Context_Switches" minE="201"
-						maxE="700" />
+					<Primitive name="Context_Switches" minE="0" maxE="TODO" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Context_Switches" minE="701"
-						maxE="*" />
+					<Primitive name="Context_Switches" minE="TODO" maxE="*" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P30S" />
-				<Value name="High" maxGap="P10S" />
+				<Value name="Normal" maxGap="TODO" />
+				<Value name="High" maxGap="TODO" />
+			</InterpolationFunction>
+		</State>
+		
+		<State name="CPU_Usage">
+			<AbstractedFrom>
+				<Primitive name="CPU_Usage" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Post_Application_Run" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Normal">
+					<Primitive name="CPU_Usage" minE="0" maxE="TODO" />
+				</Value>
+				<Value name="High">
+					<Primitive name="CPU_Usage" minE="TODO" maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Normal" maxGap="TODO" />
+				<Value name="High" maxGap="TODO" />
 			</InterpolationFunction>
 		</State>
 
 		<State name="System_Load_level">
 			<AbstractedFrom>
-				<State name="Garbage_Collections_Level" />
-				<State name="Minor_Page_Faults_Level" />
-				<State name="Context_Switches_Level" />
+				<State name="Context_Switches" />
+				<State name="CPU_Usage" />
+				<Trend name="Garbage_Collections" />
 			</AbstractedFrom>
 			<NecessaryContexts>
 				<Context name="High_CPU_Usage" />
 			</NecessaryContexts>
 			<MappingFunction>
-				<Value name="Low">
-					<State name="Garbage_Collections_Level" value="Low" />
-					<State name="Minor_Page_Faults_Level" value="Low" />
-					<State name="Context_Switches_Level" value="Low" />
+				<Value name="Normal">
+					<State name="Context_Switches" value="Normal" />
+					<State name="CPU_Usage"	value="Normal" />
+					<Trend name="Garbage_Collections" value="Same" />
 				</Value>
 				<Value name="Normal">
-					<State name="Garbage_Collections_Level"
-						value="Normal" />
-					<State name="Minor_Page_Faults_Level"
-						value="Normal" />
-					<State name="Context_Switches_Level" value="Normal" />
+					<State name="Context_Switches" value="Normal" />
+					<State name="CPU_Usage"	value="Normal" />
+					<Trend name="Garbage_Collections" value="Decreasing" />
 				</Value>
 				<Value name="High">
-					<State name="Garbage_Collections_Level"
-						value="High" />
-					<State name="Minor_Page_Faults_Level" value="High" />
-					<State name="Context_Switches_Level" value="High" />
+					<State name="Context_Switches" value="High" />
+					<State name="CPU_Usage"	value="High" />
+					<Trend name="Garbage_Collections" value="High" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P30S" />
-				<Value name="High" maxGap="P10S" />
+				<Value name="Normal" maxGap="TODO" />
+				<Value name="High" maxGap="TODO" />
 			</InterpolationFunction>
 		</State>
 		
-		<State name="Camera_Usage_level">
+		<State name="User Activity">
 			<AbstractedFrom>
-				<Primitive name="Camera" />
+				<Primitive name="Avg_Touch_Pressure" />
+				<Primitive name="Avg_Key_Dwell_Time" />
 			</AbstractedFrom>
-			<NecessaryContexts>
-				<Context name="Many_Apps_With_Camera_Permission" />
-			</NecessaryContexts>
+			<NecessaryContexts /> 
 			<MappingFunction>
-				<Value name="Low">
-					<Primitive name="Camera" minE="0" maxE="2" />
+				<Value name="Activity">
+					<Primitive name="Avg_Touch_Pressure" min="0" maxE="*" />
+					<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />
 				</Value>
-				<Value name="Normal">
-					<Primitive name="Camera" minE="3" maxE="3" />
+				<Value name="Activity">
+					<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
+					<Primitive name="Avg_Key_Dwell_Time" min="0" maxE="*" />
 				</Value>
-				<Value name="High">
-					<Primitive name="Camera" minE="4" maxE="*" />
+				<Value name="No_Activity">
+					<Primitive name="Avg_Touch_Pressure" minE="0" maxE="0" />
+					<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="0" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Low" maxGap="PT1M" />
-				<Value name="Normal" maxGap="P30S" />
-				<Value name="High" maxGap="P10S" />
+				<Value name="Activity" maxGap="PT1H" />
+				<Value name="No_Activity" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
+		 -->
 	</States>
 	
-	<!-- Assumptions: 
-		1. the time unit for the treshold is seconds
+	<!-- 
+		Assumptions: 
+		1. the threshold is the change rate of the value of the primitive per second
 		2. the angle is in degrees and not radians 
 		3. trends are created from primitives (and a single primitive at that)
 	-->
 	<Trends>
-		<Trend name="Network_Usage">
-			<AbstractedFrom name="WiFi_TX_Bytes" />
+		<Trend name="Perm_S-SMS_R-Contacts_Trend">
+			<AbstractedFrom name="Perm_S-SMS_R-Contacts" />
 			<NecessaryContexts>
-				<Context name="Connected_To_WiFi" />
 			</NecessaryContexts>
-			<MappingFunction threshold="16" angle="0" maxGap="PT30M" /> 
+			<MappingFunction threshold="0.5" angle="0.01" maxGap="P1D" /> 
 		</Trend>
+		<!-- 
+		<Trend name="Sent_Packets_Trend">
+			<AbstractedFrom name="WiFi_TX_Packets" />
+			<NecessaryContexts>
+				<Context name="Access_to_SDCard" />
+			</NecessaryContexts>
+			<MappingFunction threshold="0.35" angle="45" maxGap="P1D" /> 
+		</Trend>
+		
+		<Trend name="Garbage_Collections">
+			<AbstractedFrom name="Garbage_Collections" />
+			<NecessaryContexts>
+				<Context name="Post_Application_Run" />
+			</NecessaryContexts>
+			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+		</Trend>
+				
+		<Trend name="Pictures_Taken">
+			<AbstractedFrom name="Camera" />
+			<NecessaryContexts>
+				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />
+			</NecessaryContexts>
+			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+		</Trend>
+		
+		<Trend name="Outgoing_SMS">
+			<AbstractedFrom name="Outgoing_SMS" />
+			<NecessaryContexts>
+				<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added" />
+			</NecessaryContexts>
+			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+		</Trend>
+		 -->
 	</Trends>
+	
 	<!-- 
 		assumptions:
 		1. the ordinal must be sequential starting with 0

@@ -149,11 +149,11 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			System.out.println("\n--------------- Global iteration #" + _iteration
 					+ "---------------\n");
 		createPrimitivesAndEvents(features);
-		if (DEBUG)
-			System.out.println("** Events: **\n" + _allInstances.getEvents());
+//		if (DEBUG)
+//			System.out.println("** Events: **\n" + _allInstances.getEvents());
 
-		if (DEBUG)
-			System.out.println("** Primitives: **\n" + _allInstances.getPrimitives());
+//		if (DEBUG)
+//			System.out.println("** Primitives: **\n" + _allInstances.getPrimitives());
 		boolean cont = false;
 		int i = 1;
 		do{
@@ -166,7 +166,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			cont = _allInstances.hasNew();
 		}while (cont);
 
-		createPatterns();
+//		createPatterns();
 		_allInstances.shiftBackAll();
 		// TODO See if ontology needs to be saved here or only in the env
 		_allInstances.discardElementsNotWithinRange(_ontology.getElementTimeout());
@@ -178,8 +178,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			cd.destroyContext(_allInstances, _iteration);
 
 		}
-		if (DEBUG)
-			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
+//		if (DEBUG)
+//			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
 
 	}
 
@@ -189,8 +189,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			// TODO if isMonitored
 			cd.createContext(_allInstances, _iteration);
 		}
-		if (DEBUG)
-			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
+//		if (DEBUG)
+//			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
 	}
 
 	private void createAbstractions(){
@@ -205,8 +205,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		for (StateDef sd : stateDefs){
 			sd.createState(_allInstances, _iteration);
 		}
-		if (DEBUG)
-			System.out.println("** States: **\n" + _allInstances.getStates());
+//		if (DEBUG)
+//			System.out.println("** States: **\n" + _allInstances.getStates());
 	}
 
 	private void createTrends(){

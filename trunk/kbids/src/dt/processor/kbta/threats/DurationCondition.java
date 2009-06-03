@@ -10,8 +10,8 @@ public final class DurationCondition{
 	private final long _max;
 
 	public DurationCondition(String min, String max) throws Exception{
-		_min = new ISODuration(min).toMillis();
-		_max = new ISODuration(max).toMillis();
+		_min = (min.equals("*") ? 0 : new ISODuration(min).toMillis());
+		_max = (max.equals("*") ? Long.MAX_VALUE : new ISODuration(max).toMillis());
 	}
 
 	public boolean check(long duration){
