@@ -45,7 +45,6 @@ public final class TrendDef extends AbstractionDef{
 			return;
 		}
 
-		// System.out.println("Creating trend: " + _name);
 		// Making sure the element we need for the abstraction
 		// are present
 		PrimitiveContainer primitives = instances.getPrimitives();
@@ -53,7 +52,7 @@ public final class TrendDef extends AbstractionDef{
 		if (primitive == null){
 			return;
 		}
-		// System.out.println("AF element (primitive): " + primitive);
+
 		// Making sure all of the contexts we need for the abstraction
 		// are present
 		Element[] elementsContext = checkNecessaryContexts(instances);
@@ -61,7 +60,6 @@ public final class TrendDef extends AbstractionDef{
 			return;
 		}
 
-		// System.out.println("Context elements: " + Arrays.toString(elementsContext));
 		// Intersecting the elements to obtain the time interval
 		// for the abstraction
 		TimeInterval timeInterval = TimeInterval.intersection(elementsContext, primitive
@@ -70,21 +68,17 @@ public final class TrendDef extends AbstractionDef{
 			return;
 		}
 
-		// System.out.println("Element intersection: " + timeInterval);
-
 		ComplexContainer<Trend> trends = instances.getTrends();
 		Trend currentTrend = trends.getCurrentElement(_name);
-		// Mapping the elements to a trend value, if possible
-		// From this point on, we are certain that an abstraction can be created
-		// so we can sum up the extras of the abstracted-from elements and the
-		// contexts
+
+		// We can sum up the extras of the abstracted-from elements and the
+		// contexts as they'll be the extras of the new trend
 		Bundle newExtras = new Bundle();
 		primitive.addInnerExtras(newExtras);
 		for (Element element : elementsContext){
 			element.addInnerExtras(newExtras);
 		}
 
-		// create trend
 		createTrend(iteration, primitives, primitive, trends, currentTrend, newExtras);
 	}
 
@@ -93,38 +87,42 @@ public final class TrendDef extends AbstractionDef{
 		Bundle newExtras){
 		TimeInterval tiPrimitive = primitive.getTimeInterval();
 
-		// System.out.println("currentTrend "+currentTrend);
-		if (currentTrend != null){// exist current trend
+		if (currentTrend == null){
+			// There isn't a current trend, so we check if an old primitive exists, if so
+			// we create a new trend between the old primitive and current primitive
+			Primitive old = primitives.getOldPrimitive(primitive.getName());
+			if (old != null){
+				String value = _mappingFunction.mapValue(old, primitive);
+				TimeInterval tiNew = new TimeInterval(old.getTimeInterval().getEndTime(),
+						tiPrimitive.getEndTime());
+
+				currentTrend = new Trend(_name, value, tiNew, newExtras, old, primitive);
+
+				addCreatedTrend(iteration, trends, currentTrend);
+			}
+		}else{
+			// A current trend exists so we check if we can add the new primitive to it
 			TimeInterval tiTrend = currentTrend.getTimeInterval();
 			if (_mappingFunction.isGapSmallerThanMaxGap(tiTrend, tiPrimitive)){
 				if (_mappingFunction.isInIterpolationRange(currentTrend, primitive)){
-					// current primitive is in interpolate range then need to interpolate
-					// between current primitive and current trend
-
-					// System.out.println("InIterpolationRange");
+					// The current primitive is in interpolate range so we update
+					// the current trend according the the current primitive
 					currentTrend.setLast(primitive);
 					tiTrend.setEndTime(tiPrimitive.getEndTime());
-
-					// System.out.println("value(threshold)
-					// "+_mappingFunction.mapValue(currentTrend
-					// .getFirst(), primitive));
 
 					currentTrend.setValue(_mappingFunction.mapValue(currentTrend
 							.getFirst(), primitive));
 
-					// The interpolation has succeeded (and so the trend's interval has
-					// already
-					// been internally modified) and so we only need to remove it from
-					// the current elements
+					// The interpolation has succeeded and so we only need to remove the
+					// trend from the current elements
 					trends.removeCurrentElement(_name);
 					// Seeing as the abstraction has already existed, we only to its inner
 					// extras
 					currentTrend.addToInnerExtras(newExtras);
 				}else{
-					// current primitive isn't in interpolate range then need to create
-					// new trend by interpolate between the primitive in the end of the
-					// current trend and the current primitive
-
+					// The current primitive isn't in interpolation range so we need to
+					// create a new trend between the current primitive and the primitive
+					// in the end (namely last) of the current trend
 					Primitive last = currentTrend.getLast();
 					String value = _mappingFunction.mapValue(last, primitive);
 					TimeInterval tiNew = new TimeInterval(tiTrend.getEndTime(),
@@ -133,37 +131,18 @@ public final class TrendDef extends AbstractionDef{
 							primitive);
 
 				}
-				// Setting the newly created / interpolated trend as the newest trend of
-				// it's name
-				trends.addElement(currentTrend);
-				// Marking that the trend of this name has already been created during
-				// this
-				// iteration
-				setLastCreated(iteration);
-			}
-		}else{
-			// not exist current trend, then check if exist old primitive, if exist
-			// then create new trend by interpolate between old primitive and current
-			// primitive
-
-			// checked
-			Primitive old = primitives.getOldPrimitive(primitive.getName());
-			// System.out.println("oldPrimitive "+old);
-			if (old != null){
-				String value = _mappingFunction.mapValue(old, primitive);
-				TimeInterval tiNew = new TimeInterval(old.getTimeInterval().getEndTime(),
-						tiPrimitive.getEndTime());
-
-				currentTrend = new Trend(_name, value, tiNew, newExtras, old, primitive);
-
-				// Setting the newly created trend as the newest trend of it's name
-				trends.addElement(currentTrend);
-				// Marking that the trend of this name has already been created during
-				// this
-				// iteration
-				setLastCreated(iteration);
+				addCreatedTrend(iteration, trends, currentTrend);
 			}
 		}
+	}
+
+	private void addCreatedTrend(int iteration, ComplexContainer<Trend> trends,
+		Trend currentTrend){
+		// Setting the newly created trend as the newest trend of it's name
+		trends.addElement(currentTrend);
+		// Marking that the trend of this name has already been created during
+		// this iteration
+		setLastCreated(iteration);
 	}
 
 	@Override

@@ -3,22 +3,22 @@
 		<!-- 
 		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 
 		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
-		<Primitive name="CPU_Usage" minE="0" maxE="100" />
-		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
 		<Primitive name="Context_Switches" minE="0" maxE="*" />
 		<Primitive name="Camera" minE="0" maxE="*" />
 		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
 		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />	
 		<Primitive name="Perm_Camera" minE="0" maxE="*" />
+		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
 		-->
 	
-		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
+		<Primitive name="CPU_Usage" minE="0" maxE="100" />
+		<Primitive name="Runnable_Entities" minE="0" maxE="*" />
 	</Primitives>
 	
 
 	<Events>
-		<Event name="Package_Addition" /> <!-- Application installation -->
-		<Event name="Activity_Start" /> <!-- Running application -->
+		<Event name="Package_Addition" /> 
+		<Event name="Activity_Start" /> 
 		<Event name="USB_Connection" />
 		<Event name="USB_Disconnection" />
 		<Event name="SDCard_Access" />
@@ -28,8 +28,17 @@
 		Assumptions:
 		1. Contexts start at the same time as the inducing element
 	 -->
-	<Contexts>
-	
+	<Contexts>	
+		<Context name="Post_Application_Run">
+			<Inductions>
+				<Induction>
+					<Event name="Activity_Start" />
+					<Ends relativeTo="end" gap="PT5M" />
+				</Induction>
+			</Inductions>
+
+			<Destructions />
+		</Context>
 		
 <!-- 
 		<Context name="Access_to_SDCard">
@@ -42,18 +51,6 @@
 
 			<Destructions />
 		</Context>
-		
-		<Context name="Post_Application_Run">
-			<Inductions>
-				<Induction>
-					<Event name="Activity_Start" />
-					<Ends relativeTo="end" gap="PT5M" />
-				</Induction>
-			</Inductions>
-
-			<Destructions />
-		</Context>
-		
 		
 		<Context name="Connected_to_USB">
 			<Inductions>
@@ -81,7 +78,6 @@
 			</Destructions>
 		</Context>
 		
-		 -->
 		<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added">
 			<Inductions>
 				<Induction>
@@ -92,9 +88,31 @@
 
 			<Destructions />
 		</Context>
+		 -->
 	</Contexts>
 
 	<States>
+	
+		<State name="CPU_Usage_State">
+			<AbstractedFrom>
+				<Primitive name="CPU_Usage" />
+			</AbstractedFrom>
+			<NecessaryContexts>
+				<Context name="Post_Application_Run" />
+			</NecessaryContexts>
+			<MappingFunction>
+				<Value name="Normal">
+					<Primitive name="CPU_Usage" minE="0" maxE="50" />
+				</Value>
+				<Value name="High">
+					<Primitive name="CPU_Usage" min="50" maxE="*" />
+				</Value>
+			</MappingFunction>
+			<InterpolationFunction>
+				<Value name="Normal" maxGap="PT1H" />
+				<Value name="High" maxGap="PT1H" />
+			</InterpolationFunction>
+		</State>
 	<!-- 
 		<State name="Context_Switches">
 			<AbstractedFrom>
@@ -112,32 +130,11 @@
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Normal" maxGap="TODO" />
-				<Value name="High" maxGap="TODO" />
+				<Value name="Normal" maxGap="PT1H" />
+				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
 		
-		<State name="CPU_Usage">
-			<AbstractedFrom>
-				<Primitive name="CPU_Usage" />
-			</AbstractedFrom>
-			<NecessaryContexts>
-				<Context name="Post_Application_Run" />
-			</NecessaryContexts>
-			<MappingFunction>
-				<Value name="Normal">
-					<Primitive name="CPU_Usage" minE="0" maxE="TODO" />
-				</Value>
-				<Value name="High">
-					<Primitive name="CPU_Usage" minE="TODO" maxE="*" />
-				</Value>
-			</MappingFunction>
-			<InterpolationFunction>
-				<Value name="Normal" maxGap="TODO" />
-				<Value name="High" maxGap="TODO" />
-			</InterpolationFunction>
-		</State>
-
 		<State name="System_Load_level">
 			<AbstractedFrom>
 				<State name="Context_Switches" />
@@ -165,8 +162,8 @@
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
-				<Value name="Normal" maxGap="TODO" />
-				<Value name="High" maxGap="TODO" />
+				<Value name="Normal" maxGap="PT1H" />
+				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
 		
@@ -205,27 +202,29 @@
 		3. trends are created from primitives (and a single primitive at that)
 	-->
 	<Trends>
+		
+		<Trend name="Runnable_Entities_Trend">
+			<AbstractedFrom name="Runnable_Entities" />
+			<NecessaryContexts>
+				<Context name="Post_Application_Run" />
+			</NecessaryContexts>
+			<MappingFunction threshold="0" angle="45" maxGap="PT1H" /> 
+		</Trend>
+		<!-- 
+		
 		<Trend name="Perm_S-SMS_R-Contacts_Trend">
 			<AbstractedFrom name="Perm_S-SMS_R-Contacts" />
 			<NecessaryContexts>
 			</NecessaryContexts>
-			<MappingFunction threshold="0.5" angle="0.01" maxGap="P1D" /> 
+			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
 		</Trend>
-		<!-- 
+		
 		<Trend name="Sent_Packets_Trend">
 			<AbstractedFrom name="WiFi_TX_Packets" />
 			<NecessaryContexts>
 				<Context name="Access_to_SDCard" />
 			</NecessaryContexts>
-			<MappingFunction threshold="0.35" angle="45" maxGap="P1D" /> 
-		</Trend>
-		
-		<Trend name="Garbage_Collections">
-			<AbstractedFrom name="Garbage_Collections" />
-			<NecessaryContexts>
-				<Context name="Post_Application_Run" />
-			</NecessaryContexts>
-			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+			<MappingFunction threshold="0.35" angle="45" maxGap="PT1H" /> 
 		</Trend>
 				
 		<Trend name="Pictures_Taken">
@@ -233,7 +232,7 @@
 			<NecessaryContexts>
 				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />
 			</NecessaryContexts>
-			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+			<MappingFunction threshold="TODO" angle="TODO" maxGap="PT1H" /> 
 		</Trend>
 		
 		<Trend name="Outgoing_SMS">
@@ -241,7 +240,7 @@
 			<NecessaryContexts>
 				<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added" />
 			</NecessaryContexts>
-			<MappingFunction threshold="TODO" angle="TODO" maxGap="TODO" /> 
+			<MappingFunction threshold="TODO" angle="TODO" maxGap="PT1H" /> 
 		</Trend>
 		 -->
 	</Trends>

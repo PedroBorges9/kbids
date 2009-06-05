@@ -35,7 +35,7 @@ public abstract class PatternElement {
 		return _ordinal;
 	}
 
-	public abstract ArrayList<Element> getValid(AllInstanceContainer aic);
+	public abstract ArrayList<Element> getValidElements(AllInstanceContainer aic);
 	protected boolean obeys(Element e) {
 		return _duration.check(e.getTimeInterval().getDuration());
 	}

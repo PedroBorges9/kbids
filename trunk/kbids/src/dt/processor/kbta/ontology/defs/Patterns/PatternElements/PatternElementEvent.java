@@ -18,7 +18,7 @@ public class PatternElementEvent extends PatternElement {
 	}
 
 	@Override
-	public ArrayList<Element> getValid(AllInstanceContainer aic) {
+	public ArrayList<Element> getValidElements(AllInstanceContainer aic) {
 		ArrayList<Element> ans=new ArrayList<Element>();
 		EventContainer ec=aic.getEvents();
 		ArrayList<Event> eArray;

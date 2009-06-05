@@ -32,7 +32,7 @@ public class PatternElementTrend extends PatternElement {
 	}
 
 	@Override
-	public ArrayList<Element> getValid(AllInstanceContainer aic) {
+	public ArrayList<Element> getValidElements(AllInstanceContainer aic) {
 		ArrayList<Element> ans=new ArrayList<Element>();
 		ComplexContainer<Trend> ec=aic.getTrends();
 		Trend e;

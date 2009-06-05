@@ -1,13 +1,22 @@
 <Assessments name="Default" version="0">	
-<!-- 
+
 	<Assessment title="Test" description="test"  
 		baseCertainty="100" monitored="true">
-		<Trend name="Sent_Packets_Trend">
+		<Trend name="Runnable_Entities_Trend">
 			<SymbolicValueCondition>
 				<Value name="Increasing" />
 			</SymbolicValueCondition>
-			<DurationCondition min="*" max="P8D" />
+			<DurationCondition min="PT15S" max="P8D" />
 		</Trend>
 	</Assessment>	
-	 -->
+	<Assessment title="Test2" description="test2"  
+		baseCertainty="100" monitored="true">
+		<Trend name="CPU_Usage_State">
+			<SymbolicValueCondition>
+				<Value name="High" />
+			</SymbolicValueCondition>
+			<DurationCondition min="PT15S" max="P8D" />
+		</Trend>
+	</Assessment>	
+	 
 </Assessments>
