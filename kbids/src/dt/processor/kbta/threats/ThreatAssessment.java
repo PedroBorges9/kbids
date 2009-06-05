@@ -77,7 +77,7 @@ public final class ThreatAssessment{
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder("\nAssessment\n");
-		sb.append(_title).append(" [BaseCert").append(_baseCertainty).append("]");
+		sb.append(_title).append(" [BaseCert ").append(_baseCertainty).append("]");
 		sb.append("\nDescription: ").append(_description);
 		sb.append("\nmonitored= ").append(_isMonitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);

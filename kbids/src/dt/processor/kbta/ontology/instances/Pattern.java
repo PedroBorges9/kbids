@@ -1,28 +1,16 @@
-/**
- * 
- */
 package dt.processor.kbta.ontology.instances;
-
-import java.util.HashMap;
 
 import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
 
+public final class Pattern extends Element{
 
-
-
-/**
- * @author 
- *
- */
-public final class Pattern extends Element {
-	
-	public Pattern(  String name, TimeInterval timeInterval) {
-		super(PATTERN, name, timeInterval, null);
+	public Pattern(String name, TimeInterval timeInterval, Bundle extras){
+		super(PATTERN, name, timeInterval, extras);
 	}
 
 	@Override
-	public int compareTo(Element another) {
+	public int compareTo(Element another){
 		return 0;
 	}
 }

@@ -1,5 +1,7 @@
 package dt.processor.kbta;
 
+import static dt.processor.kbta.Env.TAG;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +36,7 @@ import dt.processor.kbta.util.Pair;
 public final class KBTAProcessorService extends Service implements ServiceConnection{
 	private static boolean _isRunning;
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	private TWU _twu;
 
@@ -56,8 +58,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		_iteration = 0;
 
 		// Connecting to the TWU so we can send threat assessments
-		System.out.println(bindService(new Intent("dt.agent.action.BIND_SERVICE")
-				.addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE));
+		bindService(new Intent("dt.agent.action.BIND_SERVICE")
+				.addCategory("dt.agent.category.TWU_SERVICE"), this, BIND_AUTO_CREATE);
 
 		Env.initialize(this, new Env.LoadingCallback(){
 
@@ -113,8 +115,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							.assess(_allInstances);
 					if (!threats.isEmpty()){
 						for (Pair<ThreatAssessment, Element> p : threats){
-							Log.d(Env.TAG, p.first.toString(p.second));
-							Log.d(Env.TAG, "Element: " + p.second.toString());
+							Log.d(TAG, p.first.toString(p.second));
+							Log.d(TAG, "Element: " + p.second.toString());
 						}
 					}
 					if (_twu != null){
@@ -186,8 +188,9 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	private void createContexts(){
 		ContextDef[] contextDefs = _ontology.getContextDefiners();
 		for (ContextDef cd : contextDefs){
-			// TODO if isMonitored
-			cd.createContext(_allInstances, _iteration);
+			//FIXME						if (cd.isMonitored()){
+				cd.createContext(_allInstances, _iteration);				
+		//FIXME						}
 		}
 //		if (DEBUG)
 //			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
@@ -203,7 +206,9 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	private void createStates(){
 		StateDef[] stateDefs = _ontology.getStateDefiners();
 		for (StateDef sd : stateDefs){
+			if (sd.isMonitored()){
 			sd.createState(_allInstances, _iteration);
+			}
 		}
 //		if (DEBUG)
 //			System.out.println("** States: **\n" + _allInstances.getStates());
@@ -212,16 +217,20 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	private void createTrends(){
 		TrendDef[] trendDefs = _ontology.getTrendDefiners();
 		for (TrendDef td : trendDefs){
+//FIXME			if (td.isMonitored()){
 			td.createTrend(_allInstances, _iteration);
+//FIXME			}
 		}
-		if (DEBUG)
-			System.out.println("** Trends: **\n" + _allInstances.getTrends());
+//		if (DEBUG)
+//			System.out.println("** Trends: **\n" + _allInstances.getTrends());
 	}
 
 	private void createPatterns(){
-		LinearPatternDef[] lpd = _ontology.getLinearPatternDefs();
-		for (LinearPatternDef lp : lpd){
-			lp.createPattern(_allInstances);
+		LinearPatternDef[] linearPatternDefs = _ontology.getLinearPatternDefs();
+		for (LinearPatternDef lpd : linearPatternDefs){
+			if (lpd.isMonitored()){
+			lpd.createPattern(_allInstances);
+			}
 
 		}
 		if (DEBUG)
