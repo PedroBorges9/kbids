@@ -2,7 +2,6 @@ package dt.processor.kbta.ontology.defs.patterns.patternElements;
 
 import java.util.ArrayList;
 
-import android.util.Log;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.Ontology;
