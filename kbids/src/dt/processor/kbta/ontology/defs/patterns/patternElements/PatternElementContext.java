@@ -4,15 +4,13 @@ import java.util.ArrayList;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
-import dt.processor.kbta.container.EventContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.threats.DurationCondition;
 
-public class PatternElementContext extends PatternElement {
+public final class PatternElementContext extends PatternElement {
 
 	public PatternElementContext(int type, String name, int ordinal,
 			DurationCondition duration) {
@@ -27,7 +25,7 @@ public class PatternElementContext extends PatternElement {
 		ArrayList<Context> eArray=ec.getOldElements(_name);
 		if (eArray!=null){
 			for (Context e1: eArray){
-				if (obeys(e1)){
+				if (check(e1)){
 					ans.add(e1);
 				}
 
@@ -35,11 +33,11 @@ public class PatternElementContext extends PatternElement {
 			}
 		}
 		e=ec.getCurrentElement(_name);
-		if (e!=null && obeys(e)){
+		if (e!=null && check(e)){
 			ans.add(e);
 		}		
 		e=ec.getNewestElement(_name);
-		if (e!=null && obeys(e)){
+		if (e!=null && check(e)){
 			ans.add(e);
 		}
 		if (ans.isEmpty()){

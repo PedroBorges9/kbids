@@ -19,17 +19,14 @@ import dt.fe.MonitoredData;
 import dt.processor.Processor;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.ontology.OntologyLoader;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
-import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
-import dt.processor.kbta.ontology.instances.Context;
+import dt.processor.kbta.ontology.defs.patterns.LinearPatternDef;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.threats.ThreatAssessment;
-import dt.processor.kbta.threats.ThreatAssessmentLoader;
 import dt.processor.kbta.threats.ThreatAssessor;
 import dt.processor.kbta.util.Pair;
 
@@ -64,7 +61,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		Env.initialize(this, new Env.LoadingCallback(){
 
 			@Override
-			public void onFailure(){
+			public void onFailure(Throwable t){
 			}
 
 			@Override
@@ -81,13 +78,13 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 	 */
 	@Override
 	public void onDestroy(){
-		super.onDestroy();
-
 		setIsRunning(false);
 		if (_twu != null){ // Unbinding from the TWU if connected
 			unbindService(this);
 			_twu = null;
 		}
+		
+		super.onDestroy();
 	}
 
 	private static synchronized void setIsRunning(boolean isRunning){
@@ -151,90 +148,83 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			System.out.println("\n--------------- Global iteration #" + _iteration
 					+ "---------------\n");
 		createPrimitivesAndEvents(features);
-//		if (DEBUG)
-//			System.out.println("** Events: **\n" + _allInstances.getEvents());
+		// if (DEBUG)
+		// System.out.println("** Events: **\n" + _allInstances.getEvents());
 
-//		if (DEBUG)
-//			System.out.println("** Primitives: **\n" + _allInstances.getPrimitives());
-		boolean cont = false;
+		// if (DEBUG)
+		// System.out.println("** Primitives: **\n" + _allInstances.getPrimitives());
 		int i = 1;
 		do{
-			// destroyContexts();
 			if (DEBUG)
 				System.out.println("---- Inner iteration #" + i++ + "----");
+			// destroyContexts();
 			_allInstances.getContexts().shiftBack();
 			createContexts();
-			createAbstractions();
-			cont = _allInstances.hasNew();
-		}while (cont);
+			_allInstances.getStates().shiftBack();
+			createStates();
+			_allInstances.getTrends().shiftBack();
+			createTrends();
+		}while (_allInstances.hasNew());
 
-//		createPatterns();
+		createPatterns();
 		_allInstances.shiftBackAll();
-		// TODO See if ontology needs to be saved here or only in the env
 		_allInstances.discardElementsNotWithinRange(_ontology.getElementTimeout());
 	}
 
 	private void destroyContexts(){
-		ContextDef[] contextDefs = _ontology.getContextDefiners();
+		ContextDef[] contextDefs = _ontology.getContextDefs();
 		for (ContextDef cd : contextDefs){
 			cd.destroyContext(_allInstances, _iteration);
 
 		}
-//		if (DEBUG)
-//			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
+		// if (DEBUG)
+		// System.out.println("** Contexts: **\n" + _allInstances.getContexts());
 
 	}
 
 	private void createContexts(){
-		ContextDef[] contextDefs = _ontology.getContextDefiners();
+		ContextDef[] contextDefs = _ontology.getContextDefs();
 		for (ContextDef cd : contextDefs){
-			//FIXME						if (cd.isMonitored()){
-				cd.createContext(_allInstances, _iteration);				
-		//FIXME						}
+			if (cd.isMonitored()){
+				cd.createContext(_allInstances, _iteration);
+			}
 		}
-//		if (DEBUG)
-//			System.out.println("** Contexts: **\n" + _allInstances.getContexts());
-	}
-
-	private void createAbstractions(){
-		_allInstances.getStates().shiftBack();
-		createStates();
-		_allInstances.getTrends().shiftBack();
-		createTrends();
+		// if (DEBUG)
+		// System.out.println("** Contexts: **\n" + _allInstances.getContexts());
 	}
 
 	private void createStates(){
-		StateDef[] stateDefs = _ontology.getStateDefiners();
+		StateDef[] stateDefs = _ontology.getStateDefs();
 		for (StateDef sd : stateDefs){
 			if (sd.isMonitored()){
-			sd.createState(_allInstances, _iteration);
+				sd.createState(_allInstances, _iteration);
 			}
 		}
-//		if (DEBUG)
-//			System.out.println("** States: **\n" + _allInstances.getStates());
+		// if (DEBUG)
+		// System.out.println("** States: **\n" + _allInstances.getStates());
 	}
 
 	private void createTrends(){
-		TrendDef[] trendDefs = _ontology.getTrendDefiners();
+		TrendDef[] trendDefs = _ontology.getTrendDefs();
 		for (TrendDef td : trendDefs){
-//FIXME			if (td.isMonitored()){
-			td.createTrend(_allInstances, _iteration);
-//FIXME			}
+			if (td.isMonitored()){
+				td.createTrend(_allInstances, _iteration);
+			}
 		}
-//		if (DEBUG)
-//			System.out.println("** Trends: **\n" + _allInstances.getTrends());
+		// if (DEBUG)
+		// System.out.println("** Trends: **\n" + _allInstances.getTrends());
 	}
 
 	private void createPatterns(){
 		LinearPatternDef[] linearPatternDefs = _ontology.getLinearPatternDefs();
 		for (LinearPatternDef lpd : linearPatternDefs){
 			if (lpd.isMonitored()){
-			lpd.createPattern(_allInstances);
+				lpd.createPattern(_allInstances);
 			}
 
 		}
 		if (DEBUG)
-			System.out.println("** Patterns: **\n" + _allInstances.getPatterns());
+			System.out.println("** Patterns: **\n" + _allInstances.getLinearPatterns());
 	}
 
 	private void createPrimitivesAndEvents(List<MonitoredData> features){
@@ -251,13 +241,13 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 			// Matching feature to a primitive
 			PrimitiveDef pd = _ontology.getPrimitiveDef(name);
-			if (pd != null /* TODO and isMonitored */){
+			if (pd != null && pd.isMonitored()){
 				pd.createPrimitive(end, value, extras, _allInstances);
 			}
 
 			// Matching feature to an event
 			EventDef ed = _ontology.getEventDef(name);
-			if (ed != null){
+			if (ed != null && ed.isMonitored()){
 				ed.createEvents(extras, _allInstances);
 			}
 		}

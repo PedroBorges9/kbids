@@ -34,5 +34,9 @@ public class EventInduction extends Induction{
 	public ElementDef getElementDef(Ontology ontology){
 		return ontology.getEventDef(_elementName);
 	}
+	@Override
+	public String getElementDefDescription(){
+		return " type=Event " + "name=" + _elementName;
+	}
 
 }

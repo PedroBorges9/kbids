@@ -1,10 +1,8 @@
 package dt.processor.kbta.container;
 
-import java.util.Date;
-
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Event;
-import dt.processor.kbta.ontology.instances.Pattern;
+import dt.processor.kbta.ontology.instances.LinearPattern;
 import dt.processor.kbta.ontology.instances.Primitive;
 import dt.processor.kbta.ontology.instances.State;
 import dt.processor.kbta.ontology.instances.Trend;
@@ -15,7 +13,7 @@ public class AllInstanceContainer {
 	private final ComplexContainer<Context> _contexts;
 	private final ComplexContainer<State> _states;
 	private final ComplexContainer<Trend> _trends;
-	private final ComplexContainer<Pattern> _patterns;
+	private final ComplexContainer<LinearPattern> _patterns;
 	
 	public AllInstanceContainer() {
 		_primitives = new PrimitiveContainer();
@@ -23,7 +21,7 @@ public class AllInstanceContainer {
 		_contexts = new ComplexContainer<Context>();
 		_states = new ComplexContainer<State>();
 		_trends = new ComplexContainer<Trend>();
-		_patterns = new ComplexContainer<Pattern>();
+		_patterns = new ComplexContainer<LinearPattern>();
 	}
 	
 	public void addPrimitive(Primitive element){
@@ -38,7 +36,7 @@ public class AllInstanceContainer {
 		_contexts.addElement(element);
 	}
 	
-	public void addPattern(Pattern element){
+	public void addPattern(LinearPattern element){
 		_patterns.addElement(element);
 	}
 	
@@ -70,7 +68,7 @@ public class AllInstanceContainer {
 		return _trends;
 	}
 
-	public ComplexContainer<Pattern> getPatterns() {
+	public ComplexContainer<LinearPattern> getLinearPatterns() {
 		return _patterns;
 	}
 

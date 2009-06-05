@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.os.Bundle;
 
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.Pattern;
+import dt.processor.kbta.ontology.instances.LinearPattern;
 import dt.processor.kbta.util.TimeInterval;
 
 public class PartialPattern{
@@ -30,7 +30,7 @@ public class PartialPattern{
 	 * @param name The name of the pattern to be created
 	 * @return The created pattern
 	 */
-	public Pattern toPattern(ArrayList<Element>[] validElements, String name){
+	public LinearPattern toPattern(ArrayList<Element>[] validElements, String name){
 		Bundle newExtras = new Bundle();
 		long start = Long.MAX_VALUE;
 		long end = 0;
@@ -58,7 +58,7 @@ public class PartialPattern{
 				end = endTime;
 			}
 		}
-		return new Pattern(name, new TimeInterval(start, end), newExtras);
+		return new LinearPattern(name, new TimeInterval(start, end), newExtras);
 	}	
 
 	/**

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collection;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -103,8 +102,15 @@ public class SettingsScreen extends PreferenceActivity{
 					@Override
 					public boolean onPreferenceChange(Preference preference,
 						Object isMonitored){
-						threat.setMonitoredThreat(Env.getOntology(), (Boolean)isMonitored);
-						return true;
+						try{
+							threat.setMonitoredThreat(Env.getOntology(), (Boolean)isMonitored);
+							return true;
+						}catch(Exception e){
+							Toast.makeText(SettingsScreen.this,
+								"Unable to monitor the threat: " + e.getMessage(),
+								Toast.LENGTH_SHORT).show();
+							return false;
+						}
 					}
 
 				});				
@@ -128,13 +134,22 @@ public class SettingsScreen extends PreferenceActivity{
 		}
 
 		@Override
-		public void onFailure(){
+		public void onFailure(final Throwable t){
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
-					Toast.makeText(SettingsScreen.this,
-						"Unable to initialize Ontology and Threats", Toast.LENGTH_SHORT)
-							.show();
+					String dueTo;
+					int length;
+					if (t == null){
+						dueTo = "";
+						length = Toast.LENGTH_SHORT;
+					}else{
+						dueTo = " due to: " + t.getMessage();
+						length = Toast.LENGTH_LONG;
+					}
+					Toast.makeText(
+						SettingsScreen.this,
+						"Unable to initialize Ontology and Threats" + dueTo, length).show();
 					finish();
 				}
 			});

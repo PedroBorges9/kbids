@@ -27,7 +27,7 @@ public class AbstractedFrom{
 
 	@Override
 	public String toString(){
-		return " type=" + _type + " name=" + _name;
+		return " type=" + Element.TYPES[_type] + " name=" + _name;
 	}
 
 	@Override

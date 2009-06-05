@@ -4,9 +4,7 @@ import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.instances.Abstraction;
-import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.State;
 
 public class GeneratedFromState extends GeneratedFromAbstraction{
@@ -20,6 +18,11 @@ public class GeneratedFromState extends GeneratedFromAbstraction{
 	@Override
 	public String toString(){
 		return "State: " + super.toString();
+	}
+
+	@Override
+	public String getElementDefDescription(){
+		return " type=State " + "name=" + _elementName;
 	}
 
 	@Override

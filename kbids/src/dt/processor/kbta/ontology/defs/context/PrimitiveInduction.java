@@ -34,4 +34,8 @@ public class PrimitiveInduction extends Induction{
 		return ontology.getPrimitiveDef(_elementName);
 	}
 
+	@Override
+	public String getElementDefDescription(){
+		return " type=Primitive " + "name=" + _elementName;
+	}
 }

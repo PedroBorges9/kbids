@@ -17,7 +17,7 @@ public class OverlapTemporalCondition extends TemporalCondition {
 	}
 
 	@Override
-	public boolean doElementsComply(Element a, Element b) {
+	public boolean check(Element a, Element b) {
 		TimeInterval ta=a.getTimeInterval();
 		TimeInterval tb=b.getTimeInterval();
 		TimeInterval o=ta.getOverlap(tb);

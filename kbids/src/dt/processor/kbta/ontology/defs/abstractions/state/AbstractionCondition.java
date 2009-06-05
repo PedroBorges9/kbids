@@ -2,7 +2,6 @@ package dt.processor.kbta.ontology.defs.abstractions.state;
 
 import dt.processor.kbta.ontology.instances.Abstraction;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.State;
 
 public final class AbstractionCondition extends ElementCondition{
 	private final String _value;

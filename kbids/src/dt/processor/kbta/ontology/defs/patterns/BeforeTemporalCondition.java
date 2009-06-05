@@ -12,7 +12,7 @@ public class BeforeTemporalCondition extends TemporalCondition{
 	}
 	
 	@Override
-	public boolean doElementsComply(Element a, Element b){
+	public boolean check(Element a, Element b){
 		return (_duration.check(
 				b.getTimeInterval().getStartTime()-a.getTimeInterval().getEndTime()));
 	}

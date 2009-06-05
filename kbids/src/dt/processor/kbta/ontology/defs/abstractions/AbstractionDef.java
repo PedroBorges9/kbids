@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Element;
 
@@ -45,6 +44,9 @@ public abstract class AbstractionDef extends ElementDef{
 		visitor.visit(this);
 		for(String contextName :_necessaryContexts){
 			ElementDef elementDef= ontology.getContextDef(contextName);
+			if (elementDef == null){
+				throw new IllegalStateException("Undefined element: type=Context name=" + contextName);
+			}
 			elementDef.accept(ontology, visitor);
 		}
 	}

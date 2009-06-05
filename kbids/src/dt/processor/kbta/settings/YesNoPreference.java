@@ -1,11 +1,11 @@
 package dt.processor.kbta.settings;
 
-import android.content.*;
-import android.content.res.*;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.*;
-import android.util.*;
+import android.preference.DialogPreference;
+import android.util.AttributeSet;
 
 /**
  * The {@link YesNoPreference} is a preference to show a dialog with Yes and No

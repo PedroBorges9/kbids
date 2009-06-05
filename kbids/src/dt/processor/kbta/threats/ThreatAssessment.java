@@ -46,28 +46,27 @@ public final class ThreatAssessment{
 		return _generatedFrom;
 	}
 
-	public boolean setInitiallyMonitoredThreat(Ontology ontology, SharedPreferences.Editor spe){
+	public void setInitiallyMonitoredThreat(Ontology ontology, SharedPreferences.Editor spe) throws IllegalStateException{
 		ElementDef elementDef = _generatedFrom.getElementDef(ontology);
 		if (elementDef == null){
-			// Indicating that the element on which the threat assessment relies
-			// doesn't exist in the ontology therefore this assessment should
-			// be removed
-			return false;
+			throw new IllegalStateException("Undefined element: " + _generatedFrom.getElementDefDescription());
 		}
 		_isMonitored = Env.getSharedPreferences().getBoolean(_title, _isMonitored);
 		if (_isMonitored){
-			spe.putBoolean(_title, true);
 			// There is only a point in traversing the elements if they are
 			// monitored, otherwise they will remain unmonitored by default
+			spe.putBoolean(_title, true);
 			elementDef.setInitiallyMonitored(ontology);
 		}
-		return true;
 	}
 	
-	public void setMonitoredThreat(Ontology ontology, boolean isMonitored){
-		_isMonitored = isMonitored;
+	public void setMonitoredThreat(Ontology ontology, boolean isMonitored) throws IllegalStateException{
 		ElementDef elementDef = _generatedFrom.getElementDef(ontology);
+		if (elementDef == null){
+			throw new IllegalStateException("Undefined element: " + _generatedFrom.getElementDefDescription());
+		}
 		elementDef.setMonitored(ontology, isMonitored);
+		_isMonitored = isMonitored;
 	}
 	
 	public boolean isMonitored(){

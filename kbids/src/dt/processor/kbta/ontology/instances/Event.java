@@ -3,7 +3,6 @@
  */
 package dt.processor.kbta.ontology.instances;
 
-import android.os.Bundle;
 
 /**
  * @author rahamime

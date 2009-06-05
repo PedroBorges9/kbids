@@ -1,22 +1,28 @@
 <Assessments name="Default" version="0">	
-
-	<Assessment title="Test" description="test"  
-		baseCertainty="100" monitored="true">
-		<Trend name="Runnable_Entities_Trend">
-			<SymbolicValueCondition>
-				<Value name="Increasing" />
-			</SymbolicValueCondition>
-			<DurationCondition min="PT15S" max="P8D" />
-		</Trend>
-	</Assessment>	
-	<Assessment title="Test2" description="test2"  
-		baseCertainty="100" monitored="true">
-		<Trend name="CPU_Usage_State">
+<!-- 
+<Assessment title="System Overload" description="A malicious application is overloading the system"  
+		baseCertainty="80" monitored="true">
+		<LinearPattern name="CPU_Usage_State">
 			<SymbolicValueCondition>
 				<Value name="High" />
 			</SymbolicValueCondition>
 			<DurationCondition min="PT15S" max="P8D" />
-		</Trend>
+		</LinearPattern>
+	</Assessment>	
+ -->
+
+	<Assessment title="System Overload" description="A malicious application is overloading the system"  
+		baseCertainty="80" monitored="false">
+		<LinearPattern name="System_Overload_Pattern">
+			<DurationCondition min="PT15S" max="*" />
+		</LinearPattern>
+	</Assessment>		
+
+	<Assessment title="Camera Abuse" description="A malicious application is taking pictures at an alarming rate!"  
+		baseCertainty="80" monitored="true">
+		<LinearPattern name="Camera_Abuse_Pattern">
+			<DurationCondition min="PT10S" max="*" />
+		</LinearPattern>
 	</Assessment>	
 	 
 </Assessments>

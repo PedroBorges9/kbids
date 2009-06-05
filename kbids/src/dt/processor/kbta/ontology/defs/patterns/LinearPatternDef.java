@@ -11,7 +11,7 @@ import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElement;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.Pattern;
+import dt.processor.kbta.ontology.instances.LinearPattern;
 
 public final class LinearPatternDef extends ElementDef{
 	private final PatternElement[] _elements;
@@ -81,7 +81,7 @@ public final class LinearPatternDef extends ElementDef{
 		}
 
 		PartialPattern last = _partialPatterns.get(_partialPatterns.size() - 1);
-		Pattern ans = last.toPattern(elements, _name);
+		LinearPattern ans = last.toPattern(elements, _name);
 		aic.addPattern(ans);
 	}
 
@@ -89,7 +89,7 @@ public final class LinearPatternDef extends ElementDef{
 		ListIterator<PartialPattern> lIter = _partialPatterns.listIterator();
 		while (lIter.hasNext()){
 			PartialPattern pp = lIter.next();
-			if (!pwc.doElementsComply(pp.getElement(pwc.getFirst()), pp.getElement(pwc.getSecond()))){
+			if (!pwc.check(pp.getElement(pwc.getFirst()), pp.getElement(pwc.getSecond()))){
 				lIter.remove();
 			}
 		}
@@ -103,7 +103,7 @@ public final class LinearPatternDef extends ElementDef{
 			PartialPattern pp = lIter.next();
 			lIter.remove();
 			for (Element e : secondElements){
-				if (pwc.doElementsComply(pp.getElement(pwc.getFirst()), e)){
+				if (pwc.check(pp.getElement(pwc.getFirst()), e)){
 					lIter.add(pp.addElement(pwc.getSecond(), e));
 				}
 			}
@@ -118,7 +118,7 @@ public final class LinearPatternDef extends ElementDef{
 			PartialPattern pp = lIter.next();
 			lIter.remove();
 			for (Element e : firstElements){
-				if (pwc.doElementsComply(e, pp.getElement(pwc.getSecond()))){
+				if (pwc.check(e, pp.getElement(pwc.getSecond()))){
 					lIter.add(pp.addElement(pwc.getFirst(), e));
 				}
 			}
@@ -134,7 +134,7 @@ public final class LinearPatternDef extends ElementDef{
 			lIter.remove();
 			for (Element e1 : firstElements){
 				for (Element e2 : secondElements){
-					if (pwc.doElementsComply(e1, e2)){
+					if (pwc.check(e1, e2)){
 						lIter.add(pp.addTwoElements(pwc.getFirst(), e1, pwc.getSecond(),
 							e2));
 					}
@@ -147,7 +147,11 @@ public final class LinearPatternDef extends ElementDef{
 	public void accept(Ontology ontology, ElementVisitor visitor){
 		visitor.visit(this);
 		for (PatternElement pe : _elements){
-			pe.getElementDef(ontology).accept(ontology, visitor);
+			ElementDef elementDef = pe.getElementDef(ontology);
+			if (elementDef == null){
+				throw new IllegalStateException("Undefined element: " + pe);
+			}
+			elementDef.accept(ontology, visitor);
 		}
 	}
 	

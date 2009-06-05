@@ -1,10 +1,11 @@
 package dt.processor.kbta.threats;
 
 import static android.text.TextUtils.isEmpty;
+import static dt.processor.kbta.util.XmlParser.parseDurationCondition;
+import static dt.processor.kbta.util.XmlParser.parseSymbolicValueCondition;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
-import static dt.processor.kbta.util.XmlParser.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -187,8 +188,8 @@ public class ThreatAssessmentLoader{
 		}else if (type.equalsIgnoreCase("Trend")){
 			return new GeneratedFromTrend(elementName, symbolicValueCondition,
 					durationCondition);
-		}else if (type.equalsIgnoreCase("Pattern")){
-			return new GeneratedFromPattern(elementName, symbolicValueCondition,
+		}else if (type.equalsIgnoreCase("LinearPattern")){
+			return new GeneratedFromLinearPattern(elementName, symbolicValueCondition,
 					durationCondition);
 		}
 		return null;

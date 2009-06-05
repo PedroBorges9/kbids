@@ -1,5 +1,6 @@
 package dt.processor.kbta;
 
+import static dt.processor.kbta.Env.TAG;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -67,11 +68,19 @@ public class Env{
 
 				if (_threatAssessor == null || _ontology == null){
 					if (callback != null){
-						callback.onFailure();
+						callback.onFailure(null);
 					}
 					return;
 				}
-				_threatAssessor.setInitiallyMonitoredThreats(_ontology);
+				try{
+					_threatAssessor.setInitiallyMonitoredThreats(_ontology);					
+				}catch(Exception e){
+					Log.e(TAG, "Failed setting initially monitored threats", e);
+					if (callback != null){
+						callback.onFailure(e);
+					}
+					return;					
+				}
 
 				// Notifying that the ontology and threat assessments have been loaded
 				if (callback != null){
@@ -126,7 +135,7 @@ public class Env{
 				if (_ontology == null || _threatAssessor == null){
 					Log.e(TAG, "Failed loading the ontology");
 					if (callback != null){
-						callback.onFailure();
+						callback.onFailure(null);
 					}
 				}else{
 					Log.i(TAG, "Loaded the ontology '" + _ontology.getName() + "' in "
@@ -153,7 +162,7 @@ public class Env{
 				if (_threatAssessor == null || _ontology == null){
 					Log.e(TAG, "Failed loading the threat assessments");
 					if (callback != null){
-						callback.onFailure();
+						callback.onFailure(null);
 					}
 				}else{
 					// Resetting the monitored state of all elements in the ontology to
@@ -195,6 +204,6 @@ public class Env{
 	public interface LoadingCallback{
 		public void onSuccess();
 
-		public void onFailure();
+		public void onFailure(Throwable t);
 	}
 }

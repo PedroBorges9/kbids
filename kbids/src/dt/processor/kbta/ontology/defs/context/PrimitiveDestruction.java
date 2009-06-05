@@ -1,12 +1,9 @@
 package dt.processor.kbta.ontology.defs.context;
 
-import java.util.ArrayList;
-
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.defs.NumericRange;
 import dt.processor.kbta.ontology.instances.Context;
-import dt.processor.kbta.ontology.instances.Event;
 import dt.processor.kbta.ontology.instances.Primitive;
 
 

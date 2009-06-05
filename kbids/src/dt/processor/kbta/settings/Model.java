@@ -85,7 +85,7 @@ public abstract class Model{
 
 		if (!_isServiceRunning){
 			initLoadPref(category);
-			initResetPref(category);			
+			initResetPref(category);
 		}
 	}
 
@@ -129,7 +129,11 @@ public abstract class Model{
 					public void run(){
 						refreshDetails();
 						if (_settingsScreen.areModelsCompatibile()){
-							onCompatibleModelLoading();
+							try{
+								onCompatibleModelLoading();
+							}catch(IllegalStateException e){
+								onFailure(e);
+							}
 						}else{
 							onIncompatibleModelLoading();
 						}
@@ -138,15 +142,27 @@ public abstract class Model{
 			}
 
 			@Override
-			public void onFailure(){
+			public void onFailure(final Throwable t){
 				_settingsScreen.runOnUiThread(new Runnable(){
 					@Override
 					public void run(){
-						Toast.makeText(
-							_settingsScreen,
-							"Unable to load the requested " + _modelName
-									+ ", reverting to default", Toast.LENGTH_SHORT)
-								.show();
+						String dueTo;
+						int length;
+						if (t == null){
+							dueTo = "";
+							length = Toast.LENGTH_SHORT;
+						}else{
+							dueTo = " due to: " + t.getMessage();
+							length = Toast.LENGTH_LONG;
+						}
+						String message = "Unable to load the requested " + _modelName
+								+ dueTo + ", reverting to default";
+						Toast.makeText(_settingsScreen, message, length).show();
+						if (t == null){
+							Log.e(TAG, message);
+						}else{
+							Log.e(TAG, message, t);
+						}
 
 						// Rollback, must not fail
 						Model.copyDefaultModelFile(_settingsScreen, _modelFile);
@@ -159,7 +175,7 @@ public abstract class Model{
 		loadModel(_settingsScreen, callback); // Do the actual loading
 	}
 
-	private void onCompatibleModelLoading(){
+	private void onCompatibleModelLoading() throws IllegalStateException{
 		// Setting the initial monitored state of all elements
 		// according to the new threat assessments
 		Env.getThreatAssessor().setInitiallyMonitoredThreats(Env.getOntology());

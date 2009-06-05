@@ -51,17 +51,11 @@ public final class TrendMappingFunction{
 				/ Math.sqrt((dtLF * dtLF + dvLF * dvLF) * (dtNL * dtNL + dvNL * dvNL));
 		double alpha = Math.toDegrees(Math.acos(cosAlpha));
 	
-//		System.out.println("("+dtLF+","+dvLF+")*"+"("+dtNL+","+dvNL+")");
-//		System.out.println(cosAlpha);
-//		System.out.println("alpha= "+alpha);
-//		System.out.println("angle= "+_angle);
-//		System.out.println("alpha < angle  "+(alpha <= _angle));
-		
 		return alpha <= _angle;
 
 	}
 
-	/*
+	/**
 	 * get two primitive and calculate change rate, and check 
 	 * if (changeRate > threshold) then the value is "Increasing"
 	 * if (changeRate < -threshold) then the value is "Decreasing"
@@ -72,13 +66,9 @@ public final class TrendMappingFunction{
 				/ (p2.getTimeInterval().getEndTime() - p1.getTimeInterval()
 						.getEndTime()))*1000;
 
-//		System.out.println("dtValue= "+(p2.getValue() - p1.getValue()));
-//		System.out.println("dtTime= "+(p2.getTimeInterval().getEndTime() - p1.getTimeInterval()
-//						.getEndTime()));
 		
-
+//		System.out.println("changeRate= "+changeRate+" threshold= "+_threshold);
 		
-	//	System.out.println("changeRate= "+changeRate+" threshold= "+_threshold);
 		if (changeRate > _threshold){
 			return "Increasing";
 		}else if (changeRate < -_threshold){

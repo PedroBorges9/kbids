@@ -38,5 +38,7 @@ public abstract class GeneratedFrom {
 		sb.append(_durationCondition).append(")");
 		return sb.toString();
 	}
+	
+	public abstract String getElementDefDescription();
 
 }
