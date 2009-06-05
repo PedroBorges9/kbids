@@ -1,10 +1,8 @@
 package dt.processor.kbta.threats;
 
 import dt.processor.kbta.container.AllInstanceContainer;
-import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.instances.Abstraction;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.ontology.instances.State;
 
 public abstract class GeneratedFromAbstraction extends GeneratedFrom{
 

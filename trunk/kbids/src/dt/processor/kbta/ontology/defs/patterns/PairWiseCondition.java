@@ -1,8 +1,5 @@
 package dt.processor.kbta.ontology.defs.patterns;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import dt.processor.kbta.ontology.instances.Element;
 
 
@@ -43,8 +40,8 @@ public class PairWiseCondition {
 		return " first= "+_first+" second= "+_second+" value= "+_value+" temporal= "+_temporal;
 	}
 
-	public boolean doElementsComply(Element element1, Element element2) {
-		if (!_temporal.doElementsComply(element1, element2)){
+	public boolean check(Element element1, Element element2) {
+		if (!_temporal.check(element1, element2)){
 			return false;
 		}
 		switch (_value) {

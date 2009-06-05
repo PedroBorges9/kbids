@@ -9,7 +9,6 @@ import java.util.Collections;
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.instances.Event;
 
 /**

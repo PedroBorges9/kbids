@@ -60,7 +60,6 @@ public abstract class Induction{
 		Context context = container.getContexts().getCurrentElement(_contextName);
 		if (context != null){
 
-//			android.util.Log.d("System.out", "Existing context: " + context);
 			long contextEnd = context.getTimeInterval().getEndTime();
 			if (contextEnd < start){
 				container.addContext(new Context(_contextName, new TimeInterval(start,
@@ -68,7 +67,6 @@ public abstract class Induction{
 				return true;
 			}else if (contextEnd < end){
 				context.getTimeInterval().setEndTime(end);
-//				android.util.Log.d("System.out", "Overlapping, new interval: " + context.getTimeInterval());
 				context.addToInnerExtras(extras);
 				return false;
 			}
@@ -92,4 +90,6 @@ public abstract class Induction{
 	
 	
 	public abstract ElementDef getElementDef(Ontology ontology);
+	
+	public abstract String getElementDefDescription();
 }

@@ -9,8 +9,6 @@ import java.util.List;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
-import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 
 /**
  * @author
@@ -61,6 +59,9 @@ public final class ContextDef extends ElementDef{
 		visitor.visit(this);
 		for (Induction induction : _inductions){
 			ElementDef elementDef = induction.getElementDef(ontology);
+			if (elementDef == null){
+				throw new IllegalStateException("Undefined element:" + induction.getElementDefDescription());
+			}
 			elementDef.accept(ontology, visitor);
 		}
 	}

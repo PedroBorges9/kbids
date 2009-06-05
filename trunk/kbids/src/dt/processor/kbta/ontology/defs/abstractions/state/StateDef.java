@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.os.Bundle;
-
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractionDef;
-import dt.processor.kbta.ontology.instances.*;
+import dt.processor.kbta.ontology.instances.Element;
+import dt.processor.kbta.ontology.instances.State;
 import dt.processor.kbta.util.TimeInterval;
 
 /**
@@ -46,19 +45,16 @@ public final class StateDef extends AbstractionDef{
 
 		// Making sure all of the elements we need for the abstraction
 		// are present
-		// System.out.println("Creating state: " + _name);
 		Element[] elementsAf = checkAbstractedFrom(instances);
 		if (elementsAf == null){
 			return;
 		}
-		// System.out.println("AF elements: " + Arrays.toString(elementsAf));
 		// Making sure all of the contexts we need for the abstraction
 		// are present
 		Element[] elementsContext = checkNecessaryContexts(instances);
 		if (elementsContext == null){
 			return;
 		}
-		// System.out.println("Context elements: " + Arrays.toString(elementsContext));
 
 		// Intersecting the elements to obtain the initial time interval
 		// for the abstraction
@@ -66,20 +62,19 @@ public final class StateDef extends AbstractionDef{
 		if (timeInterval == null){
 			return;
 		}
-		// System.out.println("Element intersection: " + timeInterval);
+		
 		// Further intersecting the obtained time interval to obtain
 		// the final time interval for the abstraction
 		timeInterval = TimeInterval.intersection(elementsContext, timeInterval);
 		if (timeInterval == null){
 			return;
 		}
-		// System.out.println("Context and Element intersection: " + timeInterval);
+		
 		// Mapping the elements to a state value, if possible
 		String value = _mappingFunction.mapElements(elementsAf);
 		if (value == null){
 			return;
 		}
-		// System.out.println("Mapped value is: " + value);
 
 		// From this point on, we are certain that an abstraction can be created
 		// so we can sum up the extras of the abstracted-from elements and the
@@ -103,7 +98,6 @@ public final class StateDef extends AbstractionDef{
 			// The interpolation has succeeded (and so the state's interval has already
 			// been internally modified) and so we only need to remove it from
 			// the current elements
-			// System.out.println("Interpolation succeeded");
 			states.removeCurrentElement(_name);
 			// Seeing as the abstraction has already existed, we only to its inner extras
 			state.addToInnerExtras(newExtras);
@@ -118,9 +112,7 @@ public final class StateDef extends AbstractionDef{
 		// Marking that the state of this name has already been created during this
 		// iteration
 		setLastCreated(iteration);
-	}
-
-	
+	}	
 
 	private Element[] checkAbstractedFrom(AllInstanceContainer instances){
 		Element[] elements = new Element[_abstractedFrom.length];
@@ -165,6 +157,9 @@ public final class StateDef extends AbstractionDef{
 
 		for (AbstractedFrom af : _abstractedFrom){
 			ElementDef elementDef=af.getElementDef(ontology);
+			if (elementDef == null){
+				throw new IllegalStateException("Undefined element:" + af);
+			}
 			elementDef.accept(ontology, visitor);
 		}
 	}

@@ -3,23 +3,18 @@
  */
 package dt.processor.kbta.ontology.defs.abstractions.trend;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.os.Bundle;
-
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
 import dt.processor.kbta.container.PrimitiveContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
-import dt.processor.kbta.ontology.defs.ElementDef.ElementVisitor;
 import dt.processor.kbta.ontology.defs.abstractions.AbstractionDef;
-import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.ontology.instances.Primitive;
-import dt.processor.kbta.ontology.instances.State;
 import dt.processor.kbta.ontology.instances.Trend;
 import dt.processor.kbta.util.TimeInterval;
 
@@ -150,6 +145,9 @@ public final class TrendDef extends AbstractionDef{
 		super.accept(ontology, visitor); // For necessary contexts and self
 
 		ElementDef elementDef = ontology.getPrimitiveDef(_abstractedFrom);
+		if (elementDef == null){
+			throw new IllegalStateException("Undefined element: type = primitive name = " + _abstractedFrom);
+		}
 		elementDef.accept(ontology, visitor);
 	}
 

@@ -20,12 +20,10 @@ public final class DurationCondition{
 
 	@Override
 	public String toString(){
-//		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-//		return " Duration=[" + df.format(_min) + ", " + df.format(_max) + "]";
-		return " Duration=[" + _min + ", " + _max + "]";
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		return " Duration=[" + df.format(_min) + ", " + df.format(_max) + "]";
+		// return " Duration=[" + _min + ", " + _max + "]";
 	}
-	
-
 
 	public long getMinDuration(){
 		return _min;

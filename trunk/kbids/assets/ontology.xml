@@ -3,19 +3,19 @@
 		<!-- 
 		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 
 		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
-		<Primitive name="Context_Switches" minE="0" maxE="*" />
-		<Primitive name="Camera" minE="0" maxE="*" />
 		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
 		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />	
-		<Primitive name="Perm_Camera" minE="0" maxE="*" />
 		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
 		-->
 	
+		<Primitive name="Context_Switches" minE="0" maxE="*" />
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
-		<Primitive name="Runnable_Entities" minE="0" maxE="*" />
+		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
+				
+		<Primitive name="Perm_Camera" minE="0" maxE="*" />
+		<Primitive name="Camera" minE="0" maxE="*" />
 	</Primitives>
 	
-
 	<Events>
 		<Event name="Package_Addition" /> 
 		<Event name="Activity_Start" /> 
@@ -34,6 +34,30 @@
 				<Induction>
 					<Event name="Activity_Start" />
 					<Ends relativeTo="end" gap="PT5M" />
+				</Induction>
+			</Inductions>
+
+			<Destructions />
+		</Context>
+		
+		<Context name="Non_System_Apps_With_Camera_Perm_Exist">
+			<Inductions>
+				<Induction>
+					<Primitive name="Perm_Camera" minE="1" maxE="*" />
+					<Ends relativeTo="end" gap="PT5S" />
+				</Induction>
+			</Inductions>
+
+			<Destructions>
+				<Primitive name="Perm_Camera" minE="0" maxE="0" />
+			</Destructions>
+		</Context>
+		
+		<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added">
+			<Inductions>
+				<Induction>
+					<Trend name="Perm_S-SMS_R-Contacts_Trend" value="Increasing" />
+					<Ends relativeTo="end" gap="PT15M" />
 				</Induction>
 			</Inductions>
 
@@ -65,34 +89,10 @@
 			</Destructions>
 		</Context>
 		
-		<Context name="Non_System_Apps_With_Camera_Perm_Exist">
-			<Inductions>
-				<Induction>
-					<Primitive name="Perm_Camera" minE="1" maxE="*" />
-					<Ends relativeTo="end" gap="PT5S" />
-				</Induction>
-			</Inductions>
-
-			<Destructions>
-				<Primitive name="Perm_Camera" minE="0" maxE="0" />
-			</Destructions>
-		</Context>
-		
-		<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added">
-			<Inductions>
-				<Induction>
-					<Trend name="Perm_S-SMS_R-Contacts_Trend" value="Increasing" />
-					<Ends relativeTo="end" gap="PT5M" />
-				</Induction>
-			</Inductions>
-
-			<Destructions />
-		</Context>
 		 -->
 	</Contexts>
 
-	<States>
-	
+	<States>	
 		<State name="CPU_Usage_State">
 			<AbstractedFrom>
 				<Primitive name="CPU_Usage" />
@@ -113,8 +113,8 @@
 				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
-	<!-- 
-		<State name="Context_Switches">
+		
+		<State name="Context_Switches_State">
 			<AbstractedFrom>
 				<Primitive name="Context_Switches" />
 			</AbstractedFrom>
@@ -123,10 +123,10 @@
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Normal">
-					<Primitive name="Context_Switches" minE="0" maxE="TODO" />
+					<Primitive name="Context_Switches" minE="0" maxE="2.5" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Context_Switches" minE="TODO" maxE="*" />
+					<Primitive name="Context_Switches" min="2.5" maxE="*" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
@@ -134,31 +134,20 @@
 				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
-		
-		<State name="System_Load_level">
+				
+		<State name="Pictures_Taken_State">
 			<AbstractedFrom>
-				<State name="Context_Switches" />
-				<State name="CPU_Usage" />
-				<Trend name="Garbage_Collections" />
+				<Primitive name="Camera" />
 			</AbstractedFrom>
 			<NecessaryContexts>
-				<Context name="High_CPU_Usage" />
+				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Normal">
-					<State name="Context_Switches" value="Normal" />
-					<State name="CPU_Usage"	value="Normal" />
-					<Trend name="Garbage_Collections" value="Same" />
-				</Value>
-				<Value name="Normal">
-					<State name="Context_Switches" value="Normal" />
-					<State name="CPU_Usage"	value="Normal" />
-					<Trend name="Garbage_Collections" value="Decreasing" />
+					<Primitive name="Camera" minE="0" maxE="4" />
 				</Value>
 				<Value name="High">
-					<State name="Context_Switches" value="High" />
-					<State name="CPU_Usage"	value="High" />
-					<Trend name="Garbage_Collections" value="High" />
+					<Primitive name="Camera" min="4" maxE="*" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
@@ -166,7 +155,8 @@
 				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
-		
+	<!-- 
+				
 		<State name="User Activity">
 			<AbstractedFrom>
 				<Primitive name="Avg_Touch_Pressure" />
@@ -203,14 +193,13 @@
 	-->
 	<Trends>
 		
-		<Trend name="Runnable_Entities_Trend">
-			<AbstractedFrom name="Runnable_Entities" />
+		<Trend name="Garbage_Collections_Trend">
+			<AbstractedFrom name="Garbage_Collections" />
 			<NecessaryContexts>
 				<Context name="Post_Application_Run" />
 			</NecessaryContexts>
-			<MappingFunction threshold="0" angle="45" maxGap="PT1H" /> 
+			<MappingFunction threshold="0.01" angle="15" maxGap="PT1H" /> 
 		</Trend>
-		<!-- 
 		
 		<Trend name="Perm_S-SMS_R-Contacts_Trend">
 			<AbstractedFrom name="Perm_S-SMS_R-Contacts" />
@@ -219,20 +208,22 @@
 			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
 		</Trend>
 		
+		<Trend name="Pictures_Taken_Trend">
+			<AbstractedFrom name="Camera" />
+			<NecessaryContexts>
+				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />			
+			</NecessaryContexts>
+			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
+		</Trend>
+		
+		<!-- 
+		
 		<Trend name="Sent_Packets_Trend">
 			<AbstractedFrom name="WiFi_TX_Packets" />
 			<NecessaryContexts>
 				<Context name="Access_to_SDCard" />
 			</NecessaryContexts>
 			<MappingFunction threshold="0.35" angle="45" maxGap="PT1H" /> 
-		</Trend>
-				
-		<Trend name="Pictures_Taken">
-			<AbstractedFrom name="Camera" />
-			<NecessaryContexts>
-				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />
-			</NecessaryContexts>
-			<MappingFunction threshold="TODO" angle="TODO" maxGap="PT1H" /> 
 		</Trend>
 		
 		<Trend name="Outgoing_SMS">
@@ -249,35 +240,70 @@
 		assumptions:
 		1. the ordinal must be sequential starting with 0
 	
+		PairWiseCondition format:
+			
+		<PairWiseCondition first="2" second="0" value="*" temporal="Overlap"
+				minLength="PT00S" maxLength="PT30S" 
+				minStartingDistance="PT1S" maxStartingDistance="PT30S"/> 
+		<PairWiseCondition first="1" second="0" value="*" temporal="Before"
+				minGap="PT1S" maxGap="PT30S" />  
 	 -->
 	<Patterns>
-		<LinearPattern name="DDoS Attack">
+		<LinearPattern name="System_Overload_Pattern">
 			<Elements>
-	<!--			<Primitive name="CPU_Usage" ordinal="1">
-					<NumericValueConditon minE="31" maxE="100" />
-					<DurationCondition min="PT0S" max="P8D" />
-				</Primitive> -->
-				<State name="Garbage_Collections_Level" ordinal="0"> <!-- can be Trend -->
+				<State name="Context_Switches_State" ordinal="0">
 					<SymbolicValueCondition>
 						<Value name="High" />
 					</SymbolicValueCondition>
-					<DurationCondition min="PT1S" max="P8D" />
+					<DurationCondition min="PT20S" max="*" />
 				</State>
-				<Context name="High_CPU_Usage" ordinal="1"> <!-- can be context -->
-					<DurationCondition min="PT3S" max="P8D" />
-				</Context>
-				<Primitive name="CPU_Usage" ordinal="2">
-					<NumericValueConditon minE="31" maxE="100" />
-					<DurationCondition min="PT0S" max="P8D" />
-				</Primitive>
-				
-				
+				<State name="CPU_Usage_State" ordinal="1">
+					<SymbolicValueCondition>
+						<Value name="High" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT20S" max="*" />
+				</State>
+				<Trend name="Garbage_Collections_Trend" ordinal="2">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT15S" max="*" />
+				</Trend>
 			</Elements>
+			
 			<PairWiseConditions>
-			<!--	<PairWiseCondition first="2" second="0" value="*" 
-					temporal="Overlap" minLength="PT00S" maxLength="PT30S" minStartingDistance="PT1S" maxStartingDistance="PT30S"/> -->
-				<PairWiseCondition first="1" second="0" value="*" 
-					temporal="Before" minGap="PT1S" maxGap="PT30S" />  
+				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
+					minLength="PT20S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/>	
+				<PairWiseCondition first="0" second="2" value="*" temporal="Overlap"
+					minLength="PT15S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/> 
+				<PairWiseCondition first="1" second="2" value="*" temporal="Overlap"
+					minLength="PT15S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/> 
+			</PairWiseConditions>
+		</LinearPattern>
+		
+		<LinearPattern name="Camera_Abuse_Pattern">
+			<Elements>
+				<State name="Pictures_Taken_State" ordinal="0">
+					<SymbolicValueCondition>
+						<Value name="High" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT10S" max="*" />
+				</State>
+				<Trend name="Pictures_Taken_Trend" ordinal="1">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT10S" max="*" />
+				</Trend>
+			</Elements>
+			
+			<PairWiseConditions>
+				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
+					minLength="PT10S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/>
 			</PairWiseConditions>
 		</LinearPattern>
 	</Patterns>

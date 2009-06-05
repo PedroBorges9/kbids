@@ -32,5 +32,9 @@ public class TrendInduction extends Induction{
 	public ElementDef getElementDef(Ontology ontology){
 		return ontology.getTrendDef(_elementName);
 	}
+	@Override
+	public String getElementDefDescription(){
+		return " type=State " + "name=" + _elementName;
+	}
 
 }

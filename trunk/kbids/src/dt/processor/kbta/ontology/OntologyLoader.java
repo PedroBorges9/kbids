@@ -43,13 +43,17 @@ import dt.processor.kbta.ontology.defs.context.StateDestruction;
 import dt.processor.kbta.ontology.defs.context.StateInduction;
 import dt.processor.kbta.ontology.defs.context.TrendDestruction;
 import dt.processor.kbta.ontology.defs.context.TrendInduction;
-import dt.processor.kbta.ontology.defs.Patterns.*;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElement;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementContext;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementEvent;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementPrimitive;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementState;
-import dt.processor.kbta.ontology.defs.Patterns.PatternElements.PatternElementTrend;
+import dt.processor.kbta.ontology.defs.patterns.BeforeTemporalCondition;
+import dt.processor.kbta.ontology.defs.patterns.LinearPatternDef;
+import dt.processor.kbta.ontology.defs.patterns.OverlapTemporalCondition;
+import dt.processor.kbta.ontology.defs.patterns.PairWiseCondition;
+import dt.processor.kbta.ontology.defs.patterns.TemporalCondition;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElement;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElementContext;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElementEvent;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElementPrimitive;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElementState;
+import dt.processor.kbta.ontology.defs.patterns.patternElements.PatternElementTrend;
 import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.settings.Model;
 import dt.processor.kbta.threats.DurationCondition;
@@ -141,7 +145,7 @@ public class OntologyLoader{
 				}else if (tag.equalsIgnoreCase("Trends")){
 					parseTrends(xpp);
 				}else if (tag.equalsIgnoreCase("Patterns")){
-					ParsePatterns(xpp);
+					parsePatterns(xpp);
 				}
 			}
 
@@ -175,7 +179,7 @@ public class OntologyLoader{
 		return null;
 	}
 
-	private void ParsePatterns(XmlPullParser xpp) throws XmlPullParserException,
+	private void parsePatterns(XmlPullParser xpp) throws XmlPullParserException,
 			IOException{
 		// System.out.println("*********ParsePatterns*********");
 		int eventType;

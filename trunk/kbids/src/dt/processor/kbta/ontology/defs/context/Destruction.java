@@ -3,10 +3,7 @@
  */
 package dt.processor.kbta.ontology.defs.context;
 
-import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
-import dt.processor.kbta.ontology.instances.Context;
-import dt.processor.kbta.util.TimeInterval;
 
 /**
  * @author 

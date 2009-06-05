@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.container.ComplexContainer;
-import dt.processor.kbta.container.ElementContainer;
 import dt.processor.kbta.ontology.instances.Context;
 import dt.processor.kbta.ontology.instances.Event;
-import dt.processor.kbta.util.TimeInterval;
 
 
 public class EventDestruction extends Destruction {

@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import dt.processor.kbta.Env;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Element;
-import dt.processor.kbta.settings.SettingsScreen;
 import dt.processor.kbta.util.Pair;
 
 public class ThreatAssessor{
@@ -49,15 +44,9 @@ public class ThreatAssessor{
 	}
 
 	public void setInitiallyMonitoredThreats(Ontology ontology){
-		Collection<String> discardedTAs = new ArrayList<String>();
 		SharedPreferences.Editor spe = Env.getSharedPreferences().edit();
 		for (ThreatAssessment ta : _assessments.values()){
-			if (!ta.setInitiallyMonitoredThreat(ontology, spe)){
-				discardedTAs.add(ta.getTitle());
-			}
-		}
-		for (String title : discardedTAs){
-			_assessments.remove(title);
+			ta.setInitiallyMonitoredThreat(ontology, spe);
 		}
 		spe.commit();
 	}

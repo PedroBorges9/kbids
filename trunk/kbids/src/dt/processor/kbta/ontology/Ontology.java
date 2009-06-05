@@ -9,7 +9,7 @@ import android.util.Log;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
-import dt.processor.kbta.ontology.defs.Patterns.LinearPatternDef;
+import dt.processor.kbta.ontology.defs.patterns.LinearPatternDef;
 import dt.processor.kbta.ontology.defs.abstractions.state.StateDef;
 import dt.processor.kbta.ontology.defs.abstractions.trend.TrendDef;
 import dt.processor.kbta.ontology.defs.context.ContextDef;
@@ -39,35 +39,14 @@ public final class Ontology{
 		ArrayList<LinearPatternDef> linearPatterns,	long elementTimeout, String ontologyName, String version){
 		_primitives = primitives;
 		_events = events;
-		_version = version;
 		_contexts = contexts.toArray(new ContextDef[contexts.size()]);
 		_states = states.toArray(new StateDef[states.size()]);
-		_trends = trends.toArray(new TrendDef[trends.size()]);
-		
+		_trends = trends.toArray(new TrendDef[trends.size()]);		
 		_linearPatterns = linearPatterns.toArray(new LinearPatternDef[linearPatterns.size()]);
-		Log.d("ONTOLOGY", Arrays.toString(_linearPatterns));
+		
 		_elementTimeout = elementTimeout;
 		_ontologyName = ontologyName;
-	}
-
-	public ContextDef[] getContextDefiners(){
-		return _contexts;
-	}
-
-	public StateDef[] getStateDefiners(){
-		return _states;
-	}
-
-	public TrendDef[] getTrendDefiners(){
-		return _trends;
-	}
-	
-	public PrimitiveDef getPrimitiveDef(String name){
-		return _primitives.get(name);
-	}
-
-	public EventDef getEventDef(String name){
-		return _events.get(name);
+		_version = version;
 	}
 	
 	public long getElementTimeout(){
@@ -81,13 +60,31 @@ public final class Ontology{
 	public String getVersion(){
 		return _version;
 	}
+	
+	public ContextDef[] getContextDefs(){
+		return _contexts;
+	}
 
+	public StateDef[] getStateDefs(){
+		return _states;
+	}
+
+	public TrendDef[] getTrendDefs(){
+		return _trends;
+	}
 
 	public LinearPatternDef[] getLinearPatternDefs() {
 		return _linearPatterns;
+	}	
+
+	public PrimitiveDef getPrimitiveDef(String name){
+		return _primitives.get(name);
 	}
 
-	
+	public EventDef getEventDef(String name){
+		return _events.get(name);
+	}
+		
 	public StateDef getStateDef(String name){
 		for(StateDef sd :_states){
 			if (sd.getName().equalsIgnoreCase(name)){
@@ -115,8 +112,14 @@ public final class Ontology{
 		return null;
 	}
 	
-	//TODO getPatternDef
-	
+	public ElementDef getLinearPatternDef(String name){
+		for(LinearPatternDef lpd :_linearPatterns){
+			if (lpd.getName().equalsIgnoreCase(name)){
+				return lpd;
+			}
+		}
+		return null;
+	}
 	
 	@Override
 	public String toString(){
@@ -157,5 +160,4 @@ public final class Ontology{
 			ed.setInitiallyUnmonitored();
 		}
 	}
-
 }
