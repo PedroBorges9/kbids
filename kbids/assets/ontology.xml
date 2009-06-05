@@ -144,10 +144,10 @@
 			</NecessaryContexts>
 			<MappingFunction>
 				<Value name="Normal">
-					<Primitive name="Camera" minE="0" maxE="4" />
+					<Primitive name="Camera" minE="0" maxE="3" />
 				</Value>
 				<Value name="High">
-					<Primitive name="Camera" min="4" maxE="*" />
+					<Primitive name="Camera" min="3" maxE="*" />
 				</Value>
 			</MappingFunction>
 			<InterpolationFunction>
@@ -213,7 +213,7 @@
 			<NecessaryContexts>
 				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />			
 			</NecessaryContexts>
-			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
+			<MappingFunction threshold="0.01" angle="45" maxGap="PT1H" /> 
 		</Trend>
 		
 		<!-- 
@@ -290,7 +290,7 @@
 					<SymbolicValueCondition>
 						<Value name="High" />
 					</SymbolicValueCondition>
-					<DurationCondition min="PT10S" max="*" />
+					<DurationCondition min="PT6S" max="*" />
 				</State>
 				<Trend name="Pictures_Taken_Trend" ordinal="1">
 					<SymbolicValueCondition>
@@ -302,7 +302,7 @@
 			
 			<PairWiseConditions>
 				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
-					minLength="PT10S" maxLength="*" 
+					minLength="PT8S" maxLength="*" 
 					minStartingDistance="*" maxStartingDistance="*"/>
 			</PairWiseConditions>
 		</LinearPattern>

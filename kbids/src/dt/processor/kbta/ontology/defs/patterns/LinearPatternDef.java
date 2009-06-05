@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import android.util.Log;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
@@ -19,8 +18,6 @@ public final class LinearPatternDef extends ElementDef{
 	private final PairWiseCondition[] _pwcs;
 
 	private LinkedList<PartialPattern> _partialPatterns;
-
-	private static final boolean patternDebug = false;
 
 	public LinearPatternDef(String name, ArrayList<PairWiseCondition> pwcs,
 		HashMap<Integer, PatternElement> elements){
@@ -38,17 +35,12 @@ public final class LinearPatternDef extends ElementDef{
 		ArrayList<Element>[] elements = new ArrayList[_elements.length];
 
 		for (PatternElement pe : _elements){
-			Log.d("PatternCreation", "getting valid element " + pe.getOrdinal()
-					+ " for pattern " + _name);
 			ArrayList<Element> e = pe.getValidElements(aic);
 			if (e == null){
-				Log.d("PatternCreation", "no valid element " + pe.getOrdinal()
-						+ " for pattern " + _name);
 				return;
 			}
 
 			elements[pe.getOrdinal()] = e;
-
 		}
 		_partialPatterns = new LinkedList<PartialPattern>();
 		int initElementOrdinal = 0;
@@ -73,9 +65,6 @@ public final class LinearPatternDef extends ElementDef{
 				noElementsMissing(pwc);
 			}
 			if (_partialPatterns.isEmpty()){
-				Log.d("PatternCreation",
-					"no element which allow a sequence of pairWiseConditions for linear pattern "
-							+ _name);
 				return;
 			}
 		}
@@ -169,11 +158,6 @@ public final class LinearPatternDef extends ElementDef{
 	 */
 	private static PairWiseCondition[] rearrangePwcGraph(int nodeCount,
 		ArrayList<PairWiseCondition> pwcEdges){
-		if (patternDebug)
-			for (PairWiseCondition p : pwcEdges){
-				Log.d("PatternCreation", p.toString());
-			}
-
 		// Representing the edges as an adjencency matrix
 		PairWiseCondition[][] adjacencyMatrix = new PairWiseCondition[nodeCount][nodeCount];
 		for (PairWiseCondition p : pwcEdges){
@@ -194,12 +178,6 @@ public final class LinearPatternDef extends ElementDef{
 				used[i] = true;
 				rearrangeConnectedComponent(nodeCount, used, i, i, adjacencyMatrix,
 					rearrangedNodes);
-			}
-		}
-		if (patternDebug){
-			Log.d("PatternCreation", "arranged to");
-			for (PairWiseCondition p : rearrangedNodes){
-				Log.d("PatternCreation", p.toString());
 			}
 		}
 
