@@ -39,13 +39,12 @@ public final class LinearPatternDef extends ElementDef{
 		for (PatternElement pe : _elements){
 			ArrayList<Element> e = pe.getValidElements(aic);
 			if (e == null){
-				Log.d("PatternCreation", "Missing element [" + pe.getOrdinal() + "] " + pe);
+//				Log.d("PatternCreation", "Missing element [" + pe.getOrdinal() + "] " + pe);
 				return;
 			}
 
 			elements[pe.getOrdinal()] = e;
 		}
-		Log.d("PatternCreation", "Computing partials");
 		_partialPatterns = new LinkedList<PartialPattern>();
 		int initElementOrdinal = 0;
 		for (Element e : elements[initElementOrdinal]){

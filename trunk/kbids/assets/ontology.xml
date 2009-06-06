@@ -10,10 +10,8 @@
 		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
 		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />		
 		
-		<!-- 
 		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
 		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
-		-->		
 		
 		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 	
 	</Primitives>
@@ -197,17 +195,24 @@
 			<MappingFunction threshold="0.01" angle="15" maxGap="PT1H" /> 
 		</Trend>
 		
-		<Trend name="Perm_S-SMS_R-Contacts_Trend">
-			<AbstractedFrom name="Perm_S-SMS_R-Contacts" />
-			<NecessaryContexts>
-			</NecessaryContexts>
-			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
-		</Trend>
-		
 		<Trend name="Pictures_Taken_Trend">
 			<AbstractedFrom name="Camera" />
 			<NecessaryContexts>
 				<Context name="Non_System_Apps_With_Camera_Perm_Exist" />			
+			</NecessaryContexts>
+			<MappingFunction threshold="0.01" angle="45" maxGap="PT1H" /> 
+		</Trend>
+		
+		<Trend name="Perm_S-SMS_R-Contacts_Trend">
+			<AbstractedFrom name="Perm_S-SMS_R-Contacts" />
+			<NecessaryContexts />
+			<MappingFunction threshold="0.5" angle="0.01" maxGap="PT1H" /> 
+		</Trend>
+				
+		<Trend name="Outgoing_SMS_Trend">
+			<AbstractedFrom name="Outgoing_SMS" />
+			<NecessaryContexts>
+				<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added" />
 			</NecessaryContexts>
 			<MappingFunction threshold="0.01" angle="45" maxGap="PT1H" /> 
 		</Trend>
@@ -219,18 +224,6 @@
 			</NecessaryContexts>
 			<MappingFunction threshold="0.35" angle="45" maxGap="PT1H" /> 
 		</Trend>
-		
-		<!-- 
-		
-		
-		<Trend name="Outgoing_SMS">
-			<AbstractedFrom name="Outgoing_SMS" />
-			<NecessaryContexts>
-				<Context name="Non_System_Apps_With_S-Sms_R-Contacts_Perm_Added" />
-			</NecessaryContexts>
-			<MappingFunction threshold="TODO" angle="TODO" maxGap="PT1H" /> 
-		</Trend>
-		 -->
 	</Trends>
 	
 	<!-- 
@@ -304,6 +297,41 @@
 			</PairWiseConditions>
 		</LinearPattern>
 		
+		<LinearPattern name="SMS_Abuse_Pattern">
+			<Elements>
+				<Trend name="Outgoing_SMS_Trend" ordinal="0">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT1S" max="*" />
+				</Trend>
+				<State name="User_Activity_State" ordinal="1">
+					<SymbolicValueCondition>
+						<Value name="No_Activity" />
+					</SymbolicValueCondition>
+				</State>
+			</Elements>
+			
+			<PairWiseConditions>
+				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
+					minLength="PT1S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/>
+			</PairWiseConditions>
+		</LinearPattern>		
+		
+		<LinearPattern name="SDCard_Information_Leakage_Pattern">
+			<Elements>				
+				<Trend name="Sent_Packets_Trend" ordinal="0">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT3S" max="*" />
+				</Trend>
+			</Elements>
+			
+			<PairWiseConditions />
+		</LinearPattern>
+		
 		<LinearPattern name="Malware_Injection_Pattern">
 			<Elements>
 				<Context name="Connected_to_USB" ordinal="0" />
@@ -326,19 +354,6 @@
 					minLength="*" maxLength="*" 
 					minStartingDistance="*" maxStartingDistance="*"/> 
 			</PairWiseConditions>
-		</LinearPattern>
-		
-		<LinearPattern name="SDCard_Information_Leakage_Pattern">
-			<Elements>				
-				<Trend name="Sent_Packets_Trend" ordinal="0">
-					<SymbolicValueCondition>
-						<Value name="Increasing" />
-					</SymbolicValueCondition>
-					<DurationCondition min="PT3S" max="*" />
-				</Trend>
-			</Elements>
-			
-			<PairWiseConditions />
 		</LinearPattern>
 	</Patterns>
 </Ontology>
