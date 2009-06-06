@@ -22,7 +22,7 @@ public class PrimitiveInduction extends Induction{
 				// We use the fact that for primitives the start and end
 				// time is the same and avoid checking _relativeToStart
 				long start = p.getTimeInterval().getEndTime();
-				long end = start + _gap;
+				long end = getEndTime(start);
 				return createContext(container, start, end, p.getExtras());
 			}
 		}

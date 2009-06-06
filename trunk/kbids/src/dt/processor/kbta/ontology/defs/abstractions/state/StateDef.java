@@ -4,7 +4,6 @@
 package dt.processor.kbta.ontology.defs.abstractions.state;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
@@ -141,14 +140,7 @@ public final class StateDef extends AbstractionDef{
 
 	@Override
 	public String toString(){
-		String st = "<State name=" + _name + "\n";
-		st += "AbstractedFrom\n" + Arrays.toString(_abstractedFrom) + "\n";
-		st += "NecessaryContexts\n" + Arrays.toString(_necessaryContexts) + "\n";
-		st += _mappingFunction;
-		st += _interpolationFunction;
-		st+=" isMonitored="+_isMonitored+" counter="+_monitoredCounter+"/>";
-
-		return st;
+		return "State: " + _name;
 	}
 
 	@Override

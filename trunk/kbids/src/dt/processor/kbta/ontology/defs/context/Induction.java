@@ -20,7 +20,7 @@ public abstract class Induction{
 
 	protected boolean _relativeToStart;
 
-	protected long _gap;
+	private long _gap;
 
 	private boolean _setRelativeToAndGapCalled;
 
@@ -53,13 +53,20 @@ public abstract class Induction{
 		_gap = gap;
 		return this;
 	}
+	
+	protected long getEndTime(long endTimeWithoutGap){
+		if (_gap == Long.MAX_VALUE){
+			return Long.MAX_VALUE;
+		}else{
+			return endTimeWithoutGap + _gap;
+		}
+	}
 
 	public abstract boolean induce(AllInstanceContainer container);
 
 	protected boolean createContext(AllInstanceContainer container, long start, long end, Bundle extras){
 		Context context = container.getContexts().getCurrentElement(_contextName);
 		if (context != null){
-
 			long contextEnd = context.getTimeInterval().getEndTime();
 			if (contextEnd < start){
 				container.addContext(new Context(_contextName, new TimeInterval(start,
@@ -87,7 +94,6 @@ public abstract class Induction{
 				+ _relativeToStart;
 
 	}
-	
 	
 	public abstract ElementDef getElementDef(Ontology ontology);
 	

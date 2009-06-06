@@ -134,7 +134,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 			@Override
 			public void stoppedMonitoring() throws RemoteException{
-				// Called by the agent when it stops running
+				_ontology.resetLastCreated();
 			}
 		};
 	}

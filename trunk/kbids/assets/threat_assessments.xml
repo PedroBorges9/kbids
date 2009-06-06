@@ -19,9 +19,23 @@
 	</Assessment>		
 
 	<Assessment title="Camera Abuse" description="A malicious application is taking pictures at an alarming rate!"  
-		baseCertainty="80" monitored="true">
+		baseCertainty="80" monitored="false">
 		<LinearPattern name="Camera_Abuse_Pattern">
 			<DurationCondition min="PT10S" max="*" />
+		</LinearPattern>
+	</Assessment>
+	
+	<Assessment title="Malware Injection" description="A malware has been injected to your device via USB!"  
+		baseCertainty="100" monitored="false">
+		<LinearPattern name="Malware_Injection_Pattern">
+			<DurationCondition min="PT0S" max="*" />
+		</LinearPattern>
+	</Assessment>	
+	
+	<Assessment title="SD Card Information Leakage" description="Information is leaking from the SD-card through the network connection!"  
+		baseCertainty="100" monitored="true">
+		<LinearPattern name="SDCard_Information_Leakage_Pattern">
+			<DurationCondition min="PT2S" max="*" />
 		</LinearPattern>
 	</Assessment>	
 	 

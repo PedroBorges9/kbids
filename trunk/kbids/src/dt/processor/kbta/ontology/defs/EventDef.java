@@ -1,12 +1,9 @@
-/**
- * 
- */
 package dt.processor.kbta.ontology.defs;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.instances.Event;
@@ -29,19 +26,22 @@ public class EventDef extends ElementDef{
 				|| eventTimes.length == 0){
 			return;
 		}
-		
-		ArrayList<Event> createdEvents = new ArrayList<Event>(eventTimes.length - 1);
-		for (int i = eventTimes.length - 1; i >= 0; --i){
+//		System.out.println("KBTA whole extras: " + extras);
+//		if (extras.containsKey("Attributes")){
+//			Bundle[] wtf = (Bundle[])extras.getParcelableArray("Attributes");
+//			System.out.println(wtf);
+//			
+//		}
+		Parcelable[] eventAttributes = extras.getParcelableArray("Attributes");
+//		System.out.println("KBTA: " + ((eventAttributes == null) ? "null" : Arrays.toString(eventAttributes)));
+		for (int i = 0; i < eventTimes.length; ++i){
 			long eventTime = eventTimes[i];
 			if (eventTime <= _latestEventTime){
-				break;
+				continue;
 			}
-
-			Event event = new Event(_name, eventTime, eventTime);
-			createdEvents.add(event);
-		}
-		Collections.reverse(createdEvents); //FIXME do it normally
-		for (Event event : createdEvents){
+			Bundle attributes = (eventAttributes != null && i < eventAttributes.length) ? 
+					(Bundle)eventAttributes[i] : null;
+			Event event = new Event(_name, eventTime, eventTime, attributes);
 			allInstances.addEvent(event);
 		}
 
@@ -56,7 +56,7 @@ public class EventDef extends ElementDef{
 	
 	@Override
 	public String toString(){
-		return "<Event name=" + _name+" isMonitored="+_isMonitored+" counter="+_monitoredCounter+"/>";
+		return "Event: " + _name;
 	}
 
 }

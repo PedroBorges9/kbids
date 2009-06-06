@@ -17,25 +17,19 @@ public final class PatternElementEvent extends PatternElement{
 		super(type, name, ordinal, duration);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Element> getValidElements(AllInstanceContainer aic){
 		ArrayList<Element> ans = new ArrayList<Element>();
 		EventContainer ec = aic.getEvents();
-		ArrayList<Event> eArray;
-		eArray = ec.getOldEvent(_name);
-		if (eArray != null){
-			for (Event e : eArray){
-				if (e != null){
+		ArrayList<Event>[] events = new ArrayList[]{ec.getOldEvents(_name), ec.getCurrentEvents(_name)};
+		for (ArrayList<Event> eArray : events){
+			if (eArray != null){
+				for (Event e : eArray){
 					if (check(e)){
 						ans.add(e);
 					}
 				}
-			}
-		}
-		eArray = ec.getCurrentEvents(_name);
-		for (Event e : eArray){
-			if (e != null && check(e)){
-				ans.add(e);
 			}
 		}
 

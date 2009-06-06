@@ -21,7 +21,7 @@ public class StateInduction extends Induction{
 			if (_symbolicValue.equalsIgnoreCase(s.getValue())){
 				TimeInterval ti = s.getTimeInterval();
 				long start = ti.getStartTime();
-				long end = (_relativeToStart ? start : ti.getEndTime()) + _gap;
+				long end = getEndTime(_relativeToStart ? start : ti.getEndTime());
 				return createContext(container, start, end, s.getExtras());
 			}
 		}

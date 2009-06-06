@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import android.util.Log;
+
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
@@ -37,11 +39,13 @@ public final class LinearPatternDef extends ElementDef{
 		for (PatternElement pe : _elements){
 			ArrayList<Element> e = pe.getValidElements(aic);
 			if (e == null){
+				Log.d("PatternCreation", "Missing element [" + pe.getOrdinal() + "] " + pe);
 				return;
 			}
 
 			elements[pe.getOrdinal()] = e;
 		}
+		Log.d("PatternCreation", "Computing partials");
 		_partialPatterns = new LinkedList<PartialPattern>();
 		int initElementOrdinal = 0;
 		for (Element e : elements[initElementOrdinal]){
@@ -219,15 +223,6 @@ public final class LinearPatternDef extends ElementDef{
 
 	@Override
 	public String toString(){
-		String st = "LinearPattern\n" + "Elements\n";
-
-		for (PatternElement pe : _elements){
-			st += pe + "\n";
-		}
-		st += "\n" + "PairWiseCondition\n";
-		for (PairWiseCondition pwc : _pwcs){
-			st += pwc + "\n";
-		}
-		return st;
+		return "LinearPattern: " + _name;
 	}
 }

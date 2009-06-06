@@ -13,15 +13,13 @@ public abstract class ElementDef{
 
 	private int _lastCreated;
 
-	protected boolean _isMonitored;
+	private boolean _isMonitored;
 
-	protected int _monitoredCounter;
+	private int _monitoredCounter;
 
 	public ElementDef(String name){
 		_name = name;
-		_lastCreated = -1;
-		_monitoredCounter = 0;
-		_isMonitored = false;
+		resetElement();
 	}
 
 	/**
@@ -34,9 +32,14 @@ public abstract class ElementDef{
 	 */
 	public abstract void accept(Ontology ontology, ElementVisitor visitor);
 
-	public final void setInitiallyUnmonitored(){
+	public final void resetElement(){
+		_lastCreated = -1;
 		_monitoredCounter = 0;
 		_isMonitored = false;
+	}
+	
+	public final void resetLastCreated(){
+		_lastCreated = -1;
 	}
 
 	public final void setInitiallyMonitored(Ontology ontology){
