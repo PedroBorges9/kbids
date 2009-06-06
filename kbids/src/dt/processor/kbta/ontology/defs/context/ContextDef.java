@@ -3,7 +3,6 @@
  */
 package dt.processor.kbta.ontology.defs.context;
 
-import java.util.Arrays;
 import java.util.List;
 
 import dt.processor.kbta.container.AllInstanceContainer;
@@ -53,14 +52,15 @@ public final class ContextDef extends ElementDef{
 			}
 		}
 	}
-	
+
 	@Override
 	public void accept(Ontology ontology, ElementVisitor visitor){
 		visitor.visit(this);
 		for (Induction induction : _inductions){
 			ElementDef elementDef = induction.getElementDef(ontology);
 			if (elementDef == null){
-				throw new IllegalStateException("Undefined element:" + induction.getElementDefDescription());
+				throw new IllegalStateException("Undefined element:"
+						+ induction.getElementDefDescription());
 			}
 			elementDef.accept(ontology, visitor);
 		}
@@ -68,9 +68,6 @@ public final class ContextDef extends ElementDef{
 
 	@Override
 	public String toString(){
-		return "<Context name=" + _name + "\n inductions: "
-				+ Arrays.toString(_inductions) + "\n destructions: "
-				+ Arrays.toString(_destructions) + " isMonitored=" + _isMonitored
-				+ " counter=" + _monitoredCounter + "/>\n";
+		return "Context: " + _name;
 	}
 }

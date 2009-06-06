@@ -4,7 +4,6 @@
 package dt.processor.kbta.ontology.defs.abstractions.trend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import android.os.Bundle;
 import dt.processor.kbta.container.AllInstanceContainer;
@@ -153,9 +152,6 @@ public final class TrendDef extends AbstractionDef{
 
 	@Override
 	public String toString(){
-		return "<Trend AbstractedFrom(primitive)= " + _abstractedFrom + "\n"
-				+ "necessaryContexts " + Arrays.toString(_necessaryContexts) + "\n"
-				+ "mappingFunction " + _mappingFunction + " isMonitored=" + _isMonitored
-				+ " counter=" + _monitoredCounter + "/>";
+		return "Trend: " + _name;
 	}
 }

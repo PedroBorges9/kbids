@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import android.util.Log;
-
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.defs.EventDef;
 import dt.processor.kbta.ontology.defs.PrimitiveDef;
@@ -33,7 +31,7 @@ public final class Ontology{
 
 	private final String _version;
 		
-	Ontology(HashMap<String, PrimitiveDef> primitives,
+	public Ontology(HashMap<String, PrimitiveDef> primitives,
 		HashMap<String, EventDef> events, ArrayList<ContextDef> contexts,
 		ArrayList<StateDef> states,ArrayList<TrendDef> trends, 
 		ArrayList<LinearPatternDef> linearPatterns,	long elementTimeout, String ontologyName, String version){
@@ -138,26 +136,50 @@ public final class Ontology{
 	}
 	
 	/**
-	 * Resetting the monitored state of all of the elements in the ontology
+	 * Resetting all of the elements in the ontology
 	 */
-	public void setAllElementsInitiallyUnmonitored(){
+	public void resetOntology(){
 		for (ElementDef ed : _primitives.values()){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
 		}
 		for (ElementDef ed : _events.values()){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
 		}
 		for (ElementDef ed : _contexts){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
 		}
 		for (ElementDef ed : _states){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
 		}
 		for (ElementDef ed : _trends){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
 		}
 		for (ElementDef ed : _linearPatterns){
-			ed.setInitiallyUnmonitored();
+			ed.resetElement();
+		}
+	}
+	
+	/**
+	 * Resetting the "last created iteation" property of all of the elements in the ontology
+	 */
+	public void resetLastCreated(){
+		for (ElementDef ed : _primitives.values()){
+			ed.resetLastCreated();
+		}
+		for (ElementDef ed : _events.values()){
+			ed.resetLastCreated();
+		}
+		for (ElementDef ed : _contexts){
+			ed.resetLastCreated();
+		}
+		for (ElementDef ed : _states){
+			ed.resetLastCreated();
+		}
+		for (ElementDef ed : _trends){
+			ed.resetLastCreated();
+		}
+		for (ElementDef ed : _linearPatterns){
+			ed.resetLastCreated();
 		}
 	}
 }

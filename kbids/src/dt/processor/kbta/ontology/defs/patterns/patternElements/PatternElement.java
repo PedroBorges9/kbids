@@ -35,8 +35,8 @@ public abstract class PatternElement{
 
 	public abstract ArrayList<Element> getValidElements(AllInstanceContainer aic);
 
-	protected boolean check(Element e){
-		return _duration.check(e.getTimeInterval().getDuration());
+	protected boolean check(Element e){		
+		return (_duration == null) ? true : _duration.check(e.getTimeInterval().getDuration());
 	}
 
 	public int getType(){

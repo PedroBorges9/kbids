@@ -147,7 +147,7 @@ public class TimeInterval{
 		long s2 = other.getStartTime();
 		long e2 = other.getEndTime();
 
-		if (e2 >= s2 && e2 >= e1){
+		if (e1 >= s2 && e2 >= e1){
 			return new TimeInterval(Math.max(s1, s2), e1);
 		}else if (e2 >= s1 && e1 >= e2){
 			return new TimeInterval(Math.max(s1, s2), e2);

@@ -38,8 +38,7 @@ public final class PrimitiveDef extends ElementDef{
 	
 	@Override
 	public String toString(){
-		return "<Primitive name= " + _name + " " + _range + " isMonitored="
-				+ _isMonitored + " counter=" + _monitoredCounter + " />";
+		return "Primitive: " + _name;
 	}
 
 }

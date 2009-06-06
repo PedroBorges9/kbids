@@ -1,7 +1,6 @@
 package dt.processor.kbta.threats;
 
 import static android.text.TextUtils.isEmpty;
-import static dt.processor.kbta.util.XmlParser.parseDurationCondition;
 import static dt.processor.kbta.util.XmlParser.parseSymbolicValueCondition;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
@@ -20,6 +19,7 @@ import android.util.Log;
 import dt.processor.kbta.Env;
 import dt.processor.kbta.settings.Model;
 import dt.processor.kbta.util.FileChangeTracker;
+import dt.processor.kbta.util.XmlParser;
 import dt.processor.kbta.util.FileChangeTracker.ChangeInfo;
 
 public class ThreatAssessmentLoader{
@@ -174,7 +174,7 @@ public class ThreatAssessmentLoader{
 			}
 
 			if ("DurationCondition".equalsIgnoreCase(xpp.getName())){
-				durationCondition = parseDurationCondition(xpp);
+				durationCondition = XmlParser.parseDurationCondition(xpp, TAG);
 			}
 		}
 

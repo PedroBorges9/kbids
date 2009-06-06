@@ -1,12 +1,11 @@
 package dt.processor.kbta;
 
-import static dt.processor.kbta.Env.TAG;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import dt.processor.kbta.ontology.Ontology;
-import dt.processor.kbta.ontology.OntologyLoader;
+import dt.processor.kbta.ontology.loader.OntologyLoader;
 import dt.processor.kbta.threats.ThreatAssessmentLoader;
 import dt.processor.kbta.threats.ThreatAssessor;
 
@@ -167,7 +166,7 @@ public class Env{
 				}else{
 					// Resetting the monitored state of all elements in the ontology to
 					// false
-					_ontology.setAllElementsInitiallyUnmonitored();
+					_ontology.resetOntology();
 
 					// Resetting the monitored state of all threats in persistent storage
 					// to false

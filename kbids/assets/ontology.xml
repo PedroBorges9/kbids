@@ -1,19 +1,21 @@
 <Ontology name="Default" version="0" elementTimeout="PT10M">
 	<Primitives>
-		<!-- 
-		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 
-		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
-		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
-		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />	
-		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
-		-->
-	
 		<Primitive name="Context_Switches" minE="0" maxE="*" />
 		<Primitive name="CPU_Usage" minE="0" maxE="100" />
 		<Primitive name="Garbage_Collections" minE="0" maxE="*" />
 				
 		<Primitive name="Perm_Camera" minE="0" maxE="*" />
-		<Primitive name="Camera" minE="0" maxE="*" />
+		<Primitive name="Camera" minE="0" maxE="*" />		
+		
+		<Primitive name="Avg_Touch_Pressure" minE="0" maxE="*" />
+		<Primitive name="Avg_Key_Dwell_Time" minE="0" maxE="*" />		
+		
+		<!-- 
+		<Primitive name="Outgoing_SMS" minE="0" maxE="*" />	 
+		<Primitive name="Perm_S-SMS_R-Contacts" minE="0" maxE="*" />
+		-->		
+		
+		<Primitive name="WiFi_TX_Packets" minE="0" maxE="*" /> 	
 	</Primitives>
 	
 	<Events>
@@ -64,7 +66,6 @@
 			<Destructions />
 		</Context>
 		
-<!-- 
 		<Context name="Access_to_SDCard">
 			<Inductions>
 				<Induction>
@@ -74,7 +75,7 @@
 			</Inductions>
 
 			<Destructions />
-		</Context>
+		</Context>		 
 		
 		<Context name="Connected_to_USB">
 			<Inductions>
@@ -88,8 +89,6 @@
 				<Event name="USB_Disconnection" />
 			</Destructions>
 		</Context>
-		
-		 -->
 	</Contexts>
 
 	<States>	
@@ -155,9 +154,8 @@
 				<Value name="High" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
-	<!-- 
 				
-		<State name="User Activity">
+		<State name="User_Activity_State">
 			<AbstractedFrom>
 				<Primitive name="Avg_Touch_Pressure" />
 				<Primitive name="Avg_Key_Dwell_Time" />
@@ -182,7 +180,6 @@
 				<Value name="No_Activity" maxGap="PT1H" />
 			</InterpolationFunction>
 		</State>
-		 -->
 	</States>
 	
 	<!-- 
@@ -191,8 +188,7 @@
 		2. the angle is in degrees and not radians 
 		3. trends are created from primitives (and a single primitive at that)
 	-->
-	<Trends>
-		
+	<Trends>		
 		<Trend name="Garbage_Collections_Trend">
 			<AbstractedFrom name="Garbage_Collections" />
 			<NecessaryContexts>
@@ -215,9 +211,7 @@
 			</NecessaryContexts>
 			<MappingFunction threshold="0.01" angle="45" maxGap="PT1H" /> 
 		</Trend>
-		
-		<!-- 
-		
+				
 		<Trend name="Sent_Packets_Trend">
 			<AbstractedFrom name="WiFi_TX_Packets" />
 			<NecessaryContexts>
@@ -225,6 +219,9 @@
 			</NecessaryContexts>
 			<MappingFunction threshold="0.35" angle="45" maxGap="PT1H" /> 
 		</Trend>
+		
+		<!-- 
+		
 		
 		<Trend name="Outgoing_SMS">
 			<AbstractedFrom name="Outgoing_SMS" />
@@ -305,6 +302,43 @@
 					minLength="PT8S" maxLength="*" 
 					minStartingDistance="*" maxStartingDistance="*"/>
 			</PairWiseConditions>
+		</LinearPattern>
+		
+		<LinearPattern name="Malware_Injection_Pattern">
+			<Elements>
+				<Context name="Connected_to_USB" ordinal="0" />
+				<Event name="Package_Addition" ordinal="1" />
+				<State name="User_Activity_State" ordinal="2">
+					<SymbolicValueCondition>
+						<Value name="No_Activity" />
+					</SymbolicValueCondition>
+				</State>
+			</Elements>
+			
+			<PairWiseConditions>
+				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
+					minLength="*" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/>	
+				<PairWiseCondition first="0" second="2" value="*" temporal="Overlap"
+					minLength="*" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/> 
+				<PairWiseCondition first="1" second="2" value="*" temporal="Overlap"
+					minLength="*" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/> 
+			</PairWiseConditions>
+		</LinearPattern>
+		
+		<LinearPattern name="SDCard_Information_Leakage_Pattern">
+			<Elements>				
+				<Trend name="Sent_Packets_Trend" ordinal="0">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+					<DurationCondition min="PT3S" max="*" />
+				</Trend>
+			</Elements>
+			
+			<PairWiseConditions />
 		</LinearPattern>
 	</Patterns>
 </Ontology>
