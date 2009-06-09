@@ -11,6 +11,8 @@ import dt.processor.kbta.threats.ThreatAssessor;
 
 public class Env{
 	public static final String TAG = "KBTA";
+	
+	public static final String SEND_ELEMENTS_TO_NETPROTECT = "send_elements_to_netprotect";
 
 	private static Ontology _ontology;
 

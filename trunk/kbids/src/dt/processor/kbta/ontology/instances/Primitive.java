@@ -3,6 +3,9 @@
  */
 package dt.processor.kbta.ontology.instances;
 
+import java.util.List;
+import java.util.Map;
+
 import android.os.Bundle;
 
 /**
@@ -43,5 +46,9 @@ public final class Primitive extends Element{
 		}
 		return 0;
 	}
-
+	
+	@Override
+	public void toNetProtectElement(List<Map> elements){
+		// Not sending primitives to NetProtect
+	}
 }

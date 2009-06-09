@@ -3,6 +3,11 @@
  */
 package dt.processor.kbta.ontology.instances;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import android.os.Bundle;
 import dt.processor.kbta.ontology.defs.abstractions.state.AbstractedFrom;
 import dt.processor.kbta.util.TimeInterval;
@@ -15,6 +20,12 @@ public abstract class Element implements Comparable<Element>{
 	public static final String[] TYPES = {"Primitive", "Event", "Context", "State", "Trend", "LinearPattern"};
 	public static final int PRIMITIVE = 0, EVENT = 1, CONTEXT = 2, STATE = 3, TREND = 4,
 			LINEAR_PATTERN = 5;
+	
+	protected static final String ELEMENT_NAME = "Name";
+	protected static final String ELEMENT_VALUE = "Value";
+	protected static final String ELEMENT_TYPE = "Type";
+	protected static final String ELEMENT_START_TIME = "StartTime";
+	protected static final String ELEMENT_END_TIME = "EndTime";
 
 	protected final String _name;
 
@@ -111,5 +122,14 @@ public abstract class Element implements Comparable<Element>{
 //				+ ((_extras == null || _extras.isEmpty()) ? "" : " " + _extras)
 				;
 	}
-
+	
+	protected Map toNetProtectElement(){
+		Map m = new TreeMap();
+		m.put(ELEMENT_NAME, _name);
+		m.put(ELEMENT_START_TIME, new Date(_timeInterval.getStartTime()));
+		m.put(ELEMENT_END_TIME, new Date(_timeInterval.getEndTime()));
+		return m;
+	}
+	
+	public abstract void toNetProtectElement(List<Map> elements);
 }

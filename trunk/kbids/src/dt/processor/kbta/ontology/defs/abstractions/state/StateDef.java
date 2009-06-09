@@ -91,7 +91,6 @@ public final class StateDef extends AbstractionDef{
 		ComplexContainer<State> states = instances.getStates();
 		State state = states.getCurrentElement(_name);
 
-		// System.out.println("Previous state: " + state);
 		if (state != null
 				&& _interpolationFunction.interpolate(state, value, timeInterval)){
 			// The interpolation has succeeded (and so the state's interval has already
