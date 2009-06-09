@@ -51,6 +51,16 @@ public class SettingsScreen extends PreferenceActivity{
 		_threats.initPrefs(root);
 
 		root.addPreference(_monitoredThreats);
+		PreferenceCategory cc = new PreferenceCategory(this);
+		cc.setTitle("NetProtect Settings");
+		root.addPreference(cc);
+		CheckBoxPreference sendElementsToNetProtect = new CheckBoxPreference(this);
+		sendElementsToNetProtect.setTitle("Send monitored elements");
+		sendElementsToNetProtect.setSummary("Send the monitored elements from " +
+				"which threats are generated to NetProtect");
+		sendElementsToNetProtect.setKey(Env.SEND_ELEMENTS_TO_NETPROTECT);
+		sendElementsToNetProtect.setPersistent(true);
+		cc.addPreference(sendElementsToNetProtect);
 
 		// Load the ontology and threat assessments
 		// Starting the initialization process
@@ -64,10 +74,10 @@ public class SettingsScreen extends PreferenceActivity{
 		if (!areModelsCompatibile()){
 			Toast.makeText(this, "Reverting to default models...", Toast.LENGTH_SHORT)
 					.show();
-			
+
 			// Rollbacl, must not fail
 			Model.copyDefaultModelFile(this, Model.getOntologyModelFile(this));
-			Model.copyDefaultModelFile(this, Model.getThreatsModelFile(this)); 
+			Model.copyDefaultModelFile(this, Model.getThreatsModelFile(this));
 			Env.initialize(this, null, true);
 		}
 
@@ -103,7 +113,8 @@ public class SettingsScreen extends PreferenceActivity{
 					public boolean onPreferenceChange(Preference preference,
 						Object isMonitored){
 						try{
-							threat.setMonitoredThreat(Env.getOntology(), (Boolean)isMonitored);
+							threat.setMonitoredThreat(Env.getOntology(),
+								(Boolean)isMonitored);
 							return true;
 						}catch(Exception e){
 							Toast.makeText(SettingsScreen.this,
@@ -113,7 +124,7 @@ public class SettingsScreen extends PreferenceActivity{
 						}
 					}
 
-				});				
+				});
 			}
 			_monitoredThreats.addPreference(cbp);
 		}
@@ -147,9 +158,9 @@ public class SettingsScreen extends PreferenceActivity{
 						dueTo = " due to: " + t.getMessage();
 						length = Toast.LENGTH_LONG;
 					}
-					Toast.makeText(
-						SettingsScreen.this,
-						"Unable to initialize Ontology and Threats" + dueTo, length).show();
+					Toast.makeText(SettingsScreen.this,
+						"Unable to initialize Ontology and Threats" + dueTo, length)
+							.show();
 					finish();
 				}
 			});
@@ -157,9 +168,11 @@ public class SettingsScreen extends PreferenceActivity{
 	}
 
 	private final class OntologyModel extends Model{
-		private OntologyModel(SettingsScreen settingsScreen, PreferenceCategory monitoredThreats, File modelFile,
-			String modelName, String xmlRootTag, boolean isServiceRunning){
-			super(settingsScreen, monitoredThreats, modelFile, modelName, xmlRootTag, isServiceRunning);
+		private OntologyModel(SettingsScreen settingsScreen,
+			PreferenceCategory monitoredThreats, File modelFile, String modelName,
+			String xmlRootTag, boolean isServiceRunning){
+			super(settingsScreen, monitoredThreats, modelFile, modelName, xmlRootTag,
+					isServiceRunning);
 		}
 
 		@Override
@@ -182,9 +195,11 @@ public class SettingsScreen extends PreferenceActivity{
 	}
 
 	private final class ThreatsModel extends Model{
-		private ThreatsModel(SettingsScreen settingsScreen, PreferenceCategory monitoredThreats, File modelFile,
-			String modelName, String xmlRootTag, boolean isServiceRunning){
-			super(settingsScreen, monitoredThreats, modelFile, modelName, xmlRootTag, isServiceRunning);
+		private ThreatsModel(SettingsScreen settingsScreen,
+			PreferenceCategory monitoredThreats, File modelFile, String modelName,
+			String xmlRootTag, boolean isServiceRunning){
+			super(settingsScreen, monitoredThreats, modelFile, modelName, xmlRootTag,
+					isServiceRunning);
 		}
 
 		@Override

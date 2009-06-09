@@ -58,7 +58,7 @@ public class PartialPattern{
 				end = endTime;
 			}
 		}
-		return new LinearPattern(name, new TimeInterval(start, end), newExtras);
+		return new LinearPattern(name, new TimeInterval(start, end), newExtras, _elements);
 	}	
 
 	/**
