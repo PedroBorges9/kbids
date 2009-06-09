@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import android.util.Log;
-
 import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;

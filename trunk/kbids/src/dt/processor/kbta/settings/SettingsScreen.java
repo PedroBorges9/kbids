@@ -55,8 +55,8 @@ public class SettingsScreen extends PreferenceActivity{
 		cc.setTitle("NetProtect Settings");
 		root.addPreference(cc);
 		CheckBoxPreference sendElementsToNetProtect = new CheckBoxPreference(this);
-		sendElementsToNetProtect.setTitle("Send monitored elements");
-		sendElementsToNetProtect.setSummary("Send the monitored elements from " +
+		sendElementsToNetProtect.setTitle("Send threat elements");
+		sendElementsToNetProtect.setSummary("Send the elements from " +
 				"which threats are generated to NetProtect");
 		sendElementsToNetProtect.setKey(Env.SEND_ELEMENTS_TO_NETPROTECT);
 		sendElementsToNetProtect.setPersistent(true);

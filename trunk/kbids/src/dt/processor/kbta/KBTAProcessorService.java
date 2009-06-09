@@ -10,6 +10,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -31,9 +32,11 @@ import dt.processor.kbta.threats.ThreatAssessor;
 import dt.processor.kbta.util.Pair;
 
 public final class KBTAProcessorService extends Service implements ServiceConnection{
-	private static boolean _isRunning;
+	private static final String AGENT_PACKAGE_NAME = "dt.agent";
 
 	public static final boolean DEBUG = false;
+
+	private static boolean _isRunning;
 
 	private TWU _twu;
 
@@ -43,6 +46,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 	private ThreatAssessor _threatAssessor;
 
+	private NetProtectConnection _npc;
+
 	private int _iteration;
 
 	@Override
@@ -51,6 +56,13 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 
 		setIsRunning(true);
 
+		try{
+			_npc = new NetProtectConnection(this, AGENT_PACKAGE_NAME);
+		}catch(NameNotFoundException e){
+			Log.e(TAG, "Unable to obtain Agent context with package name: "
+					+ AGENT_PACKAGE_NAME);
+			e.printStackTrace();
+		}
 		_allInstances = new AllInstanceContainer();
 		_iteration = 0;
 
@@ -83,7 +95,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			unbindService(this);
 			_twu = null;
 		}
-		
+
 		super.onDestroy();
 	}
 
@@ -116,6 +128,15 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 							Log.d(TAG, "Element: " + p.second.toString());
 						}
 					}
+					try{
+						if (_npc != null){
+							for (Pair<ThreatAssessment, Element> p : threats){
+								_npc.sendRelatedElementsOf(p.second);
+							}
+						}
+					}catch(Exception e){
+						Log.e(TAG, "Unable to send monitored elements to NetProtect", e);
+					}
 					if (_twu != null){
 						for (Pair<ThreatAssessment, Element> p : threats){
 							ThreatAssessment ta = p.first;
@@ -128,6 +149,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 				}catch(Throwable t){
 					System.err.println("This should've been caught sooner!!!");
 					t.printStackTrace();
+					Log.e(TAG, "This should've been caught sooner!!!", t);
 				}
 
 			}

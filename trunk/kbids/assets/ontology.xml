@@ -245,13 +245,13 @@
 					<SymbolicValueCondition>
 						<Value name="High" />
 					</SymbolicValueCondition>
-					<DurationCondition min="PT20S" max="*" />
+					<DurationCondition min="PT15S" max="*" />
 				</State>
 				<State name="CPU_Usage_State" ordinal="1">
 					<SymbolicValueCondition>
 						<Value name="High" />
 					</SymbolicValueCondition>
-					<DurationCondition min="PT20S" max="*" />
+					<DurationCondition min="PT15S" max="*" />
 				</State>
 				<Trend name="Garbage_Collections_Trend" ordinal="2">
 					<SymbolicValueCondition>

@@ -24,6 +24,7 @@ public abstract class Abstraction extends Element{
 	public void setValue(String value){
 		_value = value;
 	}
+		
 	@Override
 	public String toString(){
 		return super.toString() + " value=" + _value;

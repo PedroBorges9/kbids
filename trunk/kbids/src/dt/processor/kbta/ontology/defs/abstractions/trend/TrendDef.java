@@ -73,12 +73,12 @@ public final class TrendDef extends AbstractionDef{
 			element.addInnerExtras(newExtras);
 		}
 
-		createTrend(iteration, primitives, primitive, trends, currentTrend, newExtras);
+		createTrend(iteration, primitives, primitive, trends, currentTrend, newExtras, elementsContext);
 	}
 
 	private void createTrend(int iteration, PrimitiveContainer primitives,
 		Primitive primitive, ComplexContainer<Trend> trends, Trend currentTrend,
-		Bundle newExtras){
+		Bundle newExtras, Element[] elementsContext){
 		TimeInterval tiPrimitive = primitive.getTimeInterval();
 
 		if (currentTrend == null){
@@ -127,6 +127,10 @@ public final class TrendDef extends AbstractionDef{
 				}
 				addCreatedTrend(iteration, trends, currentTrend);
 			}
+		}
+		
+		if (currentTrend != null){
+			currentTrend.setContexts(elementsContext);
 		}
 	}
 

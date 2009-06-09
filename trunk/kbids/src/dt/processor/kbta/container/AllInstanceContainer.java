@@ -33,7 +33,7 @@ public class AllInstanceContainer {
 	}
 	
 	public void addContext(Context element){
-		System.out.println(element);
+		_contexts.addElement(element);
 	}
 	
 	public void addPattern(LinearPattern element){

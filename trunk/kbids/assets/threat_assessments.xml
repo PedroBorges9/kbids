@@ -12,7 +12,7 @@
  -->
 
 	<Assessment title="System Overload" description="A malicious application is overloading the system!"  
-		baseCertainty="80" monitored="false">
+		baseCertainty="80" monitored="true">
 		<LinearPattern name="System_Overload_Pattern">
 			<DurationCondition min="PT15S" max="*" />
 		</LinearPattern>
@@ -26,7 +26,7 @@
 	</Assessment>
 	
 	<Assessment title="SMS Abuse" description="Malicious applications are abusing their Shared-UserID and sending SMSs!"  
-		baseCertainty="100" monitored="true">
+		baseCertainty="100" monitored="false">
 		<LinearPattern name="SMS_Abuse_Pattern">
 			<DurationCondition min="PT2S" max="*" />
 		</LinearPattern>

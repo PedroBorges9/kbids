@@ -14,8 +14,9 @@ import dt.processor.kbta.util.TimeInterval;
  */
 public final class Trend extends Abstraction{
 	private final Primitive _first;
+	private Primitive _last;	
 
-	private Primitive _last;
+	private Element[] _contexts;
 
 	public Trend(String name, String value, TimeInterval timeInterval, Bundle extras,
 		Primitive first, Primitive last){
@@ -41,17 +42,24 @@ public final class Trend extends Abstraction{
 		return 0;
 	}
 	
+	public void setContexts(Element[] contexts){
+		_contexts = contexts;
+	}
+	
+	@Override
+	public void toNetProtectElement(List<Map> elements){
+		elements.add(toNetProtectElement());
+
+		for (Element e : _contexts){
+			e.toNetProtectElement(elements);
+		}
+	}
+	
 	@Override
 	protected Map toNetProtectElement(){
 		Map m = super.toNetProtectElement();
 		m.put(ELEMENT_TYPE, "GRADIENT");
 		m.put(ELEMENT_VALUE, _value);
 		return m;
-	}
-	
-	@Override
-	public void toNetProtectElement(List<Map> elements){
-		elements.add(toNetProtectElement());
-		//TODO Add abstract-from/context elements
 	}
 }

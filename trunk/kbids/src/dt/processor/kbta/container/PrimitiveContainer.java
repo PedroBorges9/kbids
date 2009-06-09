@@ -13,8 +13,6 @@ public class PrimitiveContainer implements ElementContainer{
 	public PrimitiveContainer(){
 		_oldElements = new HashMap<String, Primitive>();
 		_currentElements = new HashMap<String, Primitive>();
-
-		// TODO Auto-generated constructor stub
 	}
 
 	public void addPrimitive(Primitive p){
