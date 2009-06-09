@@ -110,6 +110,9 @@ public final class StateDef extends AbstractionDef{
 		// Marking that the state of this name has already been created during this
 		// iteration
 		setLastCreated(iteration);
+		
+		// Setting the contexts and abstracted-from elements that created this abstraction
+		state.setContextsAndAbstractedFrom(elementsContext, elementsAf);
 	}	
 
 	private Element[] checkAbstractedFrom(AllInstanceContainer instances){

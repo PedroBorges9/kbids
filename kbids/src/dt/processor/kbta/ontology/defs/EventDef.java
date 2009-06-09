@@ -1,7 +1,5 @@
 package dt.processor.kbta.ontology.defs;
 
-import java.util.Arrays;
-
 import android.os.Bundle;
 import android.os.Parcelable;
 import dt.processor.kbta.container.AllInstanceContainer;

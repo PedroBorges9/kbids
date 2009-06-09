@@ -2,21 +2,23 @@ package dt.processor.kbta;
 
 import static dt.processor.kbta.Env.TAG;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.kxmlrpc.XmlRpcClient;
 
-import dt.processor.kbta.container.AllInstanceContainer;
-
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import dt.processor.kbta.ontology.instances.Element;
 
 @SuppressWarnings("unchecked")
 public class NetProtectConnection{
-	
+
 	private static final String AGENT_ID = "agent_id";
 
 	private static final String SECRET = "secret";
@@ -27,14 +29,25 @@ public class NetProtectConnection{
 
 	private XmlRpcClient _server;
 
-	public NetProtectConnection(Context context) throws Exception{
-		_agentContext = context.createPackageContext("dt.agent", 0);
+	private WifiManager _wm;
+
+	public NetProtectConnection(Context context, String agentPackageName)
+			throws NameNotFoundException{
+		_agentContext = context.createPackageContext(agentPackageName, 0);
+
+		_wm = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 	}
 
-	public void sendElements(AllInstanceContainer aic) throws Exception{
+	public void sendRelatedElementsOf(Element e) throws Exception{
 		SharedPreferences agentPrefs = PreferenceManager
 				.getDefaultSharedPreferences(_agentContext);
 		SharedPreferences kbtaPrefs = Env.getSharedPreferences();
+
+		boolean connected = (_wm.getWifiState() == WifiManager.WIFI_STATE_ENABLED)
+				&& _wm.getConnectionInfo().getNetworkId() != -1;
+		if (!connected){
+			return;
+		}
 
 		if (kbtaPrefs.getBoolean(Env.SEND_ELEMENTS_TO_NETPROTECT, false)){
 			if (_server == null){
@@ -56,18 +69,18 @@ public class NetProtectConnection{
 				return;
 			}
 
-			List<? extends Map> elements = constructElementList(aic);
-			if (elements != null && !elements.isEmpty()){
+			List<Map> elements = new ArrayList<Map>();
+			e.toNetProtectElement(elements);
+//			for (Map m : elements){
+//				System.out.println(m);
+//			}
+			if (!elements.isEmpty()){
 				_server
 						.execute(
 							"bgu.dt.netprotect.external.CalculatedDataGateway.sendCalculatedData",
 							agentId, secret, elements);
 			}
 		}
-	}
-
-	private List<? extends Map> constructElementList(AllInstanceContainer aic){
-		return null;
 	}
 
 }

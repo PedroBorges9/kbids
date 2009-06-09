@@ -13,7 +13,9 @@ import dt.processor.kbta.util.TimeInterval;
  * @author
  */
 public final class State extends Abstraction{
-
+	private Element[] _contexts;
+	private Element[] _abstractedFrom;
+	
 	public State(String name, String value, TimeInterval timeInterval, Bundle extras){
 		super(STATE, name, value, timeInterval, extras);
 	}
@@ -41,6 +43,24 @@ public final class State extends Abstraction{
 		}
 		return 0;
 	}
+		
+
+	public void setContextsAndAbstractedFrom(Element[] contexts, Element[] abstractedFrom){
+		_contexts = contexts;
+		_abstractedFrom = abstractedFrom;		
+	}
+	
+	@Override
+	public void toNetProtectElement(List<Map> elements){
+		elements.add(toNetProtectElement());
+
+		for (Element e : _contexts){
+			e.toNetProtectElement(elements);
+		}
+		for (Element e : _abstractedFrom){
+			e.toNetProtectElement(elements);
+		}
+	}
 	
 	@Override
 	protected Map toNetProtectElement(){
@@ -50,9 +70,5 @@ public final class State extends Abstraction{
 		return m;
 	}
 	
-	@Override
-	public void toNetProtectElement(List<Map> elements){
-		elements.add(toNetProtectElement());
-		//TODO Add abstract-from/context elements
-	}
+	
 }

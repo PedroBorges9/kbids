@@ -1,9 +1,7 @@
 package dt.processor.kbta.ontology.instances;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
