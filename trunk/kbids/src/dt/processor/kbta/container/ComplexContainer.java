@@ -101,4 +101,10 @@ public class ComplexContainer <T extends Element> implements ElementContainer{
 	public boolean hasNew() {
 		return !_newElements.isEmpty();
 	}
+	
+	public void clear(){
+		_oldElements.clear();
+		_newElements.clear();
+		_currentElements.clear();
+	}
 }
