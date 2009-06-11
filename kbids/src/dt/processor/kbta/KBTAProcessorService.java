@@ -122,12 +122,6 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 					}
 					Collection<Pair<ThreatAssessment, Element>> threats = _threatAssessor
 							.assess(_allInstances);
-					if (!threats.isEmpty()){
-						for (Pair<ThreatAssessment, Element> p : threats){
-							Log.d(TAG, p.first.toString(p.second));
-							Log.d(TAG, "Element: " + p.second.toString());
-						}
-					}
 					try{
 						if (_npc != null){
 							for (Pair<ThreatAssessment, Element> p : threats){
@@ -141,11 +135,19 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 						for (Pair<ThreatAssessment, Element> p : threats){
 							ThreatAssessment ta = p.first;
 							Element element = p.second;
+							
+							//FIXME Remove
+							Log.d(TAG, ta.toString(element));
+							Log.d(TAG, "Element: " + element.toString());
+							
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
 									.getTitle(), ta.getDescription(), ta
 									.getCertainty(element), element.getExtras());
 						}
 					}
+					
+					// Removing all patterns as they will be recreated if need be
+					_allInstances.getLinearPatterns().clear();
 				}catch(Throwable t){
 					System.err.println("This should've been caught sooner!!!");
 					t.printStackTrace();
