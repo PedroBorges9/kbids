@@ -8,6 +8,7 @@ import dt.processor.kbta.container.AllInstanceContainer;
 import dt.processor.kbta.ontology.Ontology;
 import dt.processor.kbta.ontology.defs.ElementDef;
 import dt.processor.kbta.ontology.instances.Context;
+import dt.processor.kbta.ontology.instances.Element;
 import dt.processor.kbta.util.TimeInterval;
 
 /**
@@ -64,13 +65,13 @@ public abstract class Induction{
 
 	public abstract boolean induce(AllInstanceContainer container);
 
-	protected boolean createContext(AllInstanceContainer container, long start, long end, Bundle extras){
+	protected boolean createContext(AllInstanceContainer container, long start, long end, Bundle extras, Element inducedFrom){
 		Context context = container.getContexts().getCurrentElement(_contextName);
 		if (context != null){
 			long contextEnd = context.getTimeInterval().getEndTime();
 			if (contextEnd < start){
 				container.addContext(new Context(_contextName, new TimeInterval(start,
-						end), extras));
+						end), extras, inducedFrom));
 				return true;
 			}else if (contextEnd < end){
 				context.getTimeInterval().setEndTime(end);
@@ -82,7 +83,7 @@ public abstract class Induction{
 			//FIXME Before creating a new context we need to look
 			// in the new contexts in case we created a context in this iteration
 			// already and need to prolong it 
-			container.addContext(new Context(_contextName, new TimeInterval(start, end), extras));
+			container.addContext(new Context(_contextName, new TimeInterval(start, end), extras, inducedFrom));
 			return true;
 		}
 	}

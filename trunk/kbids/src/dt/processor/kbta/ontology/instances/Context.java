@@ -9,12 +9,12 @@ import java.util.Map;
 import android.os.Bundle;
 import dt.processor.kbta.util.TimeInterval;
 
-/**
- * @author
- */
 public final class Context extends Element{
-	public Context(String name, TimeInterval timeInterval, Bundle extras){
+	private final Element _inducedFrom;
+
+	public Context(String name, TimeInterval timeInterval, Bundle extras, Element inducedFrom){
 		super(CONTEXT, name, timeInterval, extras);
+		_inducedFrom = inducedFrom;
 	}
 
 	@Override
@@ -33,5 +33,6 @@ public final class Context extends Element{
 	@Override
 	public void toNetProtectElement(List<Map> elements){
 		elements.add(toNetProtectElement());
+		_inducedFrom.toNetProtectElement(elements);
 	}
 }

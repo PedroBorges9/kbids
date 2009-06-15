@@ -59,7 +59,13 @@ public final class Trend extends Abstraction{
 	protected Map toNetProtectElement(){
 		Map m = super.toNetProtectElement();
 		m.put(ELEMENT_TYPE, "GRADIENT");
-		m.put(ELEMENT_VALUE, _value);
+		String value = "SAME";
+		if ("Increasing".equalsIgnoreCase(_value)){
+			value = "INC";
+		}else if ("Decreasing".equalsIgnoreCase(_value)){
+			value = "DEC";
+		}
+		m.put(ELEMENT_VALUE, value);
 		return m;
 	}
 }
