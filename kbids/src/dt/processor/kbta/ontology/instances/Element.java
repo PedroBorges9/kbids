@@ -126,8 +126,13 @@ public abstract class Element implements Comparable<Element>{
 	protected Map toNetProtectElement(){
 		Map m = new TreeMap();
 		m.put(ELEMENT_NAME, _name);
-		m.put(ELEMENT_START_TIME, new Date(_timeInterval.getStartTime()));
-		m.put(ELEMENT_END_TIME, new Date(_timeInterval.getEndTime()));
+		long startTime = _timeInterval.getStartTime();
+		m.put(ELEMENT_START_TIME, new Date(startTime));
+		long endTime = _timeInterval.getEndTime();
+		if (endTime == Long.MAX_VALUE){
+			endTime = startTime + 60 * 60 * 24 * 1000;
+		}
+		m.put(ELEMENT_END_TIME, new Date(endTime));
 		return m;
 	}
 	

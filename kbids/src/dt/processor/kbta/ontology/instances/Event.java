@@ -1,6 +1,3 @@
-/**
- * 
- */
 package dt.processor.kbta.ontology.instances;
 
 import java.util.List;
@@ -8,10 +5,6 @@ import java.util.Map;
 
 import android.os.Bundle;
 
-
-/**
- * @author rahamime
- */
 public final class Event extends Element{
 
 	public Event(String name, long start, long end, Bundle extras){
@@ -25,11 +18,15 @@ public final class Event extends Element{
 
 	@Override
 	protected Map toNetProtectElement(){
-		return null;
+		Map m = super.toNetProtectElement();
+		m.put(ELEMENT_NAME, _name + "_Event");
+		m.put(ELEMENT_TYPE, "EVENT");
+		m.put(ELEMENT_VALUE, 1);
+		return m;
 	}
 	
 	@Override
 	public void toNetProtectElement(List<Map> elements){
-		// Not sending events to NetProtect
+		elements.add(toNetProtectElement());
 	}
 }

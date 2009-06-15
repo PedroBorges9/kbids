@@ -22,7 +22,7 @@ public class StateInduction extends Induction{
 				TimeInterval ti = s.getTimeInterval();
 				long start = ti.getStartTime();
 				long end = getEndTime(_relativeToStart ? start : ti.getEndTime());
-				return createContext(container, start, end, s.getExtras());
+				return createContext(container, start, end, s.getExtras(), s);
 			}
 		}
 		return false;
