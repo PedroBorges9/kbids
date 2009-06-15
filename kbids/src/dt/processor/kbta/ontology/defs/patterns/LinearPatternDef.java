@@ -37,7 +37,7 @@ public final class LinearPatternDef extends ElementDef{
 		for (PatternElement pe : _elements){
 			ArrayList<Element> e = pe.getValidElements(aic);
 			if (e == null){
-//				Log.d("PatternCreation", "Missing element [" + pe.getOrdinal() + "] " + pe);
+//				android.util.Log.d("PatternCreation", "Missing element [" + pe.getOrdinal() + "] " + pe);
 				return;
 			}
 
