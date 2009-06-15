@@ -37,4 +37,9 @@ public final class LinearPattern extends Element{
 		}
 	}
 	
+	@Override
+	public String toString(){
+		Bundle extras = getExtras();
+		return  super.toString() + ((extras == null || extras.isEmpty()) ? "" : " " + extras);		
+	}
 }

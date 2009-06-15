@@ -7,7 +7,6 @@ public class BeforeTemporalCondition extends TemporalCondition{
 	private DurationCondition _duration;
 
 	public BeforeTemporalCondition(DurationCondition duration){
-		super();
 		_duration = duration;
 	}
 	

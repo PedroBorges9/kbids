@@ -60,8 +60,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			_npc = new NetProtectConnection(this, AGENT_PACKAGE_NAME);
 		}catch(NameNotFoundException e){
 			Log.e(TAG, "Unable to obtain Agent context with package name: "
-					+ AGENT_PACKAGE_NAME);
-			e.printStackTrace();
+					+ AGENT_PACKAGE_NAME, e);
 		}
 		_allInstances = new AllInstanceContainer();
 		_iteration = 0;
@@ -135,17 +134,16 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 						for (Pair<ThreatAssessment, Element> p : threats){
 							ThreatAssessment ta = p.first;
 							Element element = p.second;
-							
-							//FIXME Remove
-							Log.d(TAG, ta.toString(element));
-							Log.d(TAG, "Element: " + element.toString());
-							
+
+							if (DEBUG)
+								Log.d(TAG, ta.toString(element));
+
 							_twu.receiveThreatAssessment("dt.processor.kbta", ta
 									.getTitle(), ta.getDescription(), ta
 									.getCertainty(element), element.getExtras());
 						}
 					}
-					
+
 					// Removing all patterns as they will be recreated if need be
 					_allInstances.getLinearPatterns().clear();
 				}catch(Throwable t){
@@ -168,6 +166,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			return;
 		}
 		++_iteration;
+		
 		if (DEBUG)
 			System.out.println("\n--------------- Global iteration #" + _iteration
 					+ "---------------\n");
@@ -181,7 +180,7 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 		do{
 			if (DEBUG)
 				System.out.println("---- Inner iteration #" + i++ + "----");
-			// destroyContexts();
+			destroyContexts();
 			_allInstances.getContexts().shiftBack();
 			createContexts();
 			_allInstances.getStates().shiftBack();
@@ -247,8 +246,8 @@ public final class KBTAProcessorService extends Service implements ServiceConnec
 			}
 
 		}
-		if (DEBUG)
-			System.out.println("** Patterns: **\n" + _allInstances.getLinearPatterns());
+		// if (DEBUG)
+		// System.out.println("** Patterns: **\n" + _allInstances.getLinearPatterns());
 	}
 
 	private void createPrimitivesAndEvents(List<MonitoredData> features){
