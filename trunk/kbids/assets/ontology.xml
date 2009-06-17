@@ -310,11 +310,21 @@
 						<Value name="No_Activity" />
 					</SymbolicValueCondition>
 				</State>
+				<Event name="Package_Addition" ordinal="2" />
+				<Trend name="Perm_S-SMS_R-Contacts_Trend" ordinal="3">
+					<SymbolicValueCondition>
+						<Value name="Increasing" />
+					</SymbolicValueCondition>
+				</Trend>
+				
 			</Elements>
 			
 			<PairWiseConditions>
 				<PairWiseCondition first="0" second="1" value="*" temporal="Overlap"
 					minLength="PT1S" maxLength="*" 
+					minStartingDistance="*" maxStartingDistance="*"/>
+				<PairWiseCondition first="2" second="3" value="*" temporal="Overlap"
+					minLength="*" maxLength="*" 
 					minStartingDistance="*" maxStartingDistance="*"/>
 			</PairWiseConditions>
 		</LinearPattern>		
