@@ -39,6 +39,13 @@
 		</LinearPattern>
 	</Assessment>
 	
+	<Assessment title="SDCard Information Leakage" description="SD-Card information is leaking via Cellular 3G!"  
+		baseCertainty="95" monitored="true">
+		<LinearPattern name="Celullar_SDCard_Information_Leakage_Pattern">
+			<DurationCondition min="PT2S" max="*" />
+		</LinearPattern>
+	</Assessment>
+	
 	<Assessment title="Malware Injection" description="A malware has been injected to your device via USB!"  
 		baseCertainty="95" monitored="true">
 		<LinearPattern name="Malware_Injection_Pattern">
