@@ -89,6 +89,7 @@ public final class ThreatAssessment{
 		sb.append("\nDescription: ").append(_description);
 		sb.append("\nmonitored= ").append(_isMonitored);
 		sb.append("\nGenerated From: ").append(_generatedFrom);
+		sb.append("\n").append(e.toString());
 		return sb.toString();
 	}
 

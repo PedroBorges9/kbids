@@ -130,7 +130,7 @@ public abstract class Element implements Comparable<Element>{
 		m.put(ELEMENT_START_TIME, new Date(startTime));
 		long endTime = _timeInterval.getEndTime();
 		if (endTime == Long.MAX_VALUE){
-			endTime = startTime + 60 * 60 * 24 * 1000;
+			endTime = startTime + 10 * 60 * 1000;
 		}
 		m.put(ELEMENT_END_TIME, new Date(endTime));
 		return m;
